@@ -1,0 +1,4 @@
+/.vscode
+/gym_cabworld.egg-info/
+/gym_cabworld/__pycache__/
+/gym_cabworld/envs/__pycache__/

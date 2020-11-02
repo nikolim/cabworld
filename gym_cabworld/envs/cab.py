@@ -1,0 +1,2 @@
+class Cab():
+    pass
