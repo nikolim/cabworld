@@ -1,17 +1,17 @@
 import gym
 from gym import spaces
 import numpy as np
-from gym_cabworld.envs.pygame_2d import PyGame2D
+from gym_cabworld.envs.game import Game
 
 class CustomEnv(gym.Env):
     def __init__(self):
-        self.pygame = PyGame2D()
+        self.pygame = Game()
         self.action_space = spaces.Discrete(3)
         self.observation_space = spaces.Box(np.array([0, 0, 0, 0, 0]), np.array([10, 10, 10, 10, 10]), dtype=np.int)
 
     def reset(self):
         del self.pygame
-        self.pygame = PyGame2D()
+        self.pygame = Game()
         obs = self.pygame.observe()
         return obs
 
