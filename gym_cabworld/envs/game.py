@@ -5,13 +5,16 @@ screen_width = 1000
 screen_height = 1000
 check_point = ((1200, 660), (1250, 120), (190, 200), (1030, 270), (250, 475), (650, 690))
 
+class Map: 
+    def __init__(self, map_file):
+        self.map_img = pygame.image.load(map_file)
 
 class Car:
-    def __init__(self, car_file, map_file, pos):
+    def __init__(self, car_file, map, pos):
         self.surface = pygame.image.load(car_file)
-        self.map = pygame.image.load(map_file)
-        self.surface = pygame.transform.scale(self.surface, (75, 75))
+        self.surface = pygame.transform.scale(self.surface, (50, 50))
         self.rotate_surface = self.surface
+        self.map = map 
         self.pos = pos
         self.angle = 0
         self.speed = 0
@@ -39,7 +42,7 @@ class Car:
         for i in range(4):
             x = int(self.four_points[i][0])
             y = int(self.four_points[i][1])
-            pygame.draw.circle(screen, (255, 255, 255), (x, y), 5)
+            #pygame.draw.circle(screen, (255, 255, 255), (x, y), 5)
 
     def draw_radar(self, screen):
         for r in self.radars_for_draw:
@@ -50,7 +53,7 @@ class Car:
     def check_collision(self):
         self.is_alive = True
         for p in self.four_points:
-            if self.map.get_at((int(p[0]), int(p[1]))) == (255, 255, 255, 255):
+            if self.map.map_img.get_at((int(p[0]), int(p[1]))) == (255, 255, 255, 255):
                 self.is_alive = False
                 break
 
@@ -103,16 +106,14 @@ class Car:
         self.cur_distance = dist
 
     def update(self):
-        #check speed
-        self.speed -= 0.5
-        if self.speed > 10:
-            self.speed = 10
-        if self.speed < 1:
-            self.speed = 1
+
+        self.speed = 25        
 
         #check position
         self.rotate_surface = rot_center(self.surface, self.angle)
+
         self.pos[0] += math.cos(math.radians(360 - self.angle)) * self.speed
+
         if self.pos[0] < 20:
             self.pos[0] = 20
         elif self.pos[0] > screen_width - 120:
@@ -140,17 +141,19 @@ class Game:
         pygame.init()
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.clock = pygame.time.Clock()
-        self.car = Car('images/cab.png', 'images/map.png', [250, 250])
+        self.map = Map('images/map.png')
+        self.car = Car('images/cab.png', self.map, [65, 40])
         self.game_speed = 60
         self.mode = 0
+
 
     def action(self, action):
         if action == 0:
             self.car.speed += 2
         if action == 1:
-            self.car.angle += 5
+            self.car.angle += 90
         elif action == 2:
-            self.car.angle -= 5
+            self.car.angle -= 90
 
         self.car.update()
         self.car.check_collision()
@@ -201,8 +204,7 @@ class Game:
                     self.mode += 1
                     self.mode = self.mode % 3
 
-        self.screen.blit(self.car.map, (0, 0))
-
+        self.screen.blit(self.map.map_img, (0, 0))
 
         if self.mode == 1:
             self.screen.fill((0, 0, 0))
