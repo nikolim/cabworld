@@ -18,9 +18,8 @@ class Car:
         self.pos = pos
         self.angle = 0
         self.speed = 0
-        self.center = [self.pos[0] + 50, self.pos[1] + 50]
+        self.center = [self.pos[0] + 25, self.pos[1] + 25]
         self.radars = []
-        self.radars_for_draw = []
         self.is_alive = True
         self.current_check = 0
         self.prev_distance = 0
@@ -29,27 +28,10 @@ class Car:
         self.check_flag = False
         self.distance = 0
         self.time_spent = 0
-        for d in range(-90, 120, 45):
-            self.check_radar(d)
-
-        for d in range(-90, 120, 45):
-            self.check_radar_for_draw(d)
 
     def draw(self, screen):
         screen.blit(self.rotate_surface, self.pos)
-
-    def draw_collision(self, screen):
-        for i in range(4):
-            x = int(self.four_points[i][0])
-            y = int(self.four_points[i][1])
-            #pygame.draw.circle(screen, (255, 255, 255), (x, y), 5)
-
-    def draw_radar(self, screen):
-        for r in self.radars_for_draw:
-            pos, dist = r
-            pygame.draw.line(screen, (0, 255, 0), self.center, pos, 1)
-            pygame.draw.circle(screen, (0, 255, 0), pos, 5)
-
+        
     def check_collision(self):
         self.is_alive = True
         for p in self.four_points:
@@ -57,37 +39,35 @@ class Car:
                 self.is_alive = False
                 break
 
-    def check_radar(self, degree):
-        """
-        len = 0
-        x = int(self.center[0] + math.cos(math.radians(360 - (self.angle + degree))) * len)
-        y = int(self.center[1] + math.sin(math.radians(360 - (self.angle + degree))) * len)
+    def check_radar(self, screen):
 
-        while not self.map.get_at((x, y)) == (255, 255, 255, 255) and len < 300:
-            len = len + 1
-            x = int(self.center[0] + math.cos(math.radians(360 - (self.angle + degree))) * len)
-            y = int(self.center[1] + math.sin(math.radians(360 - (self.angle + degree))) * len)
+        # how far the sensors of the car / driver can see
+        sensor_field = 40
 
-        dist = int(math.sqrt(math.pow(x - self.center[0], 2) + math.pow(y - self.center[1], 2)))
-        self.radars.append([(x, y), dist])
-        """
-        pass
+        front_x = self.center[0] + math.cos(math.radians(360 - self.angle)) * sensor_field
+        front_y = self.center[1] + math.sin(math.radians(360 - self.angle)) * sensor_field
 
-    def check_radar_for_draw(self, degree):
-        pass 
-        """"
-        len = 0
-        x = int(self.center[0] + math.cos(math.radians(360 - (self.angle + degree))) * len)
-        y = int(self.center[1] + math.sin(math.radians(360 - (self.angle + degree))) * len)
+        right_x = self.center[0] + math.cos(math.radians(360 - self.angle + 90)) * sensor_field
+        right_y = self.center[1] + math.sin(math.radians(360 - self.angle + 90)) * sensor_field
 
-        while not self.map.get_at((x, y)) == (255, 255, 255, 255) and len < 300:
-            len = len + 1
-            x = int(self.center[0] + math.cos(math.radians(360 - (self.angle + degree))) * len)
-            y = int(self.center[1] + math.sin(math.radians(360 - (self.angle + degree))) * len)
+        left_x = self.center[0] + math.cos(math.radians(360 - self.angle - 90)) * sensor_field
+        left_y = self.center[1] + math.sin(math.radians(360 - self.angle - 90)) * sensor_field
 
-        dist = int(math.sqrt(math.pow(x - self.center[0], 2) + math.pow(y - self.center[1], 2)))
-        self.radars_for_draw.append([(x, y), dist])
-        """
+        # check for street color (175,171,171, 255) 255 = alpha
+        if self.map.map_img.get_at(((int(front_x), int(front_y)))) == (175,171,171,255):
+            print("Street in front")
+
+        if self.map.map_img.get_at(((int(right_x), int(right_y)))) == (175,171,171,255):
+            print("Street on the right")
+        
+        if self.map.map_img.get_at(((int(left_x), int(left_y)))) == (175,171,171,255):
+            print("Street on the left")
+
+        # Draw sensors
+        # pygame.draw.line(screen, (255,255,255), (self.center[0], self.center[1]), (front_x, front_y), 5)
+        # pygame.draw.line(screen, (255,255,255), (self.center[0], self.center[1]), (left_x, left_y), 5)
+        # pygame.draw.line(screen, (255,255,255), (self.center[0], self.center[1]), (right_x, right_y), 5)
+
 
     def check_checkpoint(self):
         p = check_point[self.current_check]
@@ -107,34 +87,23 @@ class Car:
 
     def update(self):
 
+        # pixels per action
         self.speed = 25        
 
-        #check position
+        # rotate image
         self.rotate_surface = rot_center(self.surface, self.angle)
 
+        # move cab
         self.pos[0] += math.cos(math.radians(360 - self.angle)) * self.speed
+        self.pos[1] += math.sin(math.radians(360 - self.angle)) * self.speed
 
-        if self.pos[0] < 20:
-            self.pos[0] = 20
-        elif self.pos[0] > screen_width - 120:
-            self.pos[0] = screen_width - 120
-
+        # keep track of distance and time
         self.distance += self.speed
         self.time_spent += 1
-        self.pos[1] += math.sin(math.radians(360 - self.angle)) * self.speed
-        if self.pos[1] < 20:
-            self.pos[1] = 20
-        elif self.pos[1] > screen_height - 120:
-            self.pos[1] = screen_height - 120
-
-        # caculate 4 collision points
-        self.center = [int(self.pos[0]) + 50, int(self.pos[1]) + 50]
-        len = 40
-        left_top = [self.center[0] + math.cos(math.radians(360 - (self.angle + 30))) * len, self.center[1] + math.sin(math.radians(360 - (self.angle + 30))) * len]
-        right_top = [self.center[0] + math.cos(math.radians(360 - (self.angle + 150))) * len, self.center[1] + math.sin(math.radians(360 - (self.angle + 150))) * len]
-        left_bottom = [self.center[0] + math.cos(math.radians(360 - (self.angle + 210))) * len, self.center[1] + math.sin(math.radians(360 - (self.angle + 210))) * len]
-        right_bottom = [self.center[0] + math.cos(math.radians(360 - (self.angle + 330))) * len, self.center[1] + math.sin(math.radians(360 - (self.angle + 330))) * len]
-        self.four_points = [left_top, right_top, left_bottom, right_bottom]
+    
+        # center = start cords + img-size 
+        self.center = [int(self.pos[0]) + 25, int(self.pos[1]) + 25]
+        
 
 class Game:
     def __init__(self):
@@ -156,12 +125,10 @@ class Game:
             self.car.angle -= 90
 
         self.car.update()
-        self.car.check_collision()
+        # self.car.check_collision()
         self.car.check_checkpoint()
-
-        self.car.radars.clear()
-        for d in range(-90, 120, 45):
-            self.car.check_radar(d)
+        # car check radar
+        
 
     def evaluate(self):
         reward = 0
@@ -209,14 +176,10 @@ class Game:
         if self.mode == 1:
             self.screen.fill((0, 0, 0))
 
-        self.car.radars_for_draw.clear()
-        for d in range(-90, 120, 45):
-            self.car.check_radar_for_draw(d)
-
         pygame.draw.circle(self.screen, (255, 255, 0), check_point[self.car.current_check], 70, 1)
-        self.car.draw_collision(self.screen)
-        self.car.draw_radar(self.screen)
+        
         self.car.draw(self.screen)
+        self.car.check_radar(self.screen)
 
         pygame.display.flip()
         self.clock.tick(self.game_speed)
