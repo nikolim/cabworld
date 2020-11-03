@@ -3,8 +3,6 @@ import math
 
 class Cab:
     def __init__(self, cab_file, map, pos):
-        """
-        """
         self.map = map 
         self.img_size = 50 
         self.cab_img = pygame.image.load(cab_file)
@@ -14,16 +12,14 @@ class Cab:
         self.center = [int(self.pos[0] + (self.img_size/2)), int(self.pos[1] + (self.img_size/2))]
         self.angle = 0
         self.speed = 0
-        self.radars = [0,0,0]
+        self.radars = [0,0,0] # 0: forward-move 1: left-turn 2: right-turn 
         self.is_alive = True
         self.goal = False
         self.distance = 0
         self.time_spent = 0
+        self.passenger = None
         self.debug = False
 
-    def draw(self, screen):
-        screen.blit(self.rotate_cab_img, self.pos)
-        
     def check_radar(self, screen):
 
         self.radars = [0,0,0]
@@ -62,7 +58,13 @@ class Cab:
         self.time_spent += 1
         # center = start cords + img-size 
         self.center = [int(self.pos[0]) + 25, int(self.pos[1]) + 25]
+
+    def pick_up_passenger(self, passenger): 
+        self.passenger = passenger
     
+    def draw(self, screen):
+        screen.blit(self.rotate_cab_img, self.pos)
+        
     def rot_center(self, image, angle):
         orig_rect = image.get_rect()
         rot_image = pygame.transform.rotate(image, angle)

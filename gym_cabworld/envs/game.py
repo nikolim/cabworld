@@ -15,7 +15,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.map = Map('images/map.png')
         self.cab = Cab('images/cab.png', self.map, [65, 40])
-        self.passenger = Passenger('images/person_1.png', self.map, [800,800], 0)
+        self.passenger = Passenger('images/person_1.png', self.map, [800,800],0,[65,40])
         self.game_speed = 60
         self.mode = 0
 
@@ -59,6 +59,7 @@ class Game:
         if self.mode == 1:
             self.screen.fill((0, 0, 0))
         self.cab.draw(self.screen)
-        self.passenger.draw(self.screen)
+        if not self.passenger.in_cab:
+            self.passenger.draw(self.screen)
         pygame.display.flip()
         self.clock.tick(self.game_speed)

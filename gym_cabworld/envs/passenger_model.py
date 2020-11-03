@@ -2,7 +2,7 @@ import pygame
 import math
 
 class Passenger:
-    def __init__(self, passenger_file, map, pos, angle):
+    def __init__(self, passenger_file, map, pos, angle, destination):
         """
         """
         self.pos = pos
@@ -13,11 +13,15 @@ class Passenger:
         self.passenger_img = pygame.transform.scale(self.passenger_img, (self.img_size, self.img_size))
         self.passenger_img_rot = self.rot_center(self.passenger_img, self.angle)
         self.center = [int(self.pos[0] + (self.img_size/2)), int(self.pos[1] + (self.img_size/2))]
-        self.goal = [0,0]
+        self.destination = destination 
         self.time_waiting = 0
+        self.in_cab = False
 
     def draw(self, screen):
         screen.blit(self.passenger_img_rot, self.pos)
+
+    def get_in_cab(self): 
+        self.in_cab = True
 
     def rot_center(self, image, angle):
         orig_rect = image.get_rect()
@@ -26,3 +30,9 @@ class Passenger:
         rot_rect.center = rot_image.get_rect().center
         rot_image = rot_image.subsurface(rot_rect).copy()
         return rot_image
+    
+    def reached_destination(self): 
+        delta = 25
+        x_reached = (self.pos[0] - delta) < self.goal[0] < (self.pos[0] + delta)
+        y_reached = (self.pos[1] - delta) < self.goal[1] < (self.pos[1] + delta)
+        return x_reached and y_reached
