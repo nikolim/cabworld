@@ -7,7 +7,7 @@ class CustomEnv(gym.Env):
     def __init__(self):
         self.pygame = Game()
         self.action_space = spaces.Discrete(3)
-        self.observation_space = spaces.Box(np.array([0, 0, 0]), np.array([1,1,1]), dtype=np.int)
+        self.observation_space = spaces.Box(np.array([0, 0, 0, 0, 0]), np.array([1,1,1, 1000, 1000]), dtype=np.int)
 
     def reset(self):
         del self.pygame

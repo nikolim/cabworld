@@ -1,3 +1,7 @@
+"""
+Demo of the environment with Random Policy
+"""
+
 import random
 import time
 import gym 
@@ -8,11 +12,6 @@ env.reset()
 
 # initial random step
 state, reward, is_done, info = env.step(0)
-
-print(f'State: {state}')
-print(f'Reward: {reward}')
-print(f'Is done: {is_done}')
-print(f'Info: {info}')
 
 while not is_done: 
     possible_moves = [index for index, element in enumerate(state) if element == 1]
