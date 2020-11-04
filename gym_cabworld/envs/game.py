@@ -58,6 +58,7 @@ class Game:
         self.screen.blit(self.map.map_img, (0, 0))
         if self.mode == 1:
             self.screen.fill((0, 0, 0))
+        self.cab.check_radar(self.screen)
         self.cab.draw(self.screen)
         if not self.passenger.in_cab:
             self.passenger.draw(self.screen)
