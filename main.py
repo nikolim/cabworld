@@ -16,11 +16,10 @@ print(f'Info: {info}')
 
 while not is_done: 
     possible_moves = [index for index, element in enumerate(state) if element == 1]
-    print(possible_moves)
     move = random.choice(possible_moves)
-    print(move)
     state, reward, is_done, info = env.step(move)
+    print(state)
     env.render()
-    time.sleep(0.05)
+    time.sleep(0.02)
     if is_done: 
         print("Done")

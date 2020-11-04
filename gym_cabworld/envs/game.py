@@ -44,7 +44,9 @@ class Game:
         return False
 
     def observe(self):
-        return tuple(self.cab.radars)
+        r1,r2,r3 = self.cab.radars
+        p1, p2 = self.cab.pos
+        return tuple([r1,r2,r3,p1,p2])
 
     def view(self):
         for event in pygame.event.get():
@@ -60,7 +62,15 @@ class Game:
             self.screen.fill((0, 0, 0))
         self.cab.check_radar(self.screen)
         self.cab.draw(self.screen)
-        if not self.passenger.in_cab:
-            self.passenger.draw(self.screen)
+        self.passenger.draw(self.screen)
+        
+        if self.cab.passenger is None:
+            if self.map.calc_distance(self.cab.pos, self.passenger.pos) < 25: 
+                if not self.passenger.reached_destination:
+                    self.cab.pick_up_passenger(self.passenger)
+
+        if self.map.calc_distance(self.cab.pos, self.passenger.destination) < 25 and self.cab.passenger is not None: 
+            self.cab.drop_off_passenger(self.passenger)
+
         pygame.display.flip()
         self.clock.tick(self.game_speed)

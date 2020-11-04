@@ -42,13 +42,13 @@ class Cab:
         if self.check_if_street(right_x, right_y):
             self.radars[2] = 1
         
-        # Draw sensors
+        # Draw sensors for debugging sensors
         if self.debug:
             pygame.draw.line(screen, (255,255,255), (self.center[0], self.center[1]), (front_x, front_y), 5)
             pygame.draw.line(screen, (255,255,255), (self.center[0], self.center[1]), (left_x, left_y), 5)
             pygame.draw.line(screen, (255,255,255), (self.center[0], self.center[1]), (right_x, right_y), 5) 
         
-        # if no possible action, drive backwards 
+        # if no possible action, drive backwards until possible action 
         while all(i == 0 for i in self.radars): 
             self.speed = -5
             self.update()
@@ -65,9 +65,17 @@ class Cab:
         self.time_spent += 1
         # center = start cords + img-size 
         self.center = [int(self.pos[0]) + 25, int(self.pos[1]) + 25]
+        print(self.distance)
 
     def pick_up_passenger(self, passenger): 
         self.passenger = passenger
+        self.passenger.get_in_cab()
+
+    def drop_off_passenger(self, passenger): 
+        self.passenger.pos[0], self.passenger.pos[1] = self.pos[0], self.pos[1]
+        self.passenger.reached_destination = True
+        self.passenger.get_out_of_cab()
+        self.passenger = None
     
     def draw(self, screen):
         screen.blit(self.rotate_cab_img, self.pos)

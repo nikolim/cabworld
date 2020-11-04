@@ -14,14 +14,19 @@ class Passenger:
         self.passenger_img_rot = self.rot_center(self.passenger_img, self.angle)
         self.center = [int(self.pos[0] + (self.img_size/2)), int(self.pos[1] + (self.img_size/2))]
         self.destination = destination 
+        self.reached_destination = False
         self.time_waiting = 0
         self.in_cab = False
 
     def draw(self, screen):
-        screen.blit(self.passenger_img_rot, self.pos)
+        if not self.in_cab:
+            screen.blit(self.passenger_img_rot, self.pos)
 
     def get_in_cab(self): 
         self.in_cab = True
+
+    def get_out_of_cab(self): 
+        self.in_cab = False
 
     def rot_center(self, image, angle):
         orig_rect = image.get_rect()
