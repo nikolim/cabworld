@@ -1,10 +1,11 @@
 # Gym-Cabworld
 
-Reinforcement Environment based an OpenGymAI and Pygame
+Reinforcement Environment based an OpenGymAI and Pygame. 
+A cab is driving around tries to pick-up passenger to drive them to their destination.
 
 ![Cabworld](images/cabworld.png)
 
-# Installation 
+## Installation 
 
 ```bash
 git clone https://gitlab.com/nlimbrun/cabworld.git
@@ -13,7 +14,7 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
-# Import 
+## Usage
 
 ```python
 import gym 

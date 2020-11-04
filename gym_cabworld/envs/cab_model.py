@@ -3,13 +3,15 @@ import math
 
 class Cab:
     def __init__(self, cab_file, map, pos):
+        """
+        Cab moving on map trying to pickup passengers
+        @param cab_file: icon for cab 
+        @param map: to put the cab on 
+        @param pos: position of the passenger 
+        """
         self.map = map 
         self.img_size = 50 
-        self.cab_img = pygame.image.load(cab_file)
-        self.cab_img = pygame.transform.scale(self.cab_img, (self.img_size, self.img_size))
-        self.rotate_cab_img = self.cab_img
         self.pos = pos
-        self.center = [int(self.pos[0] + (self.img_size/2)), int(self.pos[1] + (self.img_size/2))]
         self.angle = 0
         self.speed = 0
         self.radars = [0,0,0] # 0: forward-move 1: left-turn 2: right-turn 
@@ -20,11 +22,19 @@ class Cab:
         self.passenger = None
         self.debug = False
 
-    def check_radar(self, screen):
+        self.cab_img = pygame.image.load(cab_file)
+        self.cab_img = pygame.transform.scale(self.cab_img, (self.img_size, self.img_size))
+        self.rotate_cab_img = self.cab_img
+        self.center = [int(self.pos[0] + (self.img_size/2)), int(self.pos[1] + (self.img_size/2))]
 
+    def check_radar(self, screen):
+        """
+        Check if there is a street in front, on the left, on the right
+        Uses compares color values
+        @param screen: to check on
+        """
         self.radars = [0,0,0]
-        # how far the sensors of the cab / driver can see
-        sensor_field = 35
+        sensor_field = 35 # how far the sensors of the cab / driver can see
         
         front_x = self.center[0] + math.cos(math.radians(360 - self.angle)) * sensor_field
         front_y = self.center[1] + math.sin(math.radians(360 - self.angle)) * sensor_field
@@ -55,6 +65,9 @@ class Cab:
             self.check_radar(screen)
 
     def update(self):
+        """
+        Update the values of the cab after movement
+        """
         # rotate image
         self.rotate_cab_img = self.rot_center(self.cab_img, self.angle)
         # move cab
@@ -68,19 +81,36 @@ class Cab:
         print(self.distance)
 
     def pick_up_passenger(self, passenger): 
+        """
+        Picks up a passenger
+        @param passenger: passenger to pick-up
+        """
         self.passenger = passenger
         self.passenger.get_in_cab()
 
     def drop_off_passenger(self, passenger): 
+        """
+        Drops off a passenger
+        @param passenger: passenger to drop-off
+        """
         self.passenger.pos[0], self.passenger.pos[1] = self.pos[0], self.pos[1]
         self.passenger.reached_destination = True
         self.passenger.get_out_of_cab()
         self.passenger = None
     
     def draw(self, screen):
+        """
+        Draw to cab on the map
+        @param screen: to draw on
+        """
         screen.blit(self.rotate_cab_img, self.pos)
         
     def rot_center(self, image, angle):
+        """
+        Rotate image around center
+        @param image: image to rotate
+        @param angle: angle to rotate the image
+        """
         orig_rect = image.get_rect()
         rot_image = pygame.transform.rotate(image, angle)
         rot_rect = orig_rect.copy()
@@ -89,6 +119,11 @@ class Cab:
         return rot_image
 
     def check_if_street(self, x,y): 
+        """
+        Check if there is street at a given position 
+        @param x: x-Postion to check 
+        @param y: y-Postion to check
+        """
         delta = 10
         color = self.map.map_img.get_at(((int(x), int(y))))
         street_color = self.map.street_color

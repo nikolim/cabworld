@@ -10,6 +10,9 @@ screen_height = 1000
 
 class Game:
     def __init__(self):
+        """
+        Create Pygame with map, cab, passenger
+        """
         pygame.init()
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.clock = pygame.time.Clock()
@@ -20,6 +23,10 @@ class Game:
         self.mode = 0
 
     def action(self, action):
+        """"
+        Execute action on cab
+        @param action: action to perform
+        """
         if action == 0:
             self.cab.speed = 25
         if action == 1:
@@ -31,12 +38,20 @@ class Game:
         self.cab.check_radar(self.screen)
         
     def evaluate(self):
+        """"
+        Evaluate rewards
+        @return reward
+        """
         reward = 0
         if self.cab.goal:
             reward = 10000
         return reward
 
     def is_done(self):
+        """"
+        Check if cab has reached its goal
+        @return bool
+        """
         if not self.cab.is_alive or self.cab.goal:
             self.cab.current_check = 0
             self.cab.distance = 0
@@ -44,11 +59,18 @@ class Game:
         return False
 
     def observe(self):
+        """"
+        Obsereve environment
+        @return state of environment
+        """
         r1,r2,r3 = self.cab.radars
         p1, p2 = self.cab.pos
         return tuple([r1,r2,r3,p1,p2])
 
     def view(self):
+        """"
+        Render evironment using Pygame
+        """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
@@ -64,6 +86,7 @@ class Game:
         self.cab.draw(self.screen)
         self.passenger.draw(self.screen)
         
+        # Try to pick-up passengers
         if self.cab.passenger is None:
             if self.map.calc_distance(self.cab.pos, self.passenger.pos) < 25: 
                 if not self.passenger.reached_destination:
