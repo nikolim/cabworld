@@ -18,9 +18,12 @@ class Game:
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.clock = pygame.time.Clock()
         self.map = Map('images/map.png')
-        passenger = Passenger('images/person_1.png',
+        passenger1 = Passenger('images/person_1.png',
                               self.map, [800, 800], 0, [65, 40])
-        self.map.add_passenger(passenger)
+        #passenger2 = Passenger('images/person_2.png',
+        #                self.map, [710, 230], 0, [280, 800])
+        self.map.add_passenger(passenger1)
+        #self.map.add_passenger(passenger2)
         self.cab = Cab('images/cab.png', self.map, [65, 40])
         self.game_speed = 60
         self.mode = 0
@@ -97,15 +100,6 @@ class Game:
         self.cab.check_radar()
         self.cab.draw(self.screen)
         self.map.draw_passengers(self.screen)
-
-        # Try to pick-up passengers
-        # if self.cab.passenger is None:
-        #     if self.map.calc_distance(self.cab.pos, self.passenger.pos) < 25:
-        #         if not self.passenger.reached_destination:
-        #             self.cab.pick_up_passenger(self.passenger)
-        #
-        # if self.map.calc_distance(self.cab.pos, self.passenger.destination) < 25 and self.cab.passenger is not None:
-        #     self.cab.drop_off_passenger(self.passenger)
 
         pygame.display.flip()
         self.clock.tick(self.game_speed)
