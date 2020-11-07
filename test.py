@@ -19,6 +19,6 @@ while not is_done:
     state, reward, is_done, info = env.step(move)
     print(state)
     env.render()
-    time.sleep(0.02)
+    time.sleep(0.001)
     if is_done: 
         print("Done")

@@ -20,6 +20,9 @@ class Cab:
         self.distance = 0
         self.time_spent = 0
         self.passenger = None
+        self.next_passenger = None
+        self.pick_up_possible = 0
+        self.drop_off_possible = 0
         self.debug = False
 
         self.cab_img = pygame.image.load(cab_file)
@@ -27,11 +30,10 @@ class Cab:
         self.rotate_cab_img = self.cab_img
         self.center = [int(self.pos[0] + (self.img_size/2)), int(self.pos[1] + (self.img_size/2))]
 
-    def check_radar(self, screen):
+    def check_radar(self):
         """
         Check if there is a street in front, on the left, on the right
         Uses compares color values
-        @param screen: to check on
         """
         self.radars = [0,0,0]
         sensor_field = 35 # how far the sensors of the cab / driver can see
@@ -52,17 +54,28 @@ class Cab:
         if self.check_if_street(right_x, right_y):
             self.radars[2] = 1
         
-        # Draw sensors for debugging sensors
-        if self.debug:
-            pygame.draw.line(screen, (255,255,255), (self.center[0], self.center[1]), (front_x, front_y), 5)
-            pygame.draw.line(screen, (255,255,255), (self.center[0], self.center[1]), (left_x, left_y), 5)
-            pygame.draw.line(screen, (255,255,255), (self.center[0], self.center[1]), (right_x, right_y), 5) 
-        
         # if no possible action, drive backwards until possible action 
         while all(i == 0 for i in self.radars): 
             self.speed = -5
             self.update()
-            self.check_radar(screen)
+            self.check_radar()
+
+    def check_for_passengers(self): 
+        self.drop_off_possible = 0
+        self.pick_up_possible = 0
+        if self.passenger is None:
+            # Empty cab -> check if pick-up is possible 
+            self.next_passenger = self.map.get_nearest_passenger(self.pos)
+            if self.next_passenger:
+                distance = self.map.calc_distance(self.pos, self.next_passenger.pos)
+                if distance < 25: 
+                    self.pick_up_possible = 1
+        else:
+            # Occupied cab -> check if drop-off possible 
+            distance = self.map.calc_distance(self.pos, self.passenger.destination)
+            if distance < 25: 
+                self.drop_off_possible = 1
+    
 
     def update(self):
         """
@@ -80,24 +93,31 @@ class Cab:
         self.center = [int(self.pos[0]) + 25, int(self.pos[1]) + 25]
         print(self.distance)
 
-    def pick_up_passenger(self, passenger): 
+    def pick_up_passenger(self): 
         """
-        Picks up a passenger
+        Picks up a the nearest passenger if available
         @param passenger: passenger to pick-up
         """
-        self.passenger = passenger
-        self.passenger.get_in_cab()
+        if self.passenger is None:
+            passenger = self.map.get_nearest_passenger(self.pos)
+            if passenger: 
+                if self.map.calc_distance(self.pos, passenger.pos) < 25:
+                    self.passenger = passenger
+                    self.passenger.get_in_cab()
 
-    def drop_off_passenger(self, passenger): 
+    def drop_off_passenger(self): 
         """
         Drops off a passenger
         @param passenger: passenger to drop-off
         """
-        self.passenger.pos[0], self.passenger.pos[1] = self.pos[0], self.pos[1]
-        self.passenger.reached_destination = True
-        self.passenger.get_out_of_cab()
-        self.passenger = None
-    
+        if self.passenger:
+            distance_pos_destination = self.map.calc_distance(self.pos, self.passenger.pos)
+            if distance_pos_destination < 25:
+                self.passenger.pos[0], self.passenger.pos[1] = self.pos[0], self.pos[1]
+                self.passenger.reached_destination = True
+                self.passenger.get_out_of_cab()
+                self.passenger = None
+        
     def draw(self, screen):
         """
         Draw to cab on the map
