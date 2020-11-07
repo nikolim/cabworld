@@ -6,7 +6,7 @@ from gym_cabworld.envs.game import Game
 class CustomEnv(gym.Env):
     def __init__(self):
         self.pygame = Game()
-        self.action_space = spaces.Discrete(3)
+        self.action_space = spaces.Discrete(5)
         self.observation_space = spaces.Box(np.array([0, 0, 0, 0, 0]), np.array([1,1,1, 1000, 1000]), dtype=np.int)
 
     def reset(self):
