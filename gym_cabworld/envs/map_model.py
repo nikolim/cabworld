@@ -41,3 +41,9 @@ class Map:
         for passenger in self.passengers: 
             if not passenger.in_cab:
                 screen.blit(passenger.passenger_img_rot, passenger.pos)
+
+    def all_passengers_reached_dest(self): 
+        for tmp_passenger in self.passengers: 
+            if not tmp_passenger.reached_destination: 
+                return False 
+        return True
