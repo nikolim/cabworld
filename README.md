@@ -26,5 +26,8 @@ env.render()
 ```
 ## Changelog
 
+### [0.2] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_0.2) (07.11.2020)
+- Added actions for pick-up, drop-off and simple reward system
+
 ### [0.1] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_0.1) (04.11.2020)
 - Basic world with cabs and passenger (without reward system)s
