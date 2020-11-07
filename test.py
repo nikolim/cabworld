@@ -18,16 +18,13 @@ while not is_done:
     # check if pickup is possible
     if state[3] == 1:
         move = 3
-        print("pick up passenger")
     # check if drop-off is possible
     elif state[4] == 1: 
         move = 4
-        print("drop off passenger")
     else: 
         move = random.choice(possible_moves)
     state, reward, is_done, info = env.step(move)
-    #print(state)
     env.render()
-    time.sleep(0.01)
+    time.sleep(0.1)
     if is_done: 
         print("Done")

@@ -3,7 +3,7 @@
 Reinforcement Environment based an OpenGymAI and Pygame. 
 A cab is driving around and tries to pick-up passengers to drive them to their destination.
 
-![Cabworld](images/cabworld.png)
+![Cabworld](demo.gif)
 
 ## Installation 
 

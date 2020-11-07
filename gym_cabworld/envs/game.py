@@ -33,6 +33,9 @@ class Game:
         Execute action on cab
         @param action: action to perform
         """
+        # reset rewards 
+        self.cab.rewards = 0
+
         if action == 0:
             self.cab.speed = 25
         if action == 1:
@@ -47,27 +50,22 @@ class Game:
         self.cab.update()
         self.cab.check_radar()
         self.cab.check_for_passengers()
+        self.cab.calc_rewards()
 
     def evaluate(self):
         """"
         Evaluate rewards
         @return reward
         """
-        reward = 0
-        if self.cab.goal:
-            reward = 10000
-        return reward
+        return self.cab.rewards
 
     def is_done(self):
         """"
-        Check if cab has reached its goal
+        Check if all passengers have reached their destination
         @return bool
         """
-        if not self.cab.is_alive or self.cab.goal:
-            self.cab.current_check = 0
-            self.cab.distance = 0
-            return True
-        return False
+        return self.map.all_passengers_reached_dest()
+
 
     def observe(self):
         """"

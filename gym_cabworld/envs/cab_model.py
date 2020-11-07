@@ -16,7 +16,6 @@ class Cab:
         self.speed = 0
         self.radars = [0,0,0] # 0: forward-move 1: left-turn 2: right-turn 
         self.is_alive = True
-        self.goal = False
         self.distance = 0
         self.time_spent = 0
         self.passenger = None
@@ -30,6 +29,13 @@ class Cab:
         self.rotate_cab_img = self.cab_img
         self.center = [int(self.pos[0] + (self.img_size/2)), int(self.pos[1] + (self.img_size/2))]
 
+        # rewards
+        self.pick_up_reward = 1000
+        self.drop_off_reward = 1000
+        # motivate cab to drive the shortest path
+        self.path_penalty = -1
+        self.rewards = 0
+        
     def check_radar(self):
         """
         Check if there is a street in front, on the left, on the right
@@ -59,6 +65,10 @@ class Cab:
             self.speed = -5
             self.update()
             self.check_radar()
+
+    def calc_rewards(self): 
+        if self.passenger: 
+            self.rewards += self.path_penalty
 
     def check_for_passengers(self): 
         self.drop_off_possible = 0
@@ -104,6 +114,7 @@ class Cab:
                 if self.map.calc_distance(self.pos, passenger.pos) < 25:
                     self.passenger = passenger
                     self.passenger.get_in_cab()
+                    self.rewards += self.pick_up_reward
 
     def drop_off_passenger(self): 
         """
@@ -117,8 +128,8 @@ class Cab:
                 self.passenger.reached_destination = True
                 self.passenger.get_out_of_cab()
                 self.passenger = None
+                self.rewards += self.drop_off_reward
 
-    
     def draw(self, screen):
         """
         Draw to cab on the map
