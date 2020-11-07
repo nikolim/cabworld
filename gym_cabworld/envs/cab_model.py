@@ -70,7 +70,7 @@ class Cab:
                 distance = self.map.calc_distance(self.pos, self.next_passenger.pos)
                 if distance < 25: 
                     self.pick_up_possible = 1
-        else:
+        if self.passenger:
             # Occupied cab -> check if drop-off possible 
             distance = self.map.calc_distance(self.pos, self.passenger.destination)
             if distance < 25: 
@@ -91,7 +91,7 @@ class Cab:
         self.time_spent += 1
         # center = start cords + img-size 
         self.center = [int(self.pos[0]) + 25, int(self.pos[1]) + 25]
-        print(self.distance)
+        #print(self.distance)
 
     def pick_up_passenger(self): 
         """
@@ -111,13 +111,14 @@ class Cab:
         @param passenger: passenger to drop-off
         """
         if self.passenger:
-            distance_pos_destination = self.map.calc_distance(self.pos, self.passenger.pos)
+            distance_pos_destination = self.map.calc_distance(self.pos, self.passenger.destination)
             if distance_pos_destination < 25:
                 self.passenger.pos[0], self.passenger.pos[1] = self.pos[0], self.pos[1]
                 self.passenger.reached_destination = True
                 self.passenger.get_out_of_cab()
                 self.passenger = None
-        
+
+    
     def draw(self, screen):
         """
         Draw to cab on the map

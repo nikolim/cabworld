@@ -27,9 +27,10 @@ class Map:
         nearest_passenger = None 
         min_distance = 1000
         for tmp_passenger in self.passengers: 
-            tmp_distance = self.calc_distance(pos, tmp_passenger.pos)
-            if tmp_distance < min_distance:
-                nearest_passenger = tmp_passenger
+            if not tmp_passenger.reached_destination:
+                tmp_distance = self.calc_distance(pos, tmp_passenger.pos)
+                if tmp_distance < min_distance:
+                    nearest_passenger = tmp_passenger
         return nearest_passenger
     
     def draw_passengers(self, screen):
