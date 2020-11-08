@@ -34,7 +34,11 @@ class Cab:
         self.drop_off_reward = 1000
         # motivate cab to drive the shortest path
         self.path_penalty = -1
+        self.wrong_pick_up_penalty = -100
+        self.wrong_drop_off_penalty = -100
         self.rewards = 0
+
+        self.check_radar()
         
     def check_radar(self):
         """
@@ -62,7 +66,7 @@ class Cab:
         
         # if no possible action, drive backwards until possible action 
         while all(i == 0 for i in self.radars): 
-            self.speed = -5
+            self.speed = -25
             self.update()
             self.check_radar()
 
@@ -115,6 +119,8 @@ class Cab:
                     self.passenger = passenger
                     self.passenger.get_in_cab()
                     self.rewards += self.pick_up_reward
+        else: 
+            self.rewards += self.wrong_pick_up_penalty
 
     def drop_off_passenger(self): 
         """
@@ -129,6 +135,9 @@ class Cab:
                 self.passenger.get_out_of_cab()
                 self.passenger = None
                 self.rewards += self.drop_off_reward
+        else: 
+            self.rewards += self.wrong_drop_off_penalty
+
 
     def draw(self, screen):
         """
@@ -157,9 +166,12 @@ class Cab:
         @param y: y-Postion to check
         """
         delta = 10
-        color = self.map.map_img.get_at(((int(x), int(y))))
-        street_color = self.map.street_color
-        red_similar = (street_color[0] - delta) <  color[0] < (street_color[0] + delta)
-        green_similar = (street_color[1] - delta) <  color[1] < (street_color[1] + delta)
-        blue_similar = (street_color[2] - delta) <  color[2] < (street_color[2] + delta)
-        return red_similar and green_similar and blue_similar
+        try:
+            color = self.map.map_img.get_at(((int(x), int(y))))
+            street_color = self.map.street_color
+            red_similar = (street_color[0] - delta) <  color[0] < (street_color[0] + delta)
+            green_similar = (street_color[1] - delta) <  color[1] < (street_color[1] + delta)
+            blue_similar = (street_color[2] - delta) <  color[2] < (street_color[2] + delta)
+            return red_similar and green_similar and blue_similar
+        except IndexError:
+            return False
