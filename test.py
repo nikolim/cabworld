@@ -25,6 +25,6 @@ while not is_done:
         move = random.choice(possible_moves)
     state, reward, is_done, info = env.step(move)
     env.render()
-    time.sleep(0.1)
+    time.sleep(0.001)
     if is_done: 
         print("Done")

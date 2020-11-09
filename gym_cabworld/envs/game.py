@@ -17,14 +17,14 @@ class Game:
         pygame.init()
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.clock = pygame.time.Clock()
-        self.map = Map('images/map.png')
+        self.map = Map('images/map_gen.png')
         passenger1 = Passenger('images/person_1.png',
-                              self.map, [800, 800], 0, [65, 40])
+                              self.map, [940, 940], 0, [60, 60])
         #passenger2 = Passenger('images/person_2.png',
         #                self.map, [710, 230], 0, [280, 800])
         self.map.add_passenger(passenger1)
         #self.map.add_passenger(passenger2)
-        self.cab = Cab('images/cab.png', self.map, [65, 40])
+        self.cab = Cab('images/cab.png', self.map, [60, 60])
         self.game_speed = 60
         self.mode = 0
 
@@ -37,7 +37,7 @@ class Game:
         self.cab.rewards = 0
 
         if action == 0:
-            self.cab.speed = 25
+            self.cab.speed = 40
         if action == 1:
             self.cab.angle += 90
         elif action == 2:
