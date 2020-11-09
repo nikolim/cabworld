@@ -42,12 +42,12 @@ def q_learning(env, estimator, n_episode, gamma=0.999, epsilon=0.1, epsilon_deca
             state = next_state
 
             # (Render last episode)
-            # if last_episode:
-            #     if blocker: 
-            #         input("Start last run")
-            #         blocker = False
-            #     env.render()
-            #     time.sleep(0.001)
+            if last_episode:
+                if blocker: 
+                    input("Start last run")
+                    blocker = False
+                env.render()
+                time.sleep(0.00001)
 
 n_state = env.observation_space.shape[0]
 n_action = env.action_space.n
@@ -55,10 +55,11 @@ n_feature = 200
 lr = 0.03
 
 estimator = Estimator(n_feature, n_state, n_action, 50, lr)
-n_episode = 100
+estimator.load_models()
+n_episode = 1
 total_reward_episode = [0] * n_episode
 q_learning(env, estimator, n_episode, epsilon=0.1)
-estimator.save_weights()
+estimator.save_models()
 last_reward = str(total_reward_episode[n_episode-1])
 print("Done")
 

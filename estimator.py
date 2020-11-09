@@ -49,10 +49,26 @@ class Estimator():
         with torch.no_grad():
             return torch.tensor([model(features) for model in self.models])
 
-    def save_weights(self): 
-        torch.save(self.w, 'weights/weights.pt')
-        torch.save(self.b, 'weights/bias.pt')
+    def save_models(self, PATH='checkpoints/q_learning_ckpnt.tar'): 
 
-    def load_weights(self): 
-        torch.load('weights/weights.pt')
-        torch.load('weights/bias.pt')
+        model_opt_dict = {}
+
+        for i, model in enumerate(self.models, start=0): 
+            model_name = f'model{i}_state_dict'
+            model_opt_dict[model_name] = self.models[i].state_dict()
+
+        for i, model in enumerate(self.optimizers, start=0): 
+            optimizer_name = f'optimizer{i}_state_dict'
+            model_opt_dict[model_name] = self.optimizers[i].state_dict()
+
+        torch.save(model_opt_dict, PATH)
+
+    def load_models(self, PATH='checkpoints/q_learning_ckpnt.tar'): 
+
+        try:
+            checkpoint = torch.load(PATH)
+            for i in range(len(self.models)): 
+                self.models[i].load_state_dict(checkpoint[f'model{i}_state_dict'])
+                self.optimizers[i].load_state_dict(checkpoint[f'optimizer{i}_state_dict'])
+        except: 
+            print("Could not load checkpoint")
