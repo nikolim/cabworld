@@ -3,4 +3,11 @@
 /gym_cabworld/__pycache__/
 /gym_cabworld/envs/__pycache__/
 /__pycache__/estimator.cpython-38.pyc
-settings.json
+settings.json/build
+/dist
+/build
+
+
+import gym 
+import gym_cabworld
+env = gym.make("Cabworld-v0")
