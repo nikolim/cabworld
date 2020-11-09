@@ -33,12 +33,13 @@ class Cab:
                         int(self.pos[1] - (self.img_size/2))]
 
         # rewards
-        self.pick_up_reward = 1000
-        self.drop_off_reward = 1000
+        self.pick_up_reward = 5000
+        self.drop_off_reward = 5000
         # motivate cab to drive the shortest path
-        self.path_penalty = -1
-        self.wrong_pick_up_penalty = -100
-        self.wrong_drop_off_penalty = -100
+        self.path_penalty = - 10
+        self.step_penalty = -20
+        self.wrong_pick_up_penalty = -1000
+        self.wrong_drop_off_penalty = -1000
         self.rewards = 0
         self.check_radar()
 
@@ -79,6 +80,7 @@ class Cab:
         """
         if self.passenger:
             self.rewards += self.path_penalty
+        self.rewards += self.path_penalty
 
     def check_for_passengers(self):
         """
