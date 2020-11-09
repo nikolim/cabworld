@@ -12,6 +12,10 @@ class Map:
         self.passengers = []
 
     def add_passenger(self, passenger): 
+        """
+        Add passenger to map
+        @param passenger: passenger to add on map
+        """
         self.passengers.append(passenger)
 
     def calc_distance(self, pos1, pos2): 
@@ -21,9 +25,14 @@ class Map:
         @param pos2: position of 2.object 
         @return distance in pixels
         """
-        return math.sqrt((pos1[0]-pos2[0])**2 + (pos1[1]-pos2[1])**2)
+        return round(math.sqrt((pos1[0]-pos2[0])**2 + (pos1[1]-pos2[1])**2))
 
     def get_nearest_passenger(self, pos): 
+        """
+        Get nearest passenger 
+        @param pos: position of cab
+        @return nearest passenger
+        """
         nearest_passenger = None 
         min_distance = 1000
         for tmp_passenger in self.passengers: 
@@ -40,7 +49,7 @@ class Map:
         """
         for passenger in self.passengers: 
             if not passenger.in_cab:
-                screen.blit(passenger.passenger_img_rot, passenger.pos)
+                screen.blit(passenger.passenger_img_rot, passenger.img_pos)
 
     def all_passengers_reached_dest(self):
         """

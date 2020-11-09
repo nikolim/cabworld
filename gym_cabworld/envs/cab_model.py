@@ -25,7 +25,6 @@ class Cab:
         self.drop_off_possible = 0
         self.debug = False
 
-    
         self.cab_img = pygame.image.load(cab_file)
         self.cab_img = pygame.transform.scale(
             self.cab_img, (self.img_size, self.img_size))
@@ -41,7 +40,6 @@ class Cab:
         self.wrong_pick_up_penalty = -100
         self.wrong_drop_off_penalty = -100
         self.rewards = 0
-
         self.check_radar()
 
     def check_radar(self):
@@ -74,15 +72,18 @@ class Cab:
         if self.check_if_street(right_x, right_y):
             self.radars[2] = 1
 
-        # if no possible action, drive backwards until possible action -> should not happen with new map
-        while all(i == 0 for i in self.radars):
-            print("ILLEGAL")
 
     def calc_rewards(self):
+        """
+        Calculate current rewards
+        """
         if self.passenger:
             self.rewards += self.path_penalty
 
     def check_for_passengers(self):
+        """
+        Check if a pasenger can be picked up or dropped off
+        """
         self.drop_off_possible = 0
         self.pick_up_possible = 0
         if self.passenger is None:
@@ -91,13 +92,13 @@ class Cab:
             if self.next_passenger:
                 distance = self.map.calc_distance(
                     self.pos, self.next_passenger.pos)
-                if distance < 80:
+                if distance == 0:
                     self.pick_up_possible = 1
         if self.passenger:
             # Occupied cab -> check if drop-off possible
             distance = self.map.calc_distance(
                 self.pos, self.passenger.destination)
-            if distance < 80:
+            if distance == 0:
                 self.drop_off_possible = 1
 
     def update(self):
@@ -116,6 +117,11 @@ class Cab:
                        int(self.pos[1]) - (self.img_size/2)]
         # print(self.distance)
 
+        self.check_radar()
+        self.check_for_passengers()
+        self.calc_rewards()
+
+
     def pick_up_passenger(self):
         """
         Picks up a the nearest passenger if available
@@ -124,7 +130,7 @@ class Cab:
         if self.passenger is None:
             passenger = self.map.get_nearest_passenger(self.pos)
             if passenger:
-                if self.map.calc_distance(self.pos, passenger.pos) < 80:
+                if self.map.calc_distance(self.pos, passenger.pos) == 0:
                     self.passenger = passenger
                     self.passenger.get_in_cab()
                     self.rewards += self.pick_up_reward
@@ -139,7 +145,7 @@ class Cab:
         if self.passenger:
             distance_pos_destination = self.map.calc_distance(
                 self.pos, self.passenger.destination)
-            if distance_pos_destination < 50:
+            if distance_pos_destination == 0:
                 self.passenger.pos[0], self.passenger.pos[1] = self.pos[0], self.pos[1]
                 self.passenger.reached_destination = True
                 self.passenger.get_out_of_cab()

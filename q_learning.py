@@ -12,11 +12,11 @@ def gen_epsilon_greedy_policy(estimator, epsilon, n_action):
     def policy_function(state):
         probs = torch.ones(n_action) * epsilon / n_action
         allowed_actions = torch.Tensor(state[:5])
-        # choose only from legal moves
-        q_values = estimator.predict(state) * allowed_actions 
+        q_values = estimator.predict(state)
         best_action = torch.argmax(q_values).item()
         probs[best_action] += 1.0 - epsilon
-        action = torch.multinomial(probs, 1).item()
+        probs_allowed = probs * allowed_actions
+        action = torch.multinomial(probs_allowed, 1).item()
         return action
     return policy_function
 
@@ -46,6 +46,7 @@ def q_learning(env, estimator, n_episode, gamma=1.0, epsilon=0.1, epsilon_decay=
 
         while not is_done:
             action = policy(state)
+            print(action)
             next_state, reward, is_done, _ = env.step(action)
             q_values_next = estimator.predict(next_state)
             td_target = reward + gamma * torch.max(q_values_next)
@@ -57,7 +58,7 @@ def q_learning(env, estimator, n_episode, gamma=1.0, epsilon=0.1, epsilon_decay=
             state = next_state
 
             env.render()
-            time.sleep(0.01)
+            time.sleep(0.1)
 
 
 n_state = env.observation_space.shape[0]
@@ -68,5 +69,6 @@ lr = 0.03
 estimator = Estimator(n_feature, n_state, n_action, 50, lr)
 n_episode = 1
 total_reward_episode = [0] * n_episode
-
 q_learning(env, estimator, n_episode, epsilon=0.1)
+
+print("done")

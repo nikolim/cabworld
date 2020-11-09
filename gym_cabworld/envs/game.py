@@ -43,14 +43,15 @@ class Game:
         elif action == 2:
             self.cab.angle -= 90
         elif action == 3:
+            # make no move when pick-up
+            self.cab.speed = 0
             self.cab.pick_up_passenger()
         elif action == 4:
+            # make no move when drop-off
+            self.cab.speed = 0
             self.cab.drop_off_passenger()
 
         self.cab.update()
-        self.cab.check_radar()
-        self.cab.check_for_passengers()
-        self.cab.calc_rewards()
 
     def evaluate(self):
         """"

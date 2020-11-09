@@ -19,20 +19,20 @@ class Passenger:
         self.time_waiting = 0
         self.in_cab = False
 
-        self.img_size = 30 
+        self.img_size = 20 
         self.passenger_img = pygame.image.load(passenger_file)
         self.passenger_img = pygame.transform.scale(self.passenger_img, (self.img_size, self.img_size))
         self.passenger_img_rot = self.rot_center(self.passenger_img, self.angle)
-        self.center = [int(self.pos[0] + (self.img_size/2)), int(self.pos[1] + (self.img_size/2))]
-        
+        self.img_pos = [(self.pos[0] - (self.img_size / 2)), (self.pos[1] - (self.img_size / 2))]
 
+    
     def draw(self, screen):
         """
         Draw the passenger with icon on map
         @param screen: to print on
         """
         if not self.in_cab:
-            screen.blit(self.passenger_img_rot, self.pos)
+            screen.blit(self.passenger_img, self.img_pos)
 
     def get_in_cab(self): 
         """
@@ -64,7 +64,7 @@ class Passenger:
         Check if the passenger has reached its destination 
         @return
         """
-        delta = 25 # define how close the taxi has to be to the destination of the passenger
-        x_reached = (self.pos[0] - delta) < self.goal[0] < (self.pos[0] + delta)
-        y_reached = (self.pos[1] - delta) < self.goal[1] < (self.pos[1] + delta)
+        delta = 20 # define how close the taxi has to be to the destination of the passenger
+        x_reached = (self.pos[0] - delta) < self.destination[0] < (self.pos[0] + delta)
+        y_reached = (self.pos[1] - delta) < self.destination[1] < (self.pos[1] + delta)
         return x_reached and y_reached
