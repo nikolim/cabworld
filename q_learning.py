@@ -55,7 +55,7 @@ n_feature = 200
 lr = 0.03
 
 estimator = Estimator(n_feature, n_state, n_action, 50, lr)
-n_episode = 250
+n_episode = 100
 total_reward_episode = [0] * n_episode
 q_learning(env, estimator, n_episode, epsilon=0.1)
 estimator.save_weights()
