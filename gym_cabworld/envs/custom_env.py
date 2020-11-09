@@ -5,17 +5,26 @@ from gym_cabworld.envs.game import Game
 
 class CustomEnv(gym.Env):
     def __init__(self):
+        """
+        Create OpenAiGym with Pygame
+        """
         self.pygame = Game()
         self.action_space = spaces.Discrete(5)
         self.observation_space = spaces.Box(np.array([0, 0, 0, 0, 0, 0, 0]), np.array([1,1,1,1,1,1000, 1000]), dtype=np.int)
 
     def reset(self):
+        """
+        Reset Game
+        """
         del self.pygame
         self.pygame = Game()
         obs = self.pygame.observe()
         return obs
 
     def step(self, action):
+        """
+        Execute one step in evironment
+        """
         self.pygame.action(action)
         obs = self.pygame.observe()
         reward = self.pygame.evaluate()
@@ -23,4 +32,7 @@ class CustomEnv(gym.Env):
         return obs, reward, done, {}
 
     def render(self, mode="human", close=False):
+        """
+        Render PyGame
+        """
         self.pygame.view()

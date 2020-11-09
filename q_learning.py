@@ -2,6 +2,7 @@ import random
 import time
 import gym 
 import torch
+import matplotlib.pyplot as plt
 
 from estimator import Estimator
 import gym_cabworld 
@@ -9,6 +10,9 @@ import gym_cabworld
 env = gym.make('Cabworld-v0')
 
 def gen_epsilon_greedy_policy(estimator, epsilon, n_action):
+    """
+    
+    """
     def policy_function(state):
         probs = torch.ones(n_action) * epsilon / n_action
         allowed_actions = torch.Tensor(state[:5])
@@ -20,8 +24,9 @@ def gen_epsilon_greedy_policy(estimator, epsilon, n_action):
         return action
     return policy_function
 
-
 def q_learning(env, estimator, n_episode, gamma=0.999, epsilon=0.1, epsilon_decay=.99):
+    """
+    """
     for episode in range(n_episode):
         policy = gen_epsilon_greedy_policy(estimator, epsilon * epsilon_decay ** episode, n_action)
         state = env.reset()
@@ -44,10 +49,16 @@ def q_learning(env, estimator, n_episode, gamma=0.999, epsilon=0.1, epsilon_deca
             # (Render last episode)
             if last_episode:
                 if blocker: 
-                    input("Start last run")
+                    user_input = input("Start last run with y")
                     blocker = False
-                env.render()
-                time.sleep(0.00001)
+                if 'y' in user_input :    
+                    env.render()
+                    time.sleep(0.05)
+
+        if episode % 9 == 0 and episode != 0:
+            median_reward = sum(total_reward_episode[(episode-9):episode])/10
+            median_rewards.append(median_reward)
+            print(f"Median {median_reward}")
 
 n_state = env.observation_space.shape[0]
 n_action = env.action_space.n
@@ -56,15 +67,17 @@ lr = 0.03
 
 estimator = Estimator(n_feature, n_state, n_action, 50, lr)
 estimator.load_models()
-n_episode = 1
+n_episode = 100
 total_reward_episode = [0] * n_episode
+median_rewards = []
 q_learning(env, estimator, n_episode, epsilon=0.1)
 estimator.save_models()
-last_reward = str(total_reward_episode[n_episode-1])
-print("Done")
 
-import matplotlib.pyplot as plt
-plt.plot(range(len(total_reward_episode)), total_reward_episode, label=last_reward)
-plt.legend()
+# Create plots
+plt.plot(range(len(total_reward_episode)), total_reward_episode)
+median_array = []
+plt.plot(list(range(0,len(median_rewards)*10,10)), median_rewards)
 plt.show()
 plt.savefig("rewards.png")
+
+

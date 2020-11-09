@@ -1,5 +1,6 @@
 """
 Demo of the environment with Random Policy
+Can be used for off-policy training
 """
 
 import random
@@ -12,10 +13,8 @@ env = gym.make('Cabworld-v0')
 n_episodes = 100
 
 for episode in range(n_episodes):
-
     env.reset()
     state, reward, is_done, info = env.step(0)
-
     while not is_done: 
         possible_moves = [index for index, element in enumerate(state) if element == 1]
         # check if pickup is possible
@@ -25,11 +24,9 @@ for episode in range(n_episodes):
         elif state[4] == 1: 
             move = 4
         else: 
-            try:
-                move = random.choice(possible_moves)
-            except:
-                print("ERROR!!!!!!")
+            move = random.choice(possible_moves)
         state, reward, is_done, info = env.step(move)
-        #env.render()
+        env.render()
+        time.sleep(0.05)
         if is_done: 
             print("Done")
