@@ -1,9 +1,10 @@
 import torch
 from torch.autograd import Variable
 import math
-import gym 
+import gym
 
-import gym_cabworld 
+import gym_cabworld
+
 
 class Estimator():
     def __init__(self, n_feat, n_state, n_action, n_hidden=50, lr=0.05):
@@ -16,14 +17,13 @@ class Estimator():
 
         for _ in range(n_action):
             model = torch.nn.Sequential(
-                        torch.nn.Linear(int(n_feat), int(n_hidden)),
-                        torch.nn.ReLU(),
-                        torch.nn.Linear(int(n_hidden), 1)
-                )
+                torch.nn.Linear(int(n_feat), int(n_hidden)),
+                torch.nn.ReLU(),
+                torch.nn.Linear(int(n_hidden), 1)
+            )
             self.models.append(model)
             optimizer = torch.optim.Adam(model.parameters(), lr)
             self.optimizers.append(optimizer)
-
 
     def get_gaussian_wb(self, n_feat, n_state, sigma=.2):
         torch.manual_seed(0)
@@ -36,7 +36,6 @@ class Estimator():
             torch.matmul(torch.tensor(s).float(), self.w) + self.b)
         return features
 
-
     def update(self, s, a, y):
         features = Variable(self.get_feature(s))
         y_pred = self.models[a](features)
@@ -45,9 +44,15 @@ class Estimator():
         loss.backward()
         self.optimizers[a].step()
 
-
-
     def predict(self, s):
         features = self.get_feature(s)
         with torch.no_grad():
             return torch.tensor([model(features) for model in self.models])
+
+    def save_weights(self): 
+        torch.save(self.w, 'weights/weights.pt')
+        torch.save(self.b, 'weights/bias.pt')
+
+    def load_weights(self): 
+        torch.load('weights/weights.pt')
+        torch.load('weights/bias.pt')
