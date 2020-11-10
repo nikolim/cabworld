@@ -4,6 +4,7 @@ import math
 import gym
 import gym_cabworld
 
+
 class Estimator():
     def __init__(self, n_feat, n_state, n_action, n_hidden=50, lr=0.05):
         """
@@ -34,7 +35,7 @@ class Estimator():
 
     def get_gaussian_wb(self, n_feat, n_state, sigma=.2):
         """
-        Crete initial weights
+        Create initial weights
         @param: n_feat: number of features 
         @param: n_number: number of states
         @return w,b: weights, bias
@@ -51,7 +52,7 @@ class Estimator():
         @return features 
         """
         features = (2.0 / self.n_feat) ** .5 * torch.cos(
-            torch.matmul(torch.tensor(s).float(), self.w) + self.b)
+            torch.matmul(torch.tensor(s[5:7]).float(), self.w) + self.b)
         return features
 
     def update(self, s, a, y):
@@ -77,32 +78,34 @@ class Estimator():
         with torch.no_grad():
             return torch.tensor([model(features) for model in self.models])
 
-    def save_models(self, PATH='checkpoints/q_learning_ckpnt.tar'): 
+    def save_models(self, PATH='checkpoints/q_learning_ckpnt.tar'):
         """
         Save all estimators and optimizers in one file
         @param PATH: where to save to models
         """
         model_opt_dict = {}
-        for i, model in enumerate(self.models, start=0): 
+        for i, model in enumerate(self.models, start=0):
             model_name = f'model{i}_state_dict'
             model_opt_dict[model_name] = self.models[i].state_dict()
-        for i, model in enumerate(self.optimizers, start=0): 
+        for i, model in enumerate(self.optimizers, start=0):
             optimizer_name = f'optimizer{i}_state_dict'
             model_opt_dict[model_name] = self.optimizers[i].state_dict()
         try:
             torch.save(model_opt_dict, PATH)
-        except: 
-            print("Could not save checkpoint") 
+        except:
+            print("Could not save checkpoint")
 
-    def load_models(self, PATH='checkpoints/q_learning_ckpnt.tar'): 
+    def load_models(self, PATH='checkpoints/q_learning_ckpnt.tar'):
         """
         Load all estimators and optimizers from one file
         @param PATH: where to load the models from 
         """
         try:
             checkpoint = torch.load(PATH)
-            for i in range(len(self.models)): 
-                self.models[i].load_state_dict(checkpoint[f'model{i}_state_dict'])
-                self.optimizers[i].load_state_dict(checkpoint[f'optimizer{i}_state_dict'])
-        except: 
+            for i in range(len(self.models)):
+                self.models[i].load_state_dict(
+                    checkpoint[f'model{i}_state_dict'])
+                self.optimizers[i].load_state_dict(
+                    checkpoint[f'optimizer{i}_state_dict'])
+        except:
             print("Could not load checkpoint")

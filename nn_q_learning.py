@@ -74,11 +74,12 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.1, epsilon_decay
 """
 Setup
 """
-n_state = env.observation_space.shape[0]
+#n_state = env.observation_space.shape[0]
+n_state = 2
 n_action = env.action_space.n
-n_feature = 200
+n_feature = 100
 lr = 0.03
-n_episode = 100
+n_episode = 1
 total_reward_episode = [0] * n_episode
 median_rewards = []
 

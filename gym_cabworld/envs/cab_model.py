@@ -73,7 +73,6 @@ class Cab:
         if self.check_if_street(right_x, right_y):
             self.radars[2] = 1
 
-
     def calc_rewards(self):
         """
         Calculate current rewards
@@ -116,13 +115,12 @@ class Cab:
         self.distance += self.speed
         self.time_spent += 1
         self.img_pos = [int(self.pos[0]) - (self.img_size/2),
-                       int(self.pos[1]) - (self.img_size/2)]
+                        int(self.pos[1]) - (self.img_size/2)]
         # print(self.distance)
 
         self.check_radar()
         self.check_for_passengers()
         self.calc_rewards()
-
 
     def pick_up_passenger(self):
         """

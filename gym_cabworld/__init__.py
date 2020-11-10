@@ -1,3 +1,5 @@
 from gym.envs.registration import register
 
-register(id='Cabworld-v0', entry_point='gym_cabworld.envs:CustomEnv')
+register(id='Cabworld-v0',
+         entry_point='gym_cabworld.envs:CustomEnv',
+         max_episode_steps=3000,)
