@@ -40,6 +40,7 @@ class Cab:
         self.step_penalty = - 10
         self.wrong_pick_up_penalty = -100
         self.wrong_drop_off_penalty = -100
+        self.illegal_move_penalty = -25
         self.rewards = 0
         self.check_radar()
 
@@ -116,17 +117,36 @@ class Cab:
         self.time_spent += 1
         self.img_pos = [int(self.pos[0]) - (self.img_size/2),
                         int(self.pos[1]) - (self.img_size/2)]
-        # print(self.distance)
 
         self.check_radar()
-        self.check_for_passengers()
         self.calc_rewards()
+        self.check_for_passengers()
+
+    def move_forward(self): 
+        if self.radars[0] == 1:
+            self.speed = 40
+        else: 
+            self.rewards += self.illegal_move_penalty
+
+    def turn_left(self): 
+        if self.radars[1] == 1:
+            self.angle += 90
+        else: 
+            self.rewards += self.illegal_move_penalty
+    
+    def turn_right(self): 
+        if self.radars[2] == 1:
+            self.angle -= 90
+        else: 
+            self.rewards += self.illegal_move_penalty
+
 
     def pick_up_passenger(self):
         """
         Picks up a the nearest passenger if available
         @param passenger: passenger to pick-up
         """
+        self.speed = 0
         if self.passenger is None:
             passenger = self.map.get_nearest_passenger(self.pos)
             if passenger:
@@ -142,6 +162,7 @@ class Cab:
         Drops off a passenger
         @param passenger: passenger to drop-off
         """
+        self.speed = 0
         if self.passenger:
             distance_pos_destination = self.map.calc_distance(
                 self.pos, self.passenger.destination)

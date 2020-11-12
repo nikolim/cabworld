@@ -37,20 +37,15 @@ class Game:
         self.cab.rewards = 0
 
         if action == 0:
-            self.cab.speed = 40
+            self.cab.move_forward()
         if action == 1:
-            self.cab.angle += 90
+            self.cab.turn_left()
         elif action == 2:
-            self.cab.angle -= 90
+            self.cab.turn_right()
         elif action == 3:
-            # make no move when pick-up
-            self.cab.speed = 0
             self.cab.pick_up_passenger()
         elif action == 4:
-            # make no move when drop-off
-            self.cab.speed = 0
             self.cab.drop_off_passenger()
-
         self.cab.update()
 
     def evaluate(self):
