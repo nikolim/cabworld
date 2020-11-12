@@ -20,12 +20,10 @@ def gen_epsilon_greedy_policy(estimator, epsilon, n_action):
     """
     def policy_function(state):
         probs = torch.ones(n_action) * epsilon / n_action
-        allowed_actions = torch.Tensor(state[:5])
         q_values = estimator.predict(state)
         best_action = torch.argmax(q_values).item()
         probs[best_action] += 1.0 - epsilon
-        probs_allowed = probs * allowed_actions
-        action = torch.multinomial(probs_allowed, 1).item()
+        action = torch.multinomial(probs, 1).item()
         return action
     return policy_function
 
@@ -79,7 +77,7 @@ n_state = 2
 n_action = env.action_space.n
 n_feature = 100
 lr = 0.03
-n_episode = 1
+n_episode = 100
 total_reward_episode = [0] * n_episode
 median_rewards = []
 

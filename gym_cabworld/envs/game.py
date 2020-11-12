@@ -46,6 +46,7 @@ class Game:
             self.cab.pick_up_passenger()
         elif action == 4:
             self.cab.drop_off_passenger()
+
         self.cab.update()
 
     def evaluate(self):
@@ -73,8 +74,15 @@ class Game:
         pick_up = self.cab.pick_up_possible
         drop_off = self.cab.drop_off_possible
         # own position
-        p1, p2 = self.cab.pos
-        return tuple([r1, r2, r3, pick_up, drop_off, p1, p2])
+        pos_x, pos_y = self.cab.pos
+        angle = self.cab.angle
+        if self.cab.next_passenger:
+            pass_x, pass_y = self.cab.next_passenger.pos
+            dest_x, dest_y = self.cab.next_passenger.destination
+        else: 
+            pass_x, pass_y = 0,0
+            dest_x, dest_y = 0,0
+        return tuple([r1, r2, r3, pick_up, drop_off, pos_x, pos_y, angle, pass_x, pass_y, dest_x, dest_y])
 
     def view(self):
         """"

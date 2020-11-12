@@ -34,7 +34,7 @@ class Map:
         @return nearest passenger
         """
         nearest_passenger = None 
-        min_distance = 1000
+        min_distance = 100000
         for tmp_passenger in self.passengers: 
             if not tmp_passenger.reached_destination:
                 tmp_distance = self.calc_distance(pos, tmp_passenger.pos)

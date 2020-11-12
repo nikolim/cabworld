@@ -20,11 +20,11 @@ class Cab:
         self.distance = 0
         self.time_spent = 0
         self.passenger = None
-        self.next_passenger = None
+        self.next_passenger = self.map.get_nearest_passenger(self.pos)
         self.pick_up_possible = 0
         self.drop_off_possible = 0
         self.debug = False
-
+        
         self.cab_img = pygame.image.load(cab_file)
         self.cab_img = pygame.transform.scale(
             self.cab_img, (self.img_size, self.img_size))
@@ -40,7 +40,7 @@ class Cab:
         self.step_penalty = - 10
         self.wrong_pick_up_penalty = -100
         self.wrong_drop_off_penalty = -100
-        self.illegal_move_penalty = -25
+        self.illegal_move_penalty = -50
         self.rewards = 0
         self.check_radar()
 
@@ -118,6 +118,7 @@ class Cab:
         self.img_pos = [int(self.pos[0]) - (self.img_size/2),
                         int(self.pos[1]) - (self.img_size/2)]
 
+        self.speed = 0
         self.check_radar()
         self.calc_rewards()
         self.check_for_passengers()
