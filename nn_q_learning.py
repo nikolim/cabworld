@@ -62,7 +62,7 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.1, epsilon_decay
                     blocker = False
                 if 'y' in user_input :    
                     env.render()
-                    time.sleep(0.05)
+                    time.sleep(0.001)
 
         if episode % 9 == 0 and episode != 0:
             median_reward = sum(total_reward_episode[(episode-9):episode])/10
@@ -77,7 +77,7 @@ n_state = 2
 n_action = env.action_space.n
 n_feature = 100
 lr = 0.03
-n_episode = 100
+n_episode = 1
 total_reward_episode = [0] * n_episode
 median_rewards = []
 

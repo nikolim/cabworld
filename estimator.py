@@ -84,12 +84,13 @@ class Estimator():
         @param PATH: where to save to models
         """
         model_opt_dict = {}
+
         for i, model in enumerate(self.models, start=0):
             model_name = f'model{i}_state_dict'
-            model_opt_dict[model_name] = self.models[i].state_dict()
-        for i, model in enumerate(self.optimizers, start=0):
-            optimizer_name = f'optimizer{i}_state_dict'
-            model_opt_dict[model_name] = self.optimizers[i].state_dict()
+            model_opt_dict[model_name] = model.state_dict()
+        for j, optimizer in enumerate(self.optimizers, start=0):
+            optimizer_name = f'optimizer{j}_state_dict'
+            model_opt_dict[optimizer_name] = optimizer.state_dict()
         try:
             torch.save(model_opt_dict, PATH)
         except:
@@ -107,5 +108,6 @@ class Estimator():
                     checkpoint[f'model{i}_state_dict'])
                 self.optimizers[i].load_state_dict(
                     checkpoint[f'optimizer{i}_state_dict'])
+            print("Loaded checkpoint")
         except:
             print("Could not load checkpoint")
