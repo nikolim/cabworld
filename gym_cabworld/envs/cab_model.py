@@ -87,7 +87,7 @@ class Cab:
         Check if a pasenger can be picked up or dropped off
         """
         self.drop_off_possible = 0
-        self.pick_up_possible = 0
+        self.pick_up_possible = 
         if self.passenger is None:
             # Empty cab -> check if pick-up is possible
             self.next_passenger = self.map.get_nearest_passenger(self.pos)

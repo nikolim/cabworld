@@ -25,7 +25,7 @@ class Game:
         self.map.add_passenger(passenger1)
         #self.map.add_passenger(passenger2)
         self.cab = Cab('images/cab.png', self.map, [60, 60])
-        self.game_speed = 100
+        self.game_speed = 100000000
         self.mode = 0
 
     def action(self, action):

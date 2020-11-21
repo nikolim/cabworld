@@ -1,4 +1,5 @@
 import random
+from collections import deque
 import time
 import gym 
 import torch
@@ -43,31 +44,45 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.1, epsilon_decay
         is_done = False
         last_episode = (episode == (n_episode - 1))
         blocker = True
+        memory =  deque()
+        game_time = time.time()
         while not is_done:
             action = policy(state)
             next_state, reward, is_done, _ = env.step(action)
             q_values_next = estimator.predict(next_state)
             td_target = reward + gamma * torch.max(q_values_next)
-            estimator.update(state, action, td_target)
             total_reward_episode[episode] += reward
+            memory.append((state, action, td_target))
             if is_done:
                 print(f"Episode {episode} Reward {total_reward_episode[episode]}")   
                 break
             state = next_state
+        
+        # print(f'GAME TIME {time.time()-game_time}')
+        
+        replay_size = 3000
+        replay_data = random.sample(memory, min(replay_size, len(memory)))
 
-            # (Render last episode)
-            if last_episode:
-                if blocker: 
-                    user_input = input("Start last run [y/n]: ")
-                    blocker = False
-                if 'y' in user_input :    
-                    env.render()
-                    time.sleep(0.001)
+        training_time = time.time()
+        for state, action, td_target in replay_data:
+            estimator.update(state, action, td_target)
+
+        # print(f'TRAINING TIME {time.time()-training_time}')
+
+        # (Render last episode)
+        if last_episode:
+            if blocker: 
+                user_input = input("Start last run [y/n]: ")
+                blocker = False
+            if 'y' in user_input :    
+                env.render()
+                time.sleep(0.001)
 
         if episode % 9 == 0 and episode != 0:
             median_reward = sum(total_reward_episode[(episode-9):episode])/10
             median_rewards.append(median_reward)
             print(f"Episode:{episode} Median-Reward: {median_reward}")
+            estimator.save_models()
 
 """
 Setup
@@ -77,7 +92,7 @@ n_state = 2
 n_action = env.action_space.n
 n_feature = 100
 lr = 0.03
-n_episode = 1
+n_episode = 10
 total_reward_episode = [0] * n_episode
 median_rewards = []
 
@@ -91,3 +106,4 @@ plt.plot(range(len(total_reward_episode)), total_reward_episode)
 median_array = []
 plt.plot(list(range(0,len(median_rewards)*10,10)), median_rewards)
 plt.show()
+plt.savefig('plot.png')
