@@ -28,7 +28,7 @@ def gen_epsilon_greedy_policy(estimator, epsilon, n_action):
         return action
     return policy_function
 
-def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.8, epsilon_decay=.95):
+def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.8, epsilon_decay=.975):
     """
     Run Q-Learning with TD with NN as predictor for the q-values for a given state
     @param env: evironment to use
@@ -92,8 +92,8 @@ Setup
 n_state = 2
 n_action = env.action_space.n
 n_feature = 12
-lr = 0.03
-n_episode = 100
+lr = 0.01
+n_episode = 250
 total_reward_episode = [0] * n_episode
 median_rewards = []
 
@@ -109,8 +109,8 @@ plt.plot(list(range(0,len(median_rewards)*10,10)), median_rewards)
 plt.show()
 plt.savefig('plot.png')
 
-
 print(estimator.action_counter)
+
 for i in range(6):
     plt.plot(estimator.action_losses[i])
 plt.show()
