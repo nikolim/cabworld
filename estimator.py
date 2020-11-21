@@ -6,7 +6,7 @@ import gym_cabworld
 
 
 class Estimator():
-    def __init__(self, n_feat, n_state, n_action, n_hidden=50, lr=0.05):
+    def __init__(self, n_feat, n_state, n_action, n_hidden=12, lr=0.05):
         """
         Crete Estimator with neuronal net for each action
         @param n_feat: number of features
@@ -20,12 +20,14 @@ class Estimator():
         self.models = []
         self.optimizers = []
         self.criterion = torch.nn.MSELoss()
+        self.action_counter = [0] * n_action
+        self.action_losses = [[],[],[],[],[],[]]
 
         for _ in range(n_action):
             model = torch.nn.Sequential(
-                torch.nn.Linear(int(n_feat), int(n_feat/2)),
+                torch.nn.Linear(int(n_feat), int(n_feat*3)),
                 torch.nn.ReLU(),
-                torch.nn.Linear(int(n_feat/2), int(n_hidden)),
+                torch.nn.Linear(int(n_feat*3), int(n_hidden)),
                 torch.nn.ReLU(),
                 torch.nn.Linear(int(n_hidden), 1)
             )
@@ -47,13 +49,23 @@ class Estimator():
 
     def get_feature(self, s):
         """
-        Transform state into feature
+        Transform state into features [-1,1]
         @param s: state to transform 
         @return features 
         """
-        features = (2.0 / self.n_feat) ** .5 * torch.cos(
-            torch.matmul(torch.tensor(s[5:7]).float(), self.w) + self.b)
-        return features
+        state = list(s)
+        features = []
+        for i in range(5):
+            if state[i] == 1: 
+                features.append(1)
+            else: 
+                features.append(-1)
+        for j in range(5,12):
+            if j == 7: 
+                features.append(state[7] / 180 - 1)
+            else:
+                features.append(state[j]/480-1)
+        return torch.Tensor(features)
 
     def update(self, s, a, y):
         """
@@ -68,6 +80,9 @@ class Estimator():
         self.optimizers[a].zero_grad()
         loss.backward()
         self.optimizers[a].step()
+        self.action_counter[a] += 1
+        if self.action_counter[a] % 10 == 0:        
+            self.action_losses[a].append(loss)
 
     def predict(self, s):
         """

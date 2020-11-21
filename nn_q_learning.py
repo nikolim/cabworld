@@ -28,7 +28,7 @@ def gen_epsilon_greedy_policy(estimator, epsilon, n_action):
         return action
     return policy_function
 
-def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.1, epsilon_decay=.99):
+def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.8, epsilon_decay=.95):
     """
     Run Q-Learning with TD with NN as predictor for the q-values for a given state
     @param env: evironment to use
@@ -52,6 +52,7 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.1, epsilon_decay
             q_values_next = estimator.predict(next_state)
             td_target = reward + gamma * torch.max(q_values_next)
             total_reward_episode[episode] += reward
+            estimator.update(state, action, td_target)
             memory.append((state, action, td_target))
             if is_done:
                 print(f"Episode {episode} Reward {total_reward_episode[episode]}")   
@@ -64,8 +65,8 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.1, epsilon_decay
         replay_data = random.sample(memory, min(replay_size, len(memory)))
 
         training_time = time.time()
-        for state, action, td_target in replay_data:
-            estimator.update(state, action, td_target)
+        # for state, action, td_target in replay_data:
+        #     estimator.update(state, action, td_target)
 
         # print(f'TRAINING TIME {time.time()-training_time}')
 
@@ -74,15 +75,15 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.1, epsilon_decay
             if blocker: 
                 user_input = input("Start last run [y/n]: ")
                 blocker = False
-            if 'y' in user_input :    
+            if 'y' in user_input:    
                 env.render()
-                time.sleep(0.001)
+                time.sleep(0.1)
 
         if episode % 9 == 0 and episode != 0:
             median_reward = sum(total_reward_episode[(episode-9):episode])/10
             median_rewards.append(median_reward)
             print(f"Episode:{episode} Median-Reward: {median_reward}")
-            estimator.save_models()
+            #estimator.save_models()
 
 """
 Setup
@@ -90,15 +91,15 @@ Setup
 #n_state = env.observation_space.shape[0]
 n_state = 2
 n_action = env.action_space.n
-n_feature = 100
+n_feature = 12
 lr = 0.03
-n_episode = 10
+n_episode = 100
 total_reward_episode = [0] * n_episode
 median_rewards = []
 
 estimator = Estimator(n_feature, n_state, n_action, 50, lr)
 estimator.load_models()
-q_learning(env, estimator, n_episode, epsilon=0.1)
+q_learning(env, estimator, n_episode, epsilon=(1-1/n_action))
 estimator.save_models()
 
 # Create plots
@@ -107,3 +108,9 @@ median_array = []
 plt.plot(list(range(0,len(median_rewards)*10,10)), median_rewards)
 plt.show()
 plt.savefig('plot.png')
+
+
+print(estimator.action_counter)
+for i in range(6):
+    plt.plot(estimator.action_losses[i])
+plt.show()
