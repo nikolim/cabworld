@@ -53,7 +53,7 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.8, epsilon_decay
             td_target = reward + gamma * torch.max(q_values_next)
             total_reward_episode[episode] += reward
             estimator.update(state, action, td_target)
-            memory.append((state, action, td_target))
+            # memory.append((state, action, td_target))
             if is_done:
                 print(f"Episode {episode} Reward {total_reward_episode[episode]}")   
                 break
@@ -61,10 +61,9 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.8, epsilon_decay
         
         # print(f'GAME TIME {time.time()-game_time}')
         
-        replay_size = 3000
-        replay_data = random.sample(memory, min(replay_size, len(memory)))
-
-        training_time = time.time()
+        # replay_size = 3000
+        # replay_data = random.sample(memory, min(replay_size, len(memory)))
+        # training_time = time.time()
         # for state, action, td_target in replay_data:
         #     estimator.update(state, action, td_target)
 
@@ -93,7 +92,7 @@ n_state = 2
 n_action = env.action_space.n
 n_feature = 12
 lr = 0.01
-n_episode = 250
+n_episode = 100
 total_reward_episode = [0] * n_episode
 median_rewards = []
 
