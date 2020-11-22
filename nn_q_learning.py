@@ -1,3 +1,4 @@
+import os
 import random
 from collections import deque
 import time
@@ -13,7 +14,13 @@ import gym_cabworld
 env = gym.make('Cabworld-v0')
 reward_summary = []
 
-writer = SummaryWriter("runs/dqn")
+log_folders = os.listdir('runs')
+if len(log_folders) == 0: 
+    folder_number = 0
+else:
+    folder_number = max([int(elem) for elem in log_folders]) + 1
+log_path = os.path.join("runs", str(folder_number))     
+writer = SummaryWriter(log_path)
 
 def track_reward(reward, saved_rewards):
     saved_rewards = list(saved_rewards)
@@ -97,7 +104,7 @@ n_episode = 5
 total_reward_episode = [0] * n_episode
 median_rewards = []
 
-estimator = Estimator(n_feature, n_state, n_action, 50, lr)
+estimator = Estimator(n_feature, n_state, n_action, 50, lr, log_path)
 estimator.load_models()
 q_learning(env, estimator, n_episode, epsilon=(1-1/n_action))
 estimator.save_models()
@@ -112,9 +119,11 @@ plt.show()
 print(estimator.action_counter)
 
 plt.plot(range(len(reward_summary)), [elem[0] for i,elem in enumerate(reward_summary, start=1)], label='Steps')
-plt.plot(range(len(reward_summary)), [elem[1] for i,elem in enumerate(reward_summary, start=1)], label='Illegal pik-ups / drop-offs')
+plt.plot(range(len(reward_summary)), [elem[1] for i,elem in enumerate(reward_summary, start=1)], label='Illegal pick-ups / drop-offs')
 plt.plot(range(len(reward_summary)), [elem[2] for i,elem in enumerate(reward_summary, start=1)], label='Illegal moves')
 plt.legend()
 plt.show()
 
+writer.add_text('Learning Rate', 'Learning Rate' + str(lr))
+writer.add_text('Number episodes', 'Number episodes' + str(n_episode))
 writer.close()

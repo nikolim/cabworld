@@ -8,7 +8,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 
 class Estimator():
-    def __init__(self, n_feat, n_state, n_action, n_hidden=12, lr=0.05):
+    def __init__(self, n_feat, n_state, n_action, n_hidden=12, lr=0.05, log_path="runs/0"):
         """
         Crete Estimator with neuronal net for each action
         @param n_feat: number of features
@@ -22,10 +22,9 @@ class Estimator():
         self.models = []
         self.optimizers = []
         self.criterion = torch.nn.MSELoss()
-        self.writer = SummaryWriter("runs/dqn")
+        self.writer = SummaryWriter(log_path)
         self.action_counter = [0] * n_action
         self.action_losses = [[],[],[],[],[],[]]
-
         self.counter = 0
 
         for _ in range(n_action):
@@ -117,6 +116,7 @@ class Estimator():
             torch.save(model_opt_dict, PATH)
         except:
             print("Could not save checkpoint")
+        self.writer.close()
 
     def load_models(self, PATH='checkpoints/q_learning_ckpnt.tar'):
         """

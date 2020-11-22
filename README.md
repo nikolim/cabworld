@@ -52,6 +52,13 @@ env.render()
 2. Cab brings passenger to their destination as fast as possible
 3. Cab drops off passenger at their destination
 
+
+## Tensorboard 
+```bash 
+tensorboard --logdir=runs
+```
+http://localhost:6006/
+
 ## Changelog
 
 ### [0.3] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_0.3) (10.11.2020)
