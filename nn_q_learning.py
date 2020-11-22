@@ -3,6 +3,8 @@ from collections import deque
 import time
 import gym 
 import torch
+import torchvision
+from torch.utils.tensorboard import SummaryWriter
 import matplotlib.pyplot as plt
 
 from estimator import Estimator
@@ -10,6 +12,8 @@ import gym_cabworld
 
 env = gym.make('Cabworld-v0')
 reward_summary = []
+
+writer = SummaryWriter("runs/dqn")
 
 def track_reward(reward, saved_rewards):
     saved_rewards = list(saved_rewards)
@@ -70,6 +74,7 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.8, epsilon_decay
             if is_done:
                 print(f"Episode {episode} Reward {total_reward_episode[episode]}")   
                 reward_summary.append(saved_rewards)
+                writer.add_scalar('Reward', total_reward_episode[episode], episode)
                 break
             state = next_state
 
@@ -77,6 +82,7 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.8, epsilon_decay
             median_reward = sum(total_reward_episode[(episode-9):episode])/10
             median_rewards.append(median_reward)
             print(f"Episode:{episode} Median-Reward: {median_reward}")
+            writer.add_scalar('Median Reward', total_reward_episode[episode], episode)
             #estimator.save_models()
 
 """
@@ -87,7 +93,7 @@ n_state = 2
 n_action = env.action_space.n
 n_feature = 12
 lr = 0.01
-n_episode = 100
+n_episode = 5
 total_reward_episode = [0] * n_episode
 median_rewards = []
 
@@ -105,8 +111,10 @@ plt.show()
 
 print(estimator.action_counter)
 
-plt.plot(range(len(reward_summary)), [elem[0] for elem in reward_summary], label='Steps')
-plt.plot(range(len(reward_summary)), [elem[1] for elem in reward_summary], label='Illegal pik-ups / drop-offs')
-plt.plot(range(len(reward_summary)), [elem[2] for elem in reward_summary], label='Illegal moves')
+plt.plot(range(len(reward_summary)), [elem[0] for i,elem in enumerate(reward_summary, start=1)], label='Steps')
+plt.plot(range(len(reward_summary)), [elem[1] for i,elem in enumerate(reward_summary, start=1)], label='Illegal pik-ups / drop-offs')
+plt.plot(range(len(reward_summary)), [elem[2] for i,elem in enumerate(reward_summary, start=1)], label='Illegal moves')
 plt.legend()
 plt.show()
+
+writer.close()

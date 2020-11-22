@@ -3,6 +3,8 @@ from torch.autograd import Variable
 import math
 import gym
 import gym_cabworld
+from torch.utils.tensorboard import SummaryWriter
+
 
 
 class Estimator():
@@ -20,8 +22,11 @@ class Estimator():
         self.models = []
         self.optimizers = []
         self.criterion = torch.nn.MSELoss()
+        self.writer = SummaryWriter("runs/dqn")
         self.action_counter = [0] * n_action
         self.action_losses = [[],[],[],[],[],[]]
+
+        self.counter = 0
 
         for _ in range(n_action):
             model = torch.nn.Sequential(
@@ -83,6 +88,8 @@ class Estimator():
         self.action_counter[a] += 1
         if self.action_counter[a] % 10 == 0:        
             self.action_losses[a].append(loss)
+            self.writer.add_scalar('Training Loss', loss, self.counter)
+            self.counter += 1
 
     def predict(self, s):
         """
