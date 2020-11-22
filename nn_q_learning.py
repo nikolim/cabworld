@@ -9,6 +9,17 @@ from estimator import Estimator
 import gym_cabworld 
 
 env = gym.make('Cabworld-v0')
+reward_summary = []
+
+def track_reward(reward, saved_rewards):
+    saved_rewards = list(saved_rewards)
+    if reward == -10: 
+        saved_rewards[0] += 1
+    if reward == -110: 
+        saved_rewards[1] += 1
+    if reward == -510: 
+        saved_rewards[2] += 1
+    return tuple(saved_rewards)
 
 def gen_epsilon_greedy_policy(estimator, epsilon, n_action):
     """
@@ -46,9 +57,11 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.8, epsilon_decay
         blocker = True
         memory =  deque()
         game_time = time.time()
+        saved_rewards = (0,0,0)
         while not is_done:
             action = policy(state)
             next_state, reward, is_done, _ = env.step(action)
+            saved_rewards = track_reward(reward, saved_rewards)
             q_values_next = estimator.predict(next_state)
             td_target = reward + gamma * torch.max(q_values_next)
             total_reward_episode[episode] += reward
@@ -56,27 +69,9 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.8, epsilon_decay
             # memory.append((state, action, td_target))
             if is_done:
                 print(f"Episode {episode} Reward {total_reward_episode[episode]}")   
+                reward_summary.append(saved_rewards)
                 break
             state = next_state
-        
-        # print(f'GAME TIME {time.time()-game_time}')
-        
-        # replay_size = 3000
-        # replay_data = random.sample(memory, min(replay_size, len(memory)))
-        # training_time = time.time()
-        # for state, action, td_target in replay_data:
-        #     estimator.update(state, action, td_target)
-
-        # print(f'TRAINING TIME {time.time()-training_time}')
-
-        # (Render last episode)
-        if last_episode:
-            if blocker: 
-                user_input = input("Start last run [y/n]: ")
-                blocker = False
-            if 'y' in user_input:    
-                env.render()
-                time.sleep(0.1)
 
         if episode % 9 == 0 and episode != 0:
             median_reward = sum(total_reward_episode[(episode-9):episode])/10
@@ -102,14 +97,16 @@ q_learning(env, estimator, n_episode, epsilon=(1-1/n_action))
 estimator.save_models()
 
 # Create plots
-plt.plot(range(len(total_reward_episode)), total_reward_episode)
+plt.plot(range(len(total_reward_episode)), total_reward_episode, label='Total rewards')
 median_array = []
-plt.plot(list(range(0,len(median_rewards)*10,10)), median_rewards)
+plt.plot(list(range(0,len(median_rewards)*10,10)), median_rewards, label='Median rewards')
+plt.legend()
 plt.show()
-plt.savefig('plot.png')
 
 print(estimator.action_counter)
 
-for i in range(6):
-    plt.plot(estimator.action_losses[i])
+plt.plot(range(len(reward_summary)), [elem[0] for elem in reward_summary], label='Steps')
+plt.plot(range(len(reward_summary)), [elem[1] for elem in reward_summary], label='Illegal pik-ups / drop-offs')
+plt.plot(range(len(reward_summary)), [elem[2] for elem in reward_summary], label='Illegal moves')
+plt.legend()
 plt.show()

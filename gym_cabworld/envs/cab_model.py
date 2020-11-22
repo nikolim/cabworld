@@ -35,6 +35,7 @@ class Cab:
         # rewards
         self.pick_up_reward = 10000
         self.drop_off_reward = 10000
+        
         # motivate cab to drive the shortest path
         self.path_penalty = - 10
         self.step_penalty = - 10
