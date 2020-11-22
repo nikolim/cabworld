@@ -18,7 +18,8 @@ class Game:
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.clock = pygame.time.Clock()
         self.map = Map('images/map_gen.png')
-        random_pos = self.map.get_random_pos_on_map()
+        # random_pos = self.map.get_random_pos_on_map()
+        random_pos = [940,940]
         passenger1 = Passenger('images/person_1.png',
                               self.map, random_pos, 0, [60, 60])
         #passenger2 = Passenger('images/person_2.png',

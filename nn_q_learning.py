@@ -12,8 +12,8 @@ from estimator import Estimator
 import gym_cabworld 
 
 env = gym.make('Cabworld-v0')
-reward_summary = []
 
+# Create a new log folder for tensorboard
 log_folders = os.listdir('runs')
 if len(log_folders) == 0: 
     folder_number = 0
@@ -64,10 +64,6 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.8, epsilon_decay
         policy = gen_epsilon_greedy_policy(estimator, epsilon * epsilon_decay ** episode, n_action)
         state = env.reset()
         is_done = False
-        last_episode = (episode == (n_episode - 1))
-        blocker = True
-        memory =  deque()
-        game_time = time.time()
         saved_rewards = (0,0,0)
         while not is_done:
             action = policy(state)
@@ -76,21 +72,22 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.8, epsilon_decay
             q_values_next = estimator.predict(next_state)
             td_target = reward + gamma * torch.max(q_values_next)
             total_reward_episode[episode] += reward
-            estimator.update(state, action, td_target)
-            # memory.append((state, action, td_target))
+            estimator.update(state, action, td_target, episode)
             if is_done:
-                print(f"Episode {episode} Reward {total_reward_episode[episode]}")   
-                reward_summary.append(saved_rewards)
+                writer.add_scalar('Path Penalty', saved_rewards[0], episode)
+                writer.add_scalar('Illegal Pick-up / Drop-off', saved_rewards[1], episode)
+                writer.add_scalar('Illegal Move', saved_rewards[2], episode)
                 writer.add_scalar('Reward', total_reward_episode[episode], episode)
+                estimator.total_loss = 0
+                estimator.n_updates = 0
                 break
             state = next_state
-
-        if episode % 9 == 0 and episode != 0:
+        if episode % 10 == 0 and episode != 0:
             median_reward = sum(total_reward_episode[(episode-9):episode])/10
             median_rewards.append(median_reward)
             print(f"Episode:{episode} Median-Reward: {median_reward}")
             writer.add_scalar('Median Reward', total_reward_episode[episode], episode)
-            #estimator.save_models()
+
 
 """
 Setup
@@ -100,30 +97,18 @@ n_state = 2
 n_action = env.action_space.n
 n_feature = 12
 lr = 0.01
-n_episode = 5
+n_episode = 100
 total_reward_episode = [0] * n_episode
 median_rewards = []
 
-estimator = Estimator(n_feature, n_state, n_action, 50, lr, log_path)
-estimator.load_models()
+estimator = Estimator(n_feature, n_state, n_action, 12, lr, writer)
+#estimator.load_models()
 q_learning(env, estimator, n_episode, epsilon=(1-1/n_action))
-estimator.save_models()
+#estimator.save_models()
 
-# Create plots
-plt.plot(range(len(total_reward_episode)), total_reward_episode, label='Total rewards')
-median_array = []
-plt.plot(list(range(0,len(median_rewards)*10,10)), median_rewards, label='Median rewards')
-plt.legend()
-plt.show()
-
-print(estimator.action_counter)
-
-plt.plot(range(len(reward_summary)), [elem[0] for i,elem in enumerate(reward_summary, start=1)], label='Steps')
-plt.plot(range(len(reward_summary)), [elem[1] for i,elem in enumerate(reward_summary, start=1)], label='Illegal pick-ups / drop-offs')
-plt.plot(range(len(reward_summary)), [elem[2] for i,elem in enumerate(reward_summary, start=1)], label='Illegal moves')
-plt.legend()
-plt.show()
-
-writer.add_text('Learning Rate', 'Learning Rate' + str(lr))
-writer.add_text('Number episodes', 'Number episodes' + str(n_episode))
+# Write Parameters to Tensorboard
+writer.add_text('Learning Rate ', 'Learning Rate ' + str(lr))
+writer.add_text('Number episodes ', 'Number episodes ' + str(n_episode))
+writer.add_text('Info ', 'Fixed Passenger')
 writer.close()
+
