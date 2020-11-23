@@ -36,11 +36,11 @@ env.render()
 * 3: pick-up passenger
 * 4: drop-off passenger
 3. Rewards / Penalties
-* Pick-up-reward: 1000 
-* Drop-off-reward: 1000
+* Pick-up-reward: 10000 
+* Drop-off-reward: 10000
 * Step-penality: -10
 * Wrong pick-up/drop-off penality: -100
-
+* Illegal move penalty: -500
 
 ### 2. Initial conditions
 1. Cab starting at the top-left-corner
@@ -54,6 +54,7 @@ env.render()
 
 
 ## Tensorboard 
+Use Tensorboard to compare different algorithms and tune hyperparameters
 ```bash 
 tensorboard --logdir=runs
 ```
@@ -61,7 +62,10 @@ http://localhost:6006/
 
 ## Changelog
 
-### [0.3] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_0.4) (22.11.2020)
+### [0.5] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_0.5) (22.11.2020)
+- Refactoring, Added Tensorboard, Include images in pip-package
+
+### [0.4] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_0.4) (22.11.2020)
 - Tensorboard to compare different trainings, new features in NN, random positions
 
 ### [0.3] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_0.3) (10.11.2020)
