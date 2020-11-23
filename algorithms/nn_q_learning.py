@@ -13,9 +13,30 @@ from tqdm import tqdm
 from estimator import Estimator
 import gym_cabworld 
 
+"""
+Parser
+"""
+parser = argparse.ArgumentParser(description="DQN for cabworld")
+parser.add_argument('-n', '--number', type=int, required=True,
+                    help="Number of episodes to run")
+parser.add_argument('-lr', '--learningrate', type=float, required=False, default=0.01,
+                    help="Learning rate to train the network")
+parser.add_argument('-e', '--epsilon', type=float, required=False, default=(1-1/6),
+                    help="Epsilon for epsilon greedy")
+parser.add_argument('-de', '--decay', type=float, required=False, default=0.975,
+                    help="Epsilon decay")
+parser.add_argument('-d', '--display', type=bool, required=False, default=False,
+                    help="True: display game, False: use virtual display")
+parser.add_argument('-r', '--render', type=bool, required=False, default=False,
+                    help="Render last episode")
+parser.add_argument('-s', '--save', type=bool, required=False, default=True,
+                    help="Save model")
+parser.add_argument('-l', '--load', type=bool, required=False, default=False,
+                    help="Load model")
+args = parser.parse_args()
+
 # Virtual display (requires xvfb)
-virtual_display = True
-if virtual_display:
+if not args.display:
     from pyvirtualdisplay import Display
     disp = Display().start()
 
@@ -76,6 +97,7 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.8, epsilon_decay
         state = env.reset()
         is_done = False
         saved_rewards = (0,0,0)
+        last_episode = (episode == (n_episode - 1))
         while not is_done:
             action = policy(state)
             next_state, reward, is_done, _ = env.step(action)
@@ -93,11 +115,15 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.8, epsilon_decay
                 estimator.n_updates = 0
                 break
             state = next_state
+
+            if args.display and args.render and last_episode:
+                env.render()
+                time.sleep(0.01)
+
         if episode % 10 == 0 and episode != 0:
             median_reward = sum(total_reward_episode[(episode-9):episode])/10
             median_rewards.append(median_reward)
             print(f"Episode:{episode} Median-Reward: {median_reward}")
-            writer.add_scalar('Median Reward', total_reward_episode[episode], episode)
 
 
 """
@@ -107,29 +133,17 @@ Setup
 n_state = 2
 n_action = env.action_space.n
 n_feature = 12
-lr = 0.15
-n_episode = 10
+n_episode = args.number
 total_reward_episode = [0] * n_episode
 median_rewards = []
 n_hidden = 12
-epsilon = (1-1/n_action)
-
-"""
-Parser
-"""
-parser = argparse.ArgumentParser(description="DQN for cabworld")
-parser.add_argument('-n', '--number', type=int, required=True,
-                    help="Number of episodes to run")
-parser.add_argument('-lr', '--learningrate', type=float, required=False, default=lr,
-                    help="Learning rate to train the network")
-parser.add_argument('-e', '--epsilon', type=float, required=False, default=epsilon,
-                    help="Epsilon for epsilon greedy")
-args = parser.parse_args()
 
 estimator = Estimator(n_feature, n_state, n_action, n_hidden, args.learningrate, writer)
-#estimator.load_models()
-q_learning(env, estimator, args.number, epsilon=args.epsilon)
-#estimator.save_models()
+if args.load:
+    estimator.load_models()
+q_learning(env, estimator, args.number, epsilon=args.epsilon, epsilon_decay=args.decay)
+if args.save:
+    estimator.save_models()
 
 median_reward = sum(total_reward_episode) / n_episode
 

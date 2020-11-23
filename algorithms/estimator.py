@@ -1,3 +1,4 @@
+import os
 import torch
 from torch.autograd import Variable
 import math
@@ -93,11 +94,14 @@ class Estimator():
         with torch.no_grad():
             return torch.tensor([model(features) for model in self.models], device=self.device)
 
-    def save_models(self, PATH='checkpoints/q_learning_ckpnt.tar'):
+    def save_models(self, PATH='../checkpoints/q_learning_ckpnt.tar'):
         """
         Save all estimators and optimizers in one file
         @param PATH: where to save to models
         """
+        if not os.path.exists('../checkpoints'):
+            os.mkdir('../checkpoints')
+
         model_opt_dict = {}
         for i, model in enumerate(self.models, start=0):
             model_name = f'model{i}_state_dict'
@@ -107,11 +111,12 @@ class Estimator():
             model_opt_dict[optimizer_name] = optimizer.state_dict()
         try:
             torch.save(model_opt_dict, PATH)
+            print("Saved checkpoint")
         except:
             print("Could not save checkpoint")
         self.writer.close()
 
-    def load_models(self, PATH='checkpoints/q_learning_ckpnt.tar'):
+    def load_models(self, PATH='../checkpoints/q_learning_ckpnt.tar'):
         """
         Load all estimators and optimizers from one file
         @param PATH: where to load the models from 
