@@ -31,7 +31,7 @@ parser.add_argument('-r', '--render', type=bool, required=False, default=False,
                     help="Render last episode")
 parser.add_argument('-s', '--save', type=bool, required=False, default=True,
                     help="Save model")
-parser.add_argument('-l', '--load', type=bool, required=False, default=False,
+parser.add_argument('-l', '--load', type=bool, required=False, default=True,
                     help="Load model")
 args = parser.parse_args()
 
