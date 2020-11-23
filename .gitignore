@@ -2,7 +2,7 @@
 /gym_cabworld.egg-info/
 /gym_cabworld/__pycache__/
 /gym_cabworld/envs/__pycache__/
-/__pycache__/estimator.cpython-38.pyc
+/__pycache__/
 settings.json
 /build
 /dist
