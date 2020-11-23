@@ -7,10 +7,10 @@ import torch
 import torchvision
 from torch.utils.tensorboard import SummaryWriter
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 from estimator import Estimator
 import gym_cabworld 
-
 
 # Virtual display (requires xvfb)
 virtual_display = True
@@ -18,16 +18,15 @@ if virtual_display:
     from pyvirtualdisplay import Display
     disp = Display().start()
 
-
 env = gym.make('Cabworld-v0')
 
 # Create a new log folder for tensorboard
-log_folders = os.listdir('runs')
+log_folders = os.listdir('../runs')
 if len(log_folders) == 0: 
     folder_number = 0
 else:
     folder_number = max([int(elem) for elem in log_folders]) + 1
-log_path = os.path.join("runs", str(folder_number))     
+log_path = os.path.join("../runs", str(folder_number))     
 writer = SummaryWriter(log_path)
 
 def track_reward(reward, saved_rewards):
@@ -68,7 +67,7 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.8, epsilon_decay
     @param epsilon: prob to choose random action
     @param epsilon_decay: reduce random actions over time
     """
-    for episode in range(n_episode):
+    for episode in tqdm(range(n_episode)):
         policy = gen_epsilon_greedy_policy(estimator, epsilon * epsilon_decay ** episode, n_action)
         state = env.reset()
         is_done = False
@@ -104,8 +103,8 @@ Setup
 n_state = 2
 n_action = env.action_space.n
 n_feature = 12
-lr = 0.10
-n_episode = 20
+lr = 0.15
+n_episode = 10
 total_reward_episode = [0] * n_episode
 median_rewards = []
 n_hidden = 12

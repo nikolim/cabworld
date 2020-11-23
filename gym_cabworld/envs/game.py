@@ -1,5 +1,6 @@
-import pygame
+import os
 import math
+import pygame
 
 from gym_cabworld.envs.cab_model import Cab
 from gym_cabworld.envs.map_model import Map
@@ -17,17 +18,14 @@ class Game:
         pygame.init()
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.clock = pygame.time.Clock()
-        self.map = Map('images/map_gen.png')
 
-        random_passenger_pos = self.map.get_random_pos_on_map()
-        random_passenger_dest = self.map.get_random_pos_on_map()
-        random_cab_pos = self.map.get_random_pos_on_map()
+        dirname = os.path.dirname(__file__)
+        img_path = os.path.join(dirname, '..', 'images')
 
-        # cab_pos = [60,60]
-        # passenger_pos = [940,940]
-        # passenger_dest = [60,60]
-
-        passenger1 = Passenger('images/person_1.png',
+        self.map = Map(os.path.join(img_path,'map_gen.png'))
+        random_pos = self.map.get_random_pos_on_map()
+        # random_pos = [940,940]
+        passenger1 = Passenger(os.path.join(img_path,'person_1.png'),
                               self.map, random_pos, 0, [60, 60])
 
         #passenger2 = Passenger('images/person_2.png',
@@ -35,7 +33,7 @@ class Game:
 
         self.map.add_passenger(passenger1)
         #self.map.add_passenger(passenger2)
-        self.cab = Cab('images/cab.png', self.map, [60, 60])
+        self.cab = Cab(os.path.join(img_path,'cab.png'), self.map, [60, 60])
         self.game_speed = 100000000
         self.mode = 0
 
