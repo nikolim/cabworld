@@ -11,6 +11,14 @@ import matplotlib.pyplot as plt
 from estimator import Estimator
 import gym_cabworld 
 
+
+# Virtual display (requires xvfb)
+virtual_display = True
+if virtual_display:
+    from pyvirtualdisplay import Display
+    disp = Display().start()
+
+
 env = gym.make('Cabworld-v0')
 
 # Create a new log folder for tensorboard
@@ -96,19 +104,21 @@ Setup
 n_state = 2
 n_action = env.action_space.n
 n_feature = 12
-lr = 0.01
-n_episode = 100
+lr = 0.10
+n_episode = 20
 total_reward_episode = [0] * n_episode
 median_rewards = []
+n_hidden = 12
 
-estimator = Estimator(n_feature, n_state, n_action, 12, lr, writer)
+estimator = Estimator(n_feature, n_state, n_action, n_hidden, lr, writer)
 #estimator.load_models()
 q_learning(env, estimator, n_episode, epsilon=(1-1/n_action))
 #estimator.save_models()
 
+median_reward = sum(total_reward_episode) / n_episode
+
 # Write Parameters to Tensorboard
-writer.add_text('Learning Rate ', 'Learning Rate ' + str(lr))
-writer.add_text('Number episodes ', 'Number episodes ' + str(n_episode))
+writer.add_hparams({'Episodes': n_episode,'lr': lr, 'epsilon': (1-1/n_action)}, {'reward': median_reward})
 writer.add_text('Info ', 'Fixed Passenger')
 writer.close()
 
