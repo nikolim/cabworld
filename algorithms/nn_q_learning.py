@@ -7,6 +7,7 @@ import torch
 import torchvision
 from torch.utils.tensorboard import SummaryWriter
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 from estimator import Estimator
 import gym_cabworld 
@@ -66,7 +67,7 @@ def q_learning(env, estimator, n_episode, gamma=0.99, epsilon=0.8, epsilon_decay
     @param epsilon: prob to choose random action
     @param epsilon_decay: reduce random actions over time
     """
-    for episode in range(n_episode):
+    for episode in tqdm(range(n_episode)):
         policy = gen_epsilon_greedy_policy(estimator, epsilon * epsilon_decay ** episode, n_action)
         state = env.reset()
         is_done = False

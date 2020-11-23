@@ -26,6 +26,9 @@ class Estimator():
         self.n_updates = 0
         self.total_loss = 0
 
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        print(f'Running on: {self.device}')
+
         for _ in range(n_action):
             model = torch.nn.Sequential(
                 torch.nn.Linear(int(n_feat), int(n_feat*3)),
@@ -34,24 +37,13 @@ class Estimator():
                 torch.nn.ReLU(),
                 torch.nn.Linear(int(n_hidden), 1)
             )
+            model.to(self.device)
             self.models.append(model)
             optimizer = torch.optim.Adam(model.parameters(), lr)
             self.optimizers.append(optimizer)
 
         # add graph to tensorboard
         writer.add_graph(self.models[0], torch.ones(n_feat))
-
-    def get_gaussian_wb(self, n_feat, n_state, sigma=.2):
-        """
-        Create initial weights
-        @param: n_feat: number of features 
-        @param: n_number: number of states
-        @return w,b: weights, bias
-        """
-        torch.manual_seed(0)
-        w = torch.randn((n_state, n_feat)) * 1.0 / sigma
-        b = torch.rand(n_feat) * 2.0 * math.pi
-        return w, b
 
     def get_feature(self, s):
         """
@@ -71,7 +63,7 @@ class Estimator():
                 features.append(state[7] / 180 - 1)
             else:
                 features.append(state[j] / 480 - 1)
-        return torch.Tensor(features)
+        return torch.Tensor(features, device=self.device)
 
     def update(self, s, a, y, episode):
         """
@@ -99,7 +91,7 @@ class Estimator():
         """
         features = self.get_feature(s)
         with torch.no_grad():
-            return torch.tensor([model(features) for model in self.models])
+            return torch.tensor([model(features) for model in self.models], device=self.device)
 
     def save_models(self, PATH='checkpoints/q_learning_ckpnt.tar'):
         """
