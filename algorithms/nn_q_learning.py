@@ -1,5 +1,6 @@
 import os
 import random
+import argparse
 from collections import deque
 import time
 import gym 
@@ -111,16 +112,29 @@ n_episode = 10
 total_reward_episode = [0] * n_episode
 median_rewards = []
 n_hidden = 12
+epsilon = (1-1/n_action)
 
-estimator = Estimator(n_feature, n_state, n_action, n_hidden, lr, writer)
+"""
+Parser
+"""
+parser = argparse.ArgumentParser(description="DQN for cabworld")
+parser.add_argument('-n', '--number', type=int, required=True,
+                    help="Number of episodes to run")
+parser.add_argument('-lr', '--learningrate', type=float, required=False, default=lr,
+                    help="Learning rate to train the network")
+parser.add_argument('-e', '--epsilon', type=float, required=False, default=epsilon,
+                    help="Epsilon for epsilon greedy")
+args = parser.parse_args()
+
+estimator = Estimator(n_feature, n_state, n_action, n_hidden, args.learningrate, writer)
 #estimator.load_models()
-q_learning(env, estimator, n_episode, epsilon=(1-1/n_action))
+q_learning(env, estimator, args.number, epsilon=args.epsilon)
 #estimator.save_models()
 
 median_reward = sum(total_reward_episode) / n_episode
 
 # Write Parameters to Tensorboard
-writer.add_hparams({'Episodes': n_episode,'lr': lr, 'epsilon': (1-1/n_action)}, {'reward': median_reward})
+writer.add_hparams({'Episodes': args.number,'lr': args.learningrate, 'epsilon': args.epsilon}, {'reward': median_reward})
 writer.add_text('Info ', 'Fixed Passenger')
 writer.close()
 
