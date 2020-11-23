@@ -61,6 +61,9 @@ http://localhost:6006/
 
 ## Changelog
 
+### [0.3] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_0.4) (22.11.2020)
+- Tensorboard to compare different trainings, new features in NN, random positions
+
 ### [0.3] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_0.3) (10.11.2020)
 - Improved reward system, notebook to generate maps, q-learning approach
 
