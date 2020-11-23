@@ -20,6 +20,9 @@ if virtual_display:
 
 env = gym.make('Cabworld-v0')
 
+if not os.path.exists('../runs'):
+    os.mkdir('../runs')
+
 # Create a new log folder for tensorboard
 log_folders = os.listdir('../runs')
 if len(log_folders) == 0: 
