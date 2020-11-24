@@ -34,13 +34,18 @@ class Policy(nn.Module):
     """
     def __init__(self):
         super(Policy, self).__init__()
-        self.affine1 = nn.Linear(12, 128)
+        # create features from input
+        self.affine1 = nn.Linear(12, 64)
 
         # actor's layer
-        self.action_head = nn.Linear(128, 6)
+        self.action_in = nn.Linear(64, 128)
+        self.action_hidden = nn.Linear(128, 128)
+        self.action_out = nn.Linear(128, 6)
 
         # critic's layer
-        self.value_head = nn.Linear(128, 1)
+        self.value_in = nn.Linear(64, 128)
+        self.value_hidden = nn.Linear(128, 128)
+        self.value_out = nn.Linear(128, 1)
 
         # action & reward buffer
         self.saved_actions = []
@@ -54,10 +59,14 @@ class Policy(nn.Module):
 
         # actor: choses action to take from state s_t 
         # by returning probability of each action
-        action_prob = F.softmax(self.action_head(x), dim=-1)
+        actor_x = F.relu(self.action_in(x))
+        actor_x = F.relu(self.action_hidden(actor_x))
+        action_prob = F.softmax(self.action_out(actor_x), dim=-1)
 
         # critic: evaluates being in the state s_t
-        state_values = self.value_head(x)
+        state_x = F.relu(self.value_in(x))
+        state_x = F.relu(self.value_hidden(state_x))
+        state_values = self.value_out(state_x)
 
         # return values for both actor and critic as a tuple of 2 values:
         # 1. a list with the probability of each action over the action space
@@ -134,7 +143,7 @@ def main():
     running_reward = 10
 
     # run inifinitely many episodes
-    for i_episode in range(100):
+    for i_episode in range(1000):
 
         # reset environment and episode reward
         state = env.reset()
@@ -142,7 +151,7 @@ def main():
 
         # for each episode, only run 9999 steps so that we don't 
         # infinite loop while learning
-        for t in range(1, 10000):
+        while True:
 
             # select action from policy
             action = select_action(np.array(state))

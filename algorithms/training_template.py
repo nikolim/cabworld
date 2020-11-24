@@ -12,7 +12,7 @@ from torch.utils.tensorboard import SummaryWriter
 import matplotlib.pyplot as plt
 
 import gym_cabworld
-from estimator import Estimator
+from nn_estimator import Estimator
 from algorithms.nn_q_learning import *
 from algorithms.sarsa import *
 
