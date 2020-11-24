@@ -8,11 +8,10 @@ from torch.utils.tensorboard import SummaryWriter
 
 
 class Estimator():
-    def __init__(self, n_feat, n_state, n_action, n_hidden, lr, writer):
+    def __init__(self, n_feat, n_action, n_hidden, lr, writer):
         """
         Crete Estimator with neuronal net for each action
         @param n_feat: number of features
-        @param n_state: number of states in evironment
         @param n_action: number of actions in environment
         @param n_hidden: number of hidden neurons
         @param lr: learning rate
