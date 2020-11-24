@@ -14,9 +14,12 @@ import matplotlib.pyplot as plt
 import gym_cabworld
 from estimator import Estimator
 from algorithms.nn_q_learning import *
+from algorithms.sarsa import *
 
 parser = argparse.ArgumentParser(
     description="Training template for Cabworld-v0")
+parser.add_argument('-a', '--algorithm', type=str, required=True,
+                    help="Algorithm to run")    
 parser.add_argument('-n', '--number', type=int, required=True,
                     help="Number of episodes to run")
 parser.add_argument('-lr', '--learningrate', type=float, required=False, default=0.01,
@@ -70,7 +73,15 @@ estimator = Estimator(n_feature, n_action,
 if args.load:
     estimator.load_models()
 
-total_reward_episode = q_learning(env=env, estimator=estimator, n_episode=args.number, writer=writer, gamma=args.gamma,
+if args.algorithm == "dqn": 
+    algorithm = q_learning
+elif args.algorithm == "sarsa":
+    algorithm = sarsa
+else: 
+    print("No algorithm specified")
+    exit()
+
+total_reward_episode = algorithm(env=env, estimator=estimator, n_episode=args.number, writer=writer, gamma=args.gamma,
                                   epsilon=args.epsilon, epsilon_decay=args.decay, n_action=n_action, render=args.render)
 
 if args.save:

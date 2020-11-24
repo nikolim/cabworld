@@ -59,6 +59,7 @@ def q_learning(env, estimator, n_episode, writer, gamma, epsilon, epsilon_decay,
     @param epsilon: prob to choose random action
     @param epsilon_decay: reduce random actions over time
     """
+    writer.add_text('Algorithm ', 'Q-Learning with NN')
     total_reward_episode = [0] * n_episode
 
     for episode in tqdm(range(n_episode)):
@@ -85,4 +86,5 @@ def q_learning(env, estimator, n_episode, writer, gamma, epsilon, epsilon_decay,
             if render and last_episode:
                 env.render()
                 time.sleep(0.01)
+
     return total_reward_episode

@@ -3,7 +3,7 @@
 /gym_cabworld/__pycache__/
 /gym_cabworld/envs/__pycache__/
 /algorithms/__pycache__/estimator.cpython-38.pyc
-/__pycache__/
+/__pycache__
 /__pycache__/estimator.cpython-38.pyc
 settings.json
 /build
