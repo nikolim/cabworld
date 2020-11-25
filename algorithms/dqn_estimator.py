@@ -63,4 +63,27 @@ class DQN():
                 td_targets.append(q_values)
             self.update(states, td_targets)
 
+    def save_models(self, PATH='../checkpoints/dqn_checkpoint.tar'):
+        if not os.path.exists('../checkpoints'):
+            os.mkdir('../checkpoints')
 
+        model_opt_dict = {}
+        model_name = 'model_state_dict'
+        optimizer_name = 'optimizer_state_dict'
+        model_opt_dict[model_name] = self.model.state_dict()
+        model_opt_dict[optimizer_name] = self.optimizer.state_dict()
+        try:
+            torch.save(model_opt_dict, PATH)
+            print("Saved checkpoint")
+        except:
+            print("Could not save checkpoint")
+        self.writer.close()
+
+    def load_models(self, PATH='../checkpoints/dqn_checkpoint.tar'):
+        try:
+            checkpoint = torch.load(PATH)
+            self.models.load_state_dict(checkpoint['model_state_dict'])
+            self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+            print("Loaded checkpoint")
+        except:
+            print("Could not load checkpoint")

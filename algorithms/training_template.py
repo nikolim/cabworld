@@ -18,7 +18,6 @@ from algorithms.sarsa import *
 from algorithms.actor_critic import *
 
 parser = argparse.ArgumentParser(description="Training selector for Cabworld-v0")
-
 parser.add_argument('-a', '--algorithm', type=str, required=True,
                     help="Algorithm to run")    
 parser.add_argument('-n', '--number', type=int, required=True,
@@ -48,7 +47,8 @@ if not args.display:
     disp = Display().start()
 
 # Create a new log folder for tensorboard
-log_path = os.path.join('../runs', str(args.algorithm))
+dirname = os.path.dirname(__file__)
+log_path = os.path.join(dirname ,'../runs', str(args.algorithm))
 if not os.path.exists(log_path):
     os.mkdir(log_path)
 log_folders = os.listdir(log_path)
@@ -79,7 +79,7 @@ elif args.algorithm == "sarsa":
                       n_hidden, args.learningrate, writer)
 elif args.algorithm == "ac": 
     algorithm = actor_critic
-    estimator = PolicyNetwork(n_feature, n_action, [n_hidden*4, n_hidden*2], args.learningrate, writer)
+    estimator = PolicyNetwork(n_feature, n_action, n_hidden*8 , args.learningrate, writer)
 else: 
     print("No algorithm specified")
     exit()
