@@ -1,7 +1,7 @@
-include images/map_gen.png
-include images/house.png
-include images/cab.png
-include images/tree.png
-include images/person_1.png
-include images/person_2.png
-include images/person_3.png
+include gym_cabworld/images/map_gen.png
+include gym_cabworld/images/house.png
+include gym_cabworld/images/cab.png
+include gym_cabworld/images/tree.png
+include gym_cabworld/images/person_1.png
+include gym_cabworld/images/person_2.png
+include gym_cabworld/images/person_3.png

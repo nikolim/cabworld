@@ -10,7 +10,7 @@ setup(name='gym_cabworld',
       package_dir={'gym_cabworld': 'gym_cabworld'},
       package_data={
           '': ['*.png'], },
-      data_files=[
+	data_files=[
         ('/home/niko/Info/gym-cabworld', [os.path.join('gym_cabworld/images/', 'map_gen.png')]),
         ('/home/niko/Info/gym-cabworld', [os.path.join('gym_cabworld/images/', 'cab.png')]),
         ('/home/niko/Info/gym-cabworld', [os.path.join('gym_cabworld/images/', 'person_1.png')]),
