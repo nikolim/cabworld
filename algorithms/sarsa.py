@@ -1,7 +1,7 @@
 import time
 from tqdm import tqdm
 import torch
-from algorithms.nn_q_learning import *
+from algorithms.q_learning import *
 
 
 def sarsa(env, estimator, n_episode, writer, gamma, epsilon, epsilon_decay, n_action, render, ):
