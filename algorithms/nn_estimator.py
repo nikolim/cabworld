@@ -98,8 +98,11 @@ class Estimator():
         Save all estimators and optimizers in one file
         @param PATH: where to save to models
         """
-        if not os.path.exists('../checkpoints'):
-            os.mkdir('../checkpoints')
+        dirname = os.path.dirname(__file__)
+        path = os.path.join(dirname, '../checkpoints')
+
+        if not os.path.exists(path):
+            os.mkdir(path)
 
         model_opt_dict = {}
         for i, model in enumerate(self.models, start=0):
@@ -120,8 +123,11 @@ class Estimator():
         Load all estimators and optimizers from one file
         @param PATH: where to load the models from 
         """
+        dirname = os.path.dirname(__file__)
+        path = os.path.join(dirname, '../checkpoints/q_learning_ckpnt.tar')
+
         try:
-            checkpoint = torch.load(PATH)
+            checkpoint = torch.load(path)
             for i in range(len(self.models)):
                 self.models[i].load_state_dict(
                     checkpoint[f'model{i}_state_dict'])

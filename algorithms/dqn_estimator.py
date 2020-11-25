@@ -8,17 +8,17 @@ import random
 from torch.autograd import Variable
 
 class DQN():
-    def __init__(self, n_state, n_action, n_hidden=50, lr=0.05):
+    def __init__(self, n_state, n_action, n_hidden, lr, writer):
         self.criterion = torch.nn.MSELoss()
         self.model = torch.nn.Sequential(
                         torch.nn.Linear(n_state, n_hidden),
                         torch.nn.ReLU(),
                         torch.nn.Linear(n_hidden, n_action)
                 )
-
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr)
+        writer.add_graph(self.model, torch.ones(n_state))
 
-    def update(self, s, y):
+    def update(self, s, y, episode):
         """
         Update the weights of the DQN given a training sample
         @param s: state
@@ -29,7 +29,7 @@ class DQN():
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
-
+        self.writer.add_scalar('Training Loss', loss, episode)
 
     def predict(self, s):
         """
@@ -80,8 +80,12 @@ class DQN():
         self.writer.close()
 
     def load_models(self, PATH='../checkpoints/dqn_checkpoint.tar'):
+
+        dirname = os.path.dirname(__file__)
+        path = os.path.join(dirname, PATH)
+        print(path)
         try:
-            checkpoint = torch.load(PATH)
+            checkpoint = torch.load(path)
             self.models.load_state_dict(checkpoint['model_state_dict'])
             self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
             print("Loaded checkpoint")

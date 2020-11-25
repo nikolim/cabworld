@@ -20,7 +20,7 @@ def gen_epsilon_greedy_policy(estimator, epsilon, n_action):
     return policy_function
 
 
-def q_learning(env, estimator, n_episode, replay_size, gamma=1.0, epsilon=0.1, epsilon_decay=.99):
+def dqn_learning(env, estimator, n_episode, replay_size, gamma=1.0, epsilon=0.1, epsilon_decay=.99):
     """
     Deep Q-Learning using DQN, with experience replay
     @param env: Gym environment
@@ -76,11 +76,3 @@ replay_size = 20
 total_reward_episode = [0] * n_episode
 
 q_learning(env, dqn, n_episode, replay_size, gamma=.9, epsilon=.3)
-
-
-import matplotlib.pyplot as plt
-plt.plot(total_reward_episode)
-plt.title('Episode reward over time')
-plt.xlabel('Episode')
-plt.ylabel('Total reward')
-plt.show()

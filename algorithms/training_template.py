@@ -12,6 +12,7 @@ from torch.utils.tensorboard import SummaryWriter
 import matplotlib.pyplot as plt
 
 import gym_cabworld
+from dqn_estimator import DQN
 from nn_estimator import Estimator
 from algorithms.q_learning import *
 from algorithms.sarsa import *
@@ -71,7 +72,7 @@ n_hidden = 12
 
 if args.algorithm == "dqn": 
     algorithm = q_learning
-    estimator = Estimator(n_feature, n_action,
+    estimator = DQN(n_feature, n_action,
                       n_hidden, args.learningrate, writer)
 elif args.algorithm == "sarsa":
     algorithm = sarsa
@@ -98,5 +99,6 @@ median_reward = sum(total_reward_episode) / n_episode
 writer.add_hparams({'Episodes': args.number, 'lr': args.learningrate,
                     'epsilon': args.epsilon, 'decay': args.decay},
                    {'reward': median_reward})
-writer.add_text('Info ', 'Fixed Passenger')
+
+writer.add_text('Info ', 'Random Passenger')
 writer.close()
