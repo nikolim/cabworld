@@ -16,6 +16,7 @@ class Game:
         Create Pygame with map, cab, passenger
         """
         pygame.init()
+        pygame.display.set_caption('Cabworld')
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.clock = pygame.time.Clock()
 
@@ -23,8 +24,8 @@ class Game:
         img_path = os.path.join(dirname, '..', 'images')
 
         self.map = Map(os.path.join(img_path,'map_gen.png'))
-        # random_pos = self.map.get_random_pos_on_map()
-        random_pos = [940,940]
+        random_pos = self.map.get_random_pos_on_map()
+        #random_pos = [940,940]
         passenger1 = Passenger(os.path.join(img_path,'person_1.png'),
                               self.map, random_pos, 0, [60, 60])
 

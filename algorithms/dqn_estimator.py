@@ -1,4 +1,4 @@
-
+import os
 import gym
 import torch
 
@@ -16,6 +16,7 @@ class DQN():
                         torch.nn.Linear(n_hidden, n_action)
                 )
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr)
+        self.writer = writer
         writer.add_graph(self.model, torch.ones(n_state))
 
     def update(self, s, y, episode):
@@ -41,7 +42,7 @@ class DQN():
             return self.model(torch.Tensor(s))
 
 
-    def replay(self, memory, replay_size, gamma):
+    def replay(self, memory, replay_size, gamma, episode):
         """
         Experience replay
         @param memory: a list of experience
@@ -61,7 +62,8 @@ class DQN():
                     q_values_next = self.predict(next_state)
                     q_values[action] = reward + gamma * torch.max(q_values_next).item()
                 td_targets.append(q_values)
-            self.update(states, td_targets)
+            self.update(states, td_targets, episode)
+
 
     def save_models(self, PATH='../checkpoints/dqn_checkpoint.tar'):
         if not os.path.exists('../checkpoints'):

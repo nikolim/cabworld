@@ -1,11 +1,9 @@
 import gym
 import torch
-
+from tqdm import tqdm
 from collections import deque
 import random
 import gym_cabworld
-
-env = gym.envs.make("Cabworld-v0")
 
 from torch.autograd import Variable
 from algorithms.dqn_estimator import *
@@ -19,8 +17,36 @@ def gen_epsilon_greedy_policy(estimator, epsilon, n_action):
             return torch.argmax(q_values).item()
     return policy_function
 
+def track_reward(reward, saved_rewards):
+    """
+    Count the number of rewards / penalties
+    @param reward: reward for last action 
+    @param saved_rewards: tupel of previous received rewards
+    """
+    saved_rewards = list(saved_rewards)
+    if reward == -10:
+        saved_rewards[0] += 1
+    if reward == -110:
+        saved_rewards[1] += 1
+    if reward == -510:
+        saved_rewards[2] += 1
+    return tuple(saved_rewards)
 
-def dqn_learning(env, estimator, n_episode, replay_size, gamma=1.0, epsilon=0.1, epsilon_decay=.99):
+def log_rewards(writer, saved_rewards, episode_reward, episode): 
+    """
+    Log rewards for tensorboard
+    @param writer: writer to write to into logs
+    @param saved_rewards: Tupel with penalties (path, pick-up, illegal-move)
+    @param episode_reward: reward for the current episode
+    @param episode: curent number of episode
+    """
+    writer.add_scalar('Path Penalty', saved_rewards[0], episode)
+    writer.add_scalar('Illegal Pick-up / Drop-off', saved_rewards[1], episode)
+    writer.add_scalar('Illegal Move', saved_rewards[2], episode)
+    writer.add_scalar('Reward', episode_reward, episode)
+
+
+def dqn_learning(env, estimator, n_episode, writer, gamma, epsilon, epsilon_decay, n_action, render):
     """
     Deep Q-Learning using DQN, with experience replay
     @param env: Gym environment
@@ -31,48 +57,31 @@ def dqn_learning(env, estimator, n_episode, replay_size, gamma=1.0, epsilon=0.1,
     @param epsilon: parameter for epsilon_greedy
     @param epsilon_decay: epsilon decreasing factor
     """
-    for episode in range(n_episode):
+
+    writer.add_text('Algorithm ', 'DQN')
+    total_reward_episode = [0] * n_episode
+    memory = deque(maxlen=3000)
+    replay_size = 1000
+
+    for episode in tqdm(range(n_episode)):
         policy = gen_epsilon_greedy_policy(estimator, epsilon, n_action)
         state = env.reset()
         is_done = False
-
+        saved_rewards = (0,0,0)
         while not is_done:
             action = policy(state)
             next_state, reward, is_done, _ = env.step(action)
+            saved_rewards = track_reward(reward, saved_rewards)
             total_reward_episode[episode] += reward
-
-            modified_reward = next_state[0] + 0.5
-            if next_state[0] >= 0.5:
-                modified_reward += 100
-            elif next_state[0] >= 0.25:
-                modified_reward += 20
-            elif next_state[0] >= 0.1:
-                modified_reward += 10
-            elif next_state[0] >= 0:
-                modified_reward += 5
-
-            memory.append((state, action, next_state, modified_reward, is_done))
-
+            memory.append((state, action, next_state, reward, is_done))
             if is_done:
+                log_rewards(writer, saved_rewards, total_reward_episode[episode], episode)
                 break
-
-            estimator.replay(memory, replay_size, gamma)
             state = next_state
 
-        print('Episode: {}, total reward: {}, epsilon: {}'.format(episode, total_reward_episode[episode], epsilon))
+        estimator.replay(memory, replay_size, gamma, episode)
 
+        print('Episode: {}, total reward: {}'.format(episode, total_reward_episode[episode]))
         epsilon = max(epsilon * epsilon_decay, 0.01)
 
-n_state = 12
-n_action = env.action_space.n
-n_hidden = 50
-lr = 0.001
-dqn = DQN(n_state, n_action, n_hidden, lr)
-
-memory = deque(maxlen=10000)
-
-n_episode = 100
-replay_size = 20
-total_reward_episode = [0] * n_episode
-
-q_learning(env, dqn, n_episode, replay_size, gamma=.9, epsilon=.3)
+    return total_reward_episode

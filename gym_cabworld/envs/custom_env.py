@@ -38,3 +38,7 @@ class CustomEnv(gym.Env):
         Render PyGame
         """
         self.pygame.view()
+
+
+
+

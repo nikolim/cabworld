@@ -12,6 +12,7 @@ from torch.utils.tensorboard import SummaryWriter
 import matplotlib.pyplot as plt
 
 import gym_cabworld
+from dqn import *
 from dqn_estimator import DQN
 from nn_estimator import Estimator
 from algorithms.q_learning import *
@@ -71,11 +72,15 @@ n_feature = 12
 n_hidden = 12
 
 if args.algorithm == "dqn": 
-    algorithm = q_learning
+    algorithm = dqn_learning
     estimator = DQN(n_feature, n_action,
                       n_hidden, args.learningrate, writer)
 elif args.algorithm == "sarsa":
     algorithm = sarsa
+    estimator = Estimator(n_feature, n_action,
+                      n_hidden, args.learningrate, writer)
+elif args.algorithm == "q":
+    algorithm = q_learning
     estimator = Estimator(n_feature, n_action,
                       n_hidden, args.learningrate, writer)
 elif args.algorithm == "ac": 

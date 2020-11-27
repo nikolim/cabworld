@@ -49,7 +49,7 @@ def log_rewards(writer, saved_rewards, episode_reward, episode):
     writer.add_scalar('Reward', episode_reward, episode)
 
 
-def q_learning(env, estimator, n_episode, writer, gamma, epsilon, epsilon_decay, n_action, render, ):
+def q_learning(env, estimator, n_episode, writer, gamma, epsilon, epsilon_decay, n_action, render):
     """
     Run Q-Learning with TD with NN as predictor for the q-values for a given state
     @param env: evironment to use
