@@ -25,16 +25,17 @@ class Passenger:
         self.passenger_img_rot = self.rot_center(self.passenger_img, self.angle)
         self.img_pos = [(self.pos[0] - (self.img_size / 2)), (self.pos[1] - (self.img_size / 2))]
 
-        self.color = (randint(0,255), randint(0,255), randint(0,255))
+        self.color = (randint(0,255), randint(0,255), randint(0,255), 128)
 
     def draw(self, screen):
         """
         Draw the passenger with icon on map
         @param screen: to print on
         """
-        if not self.in_cab:
+        if not self.in_cab and not self.reached_destination:
             pygame.draw.circle(screen, self.color, self.pos, 20, 3)
             screen.blit(self.passenger_img, self.img_pos)
+
         if not self.reached_destination:
             pygame.draw.circle(screen, self.color, self.destination, 20, 3)
 

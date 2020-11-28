@@ -1,6 +1,7 @@
 import os
 import math
 import pygame
+from random import randint
 
 from gym_cabworld.envs.cab_model import Cab
 from gym_cabworld.envs.map_model import Map
@@ -8,7 +9,7 @@ from gym_cabworld.envs.passenger_model import Passenger
 
 screen_width = 1000
 screen_height = 1000
-
+number_passengers = 1
 
 class Game:
     def __init__(self):
@@ -24,14 +25,14 @@ class Game:
         img_path = os.path.join(dirname, '..', 'images')
 
         self.map = Map(os.path.join(img_path,'map_gen.png'))
-        random_pos = self.map.get_random_pos_on_map()
-        passenger1 = Passenger(os.path.join(img_path,'person_1.png'),
-                              self.map, random_pos, 0, [60, 60])
-        self.map.add_passenger(passenger1)
-
-        # passenger2 = Passenger('images/person_2.png',
-        #                self.map, [710, 230], 0, [280, 800])
-        # self.map.add_passenger(passenger2)
+        
+        for _ in range(number_passengers): 
+            random_pos = self.map.get_random_pos_on_map()
+            random_dest = self.map.get_random_pos_on_map()
+            img = 'person_' + str(randint(1,3)) + '.png'
+            passenger = Passenger(os.path.join(img_path,img),
+                                self.map, random_pos, 0, random_dest)
+            self.map.add_passenger(passenger)
 
         self.cab = Cab(os.path.join(img_path,'cab.png'), self.map, [60, 60])
         self.game_speed = 100000000

@@ -61,8 +61,7 @@ class Map:
         @param screen: to print on
         """
         for passenger in self.passengers: 
-            if not passenger.in_cab:
-                passenger.draw(screen)
+            passenger.draw(screen)
 
     def all_passengers_reached_dest(self):
         """
