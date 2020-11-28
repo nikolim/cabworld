@@ -62,7 +62,7 @@ class Map:
         """
         for passenger in self.passengers: 
             if not passenger.in_cab:
-                screen.blit(passenger.passenger_img_rot, passenger.img_pos)
+                passenger.draw(screen)
 
     def all_passengers_reached_dest(self):
         """

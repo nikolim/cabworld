@@ -1,5 +1,6 @@
 import pygame
 import math
+from random import randint
 
 class Passenger:
     def __init__(self, passenger_file, map, pos, angle, destination):
@@ -18,21 +19,24 @@ class Passenger:
         self.reached_destination = False
         self.time_waiting = 0
         self.in_cab = False
-
         self.img_size = 20 
         self.passenger_img = pygame.image.load(passenger_file)
         self.passenger_img = pygame.transform.scale(self.passenger_img, (self.img_size, self.img_size))
         self.passenger_img_rot = self.rot_center(self.passenger_img, self.angle)
         self.img_pos = [(self.pos[0] - (self.img_size / 2)), (self.pos[1] - (self.img_size / 2))]
 
-    
+        self.color = (randint(0,255), randint(0,255), randint(0,255))
+
     def draw(self, screen):
         """
         Draw the passenger with icon on map
         @param screen: to print on
         """
         if not self.in_cab:
+            pygame.draw.circle(screen, self.color, self.pos, 20, 3)
             screen.blit(self.passenger_img, self.img_pos)
+        if not self.reached_destination:
+            pygame.draw.circle(screen, self.color, self.destination, 20, 3)
 
     def get_in_cab(self): 
         """
