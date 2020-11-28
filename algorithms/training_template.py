@@ -36,9 +36,9 @@ parser.add_argument('-d', '--display', type=bool, required=False, default=False,
                     help="True: display game, False: use virtual display")
 parser.add_argument('-r', '--render', type=bool, required=False, default=False,
                     help="Render last episode")
-parser.add_argument('-s', '--save', type=bool, required=False, default=True,
+parser.add_argument('-s', '--save', type=str, required=False, default='True',
                     help="Save model")
-parser.add_argument('-l', '--load', type=bool, required=False, default=True,
+parser.add_argument('-l', '--load', type=str, required=False, default='True',
                     help="Load model")
 args = parser.parse_args()
 
@@ -90,13 +90,13 @@ else:
     print("No algorithm specified")
     exit()
 
-if args.load:
+if args.load == "true" or args.load == "True":
     estimator.load_models()
 
 total_reward_episode = algorithm(env=env, estimator=estimator, n_episode=args.number, writer=writer, gamma=args.gamma,
                                   epsilon=args.epsilon, epsilon_decay=args.decay, n_action=n_action, render=args.render)
 
-if args.save:
+if args.save == "true" or args.save == "True":
     estimator.save_models()
 
 median_reward = sum(total_reward_episode) / n_episode

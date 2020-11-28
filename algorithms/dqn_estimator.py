@@ -68,7 +68,6 @@ class DQN():
     def save_models(self, PATH='../checkpoints/dqn_checkpoint.tar'):
         if not os.path.exists('../checkpoints'):
             os.mkdir('../checkpoints')
-
         model_opt_dict = {}
         model_name = 'model_state_dict'
         optimizer_name = 'optimizer_state_dict'

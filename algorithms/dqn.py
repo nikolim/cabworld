@@ -1,3 +1,4 @@
+import time
 import gym
 import torch
 from tqdm import tqdm
@@ -68,6 +69,7 @@ def dqn_learning(env, estimator, n_episode, writer, gamma, epsilon, epsilon_deca
         state = env.reset()
         is_done = False
         saved_rewards = (0,0,0)
+        last_episode = (episode == (n_episode - 1))
         while not is_done:
             action = policy(state)
             next_state, reward, is_done, _ = env.step(action)
@@ -78,6 +80,10 @@ def dqn_learning(env, estimator, n_episode, writer, gamma, epsilon, epsilon_deca
                 log_rewards(writer, saved_rewards, total_reward_episode[episode], episode)
                 break
             state = next_state
+
+            if render and last_episode:
+                env.render()
+                time.sleep(0.01)
 
         estimator.replay(memory, replay_size, gamma, episode)
 

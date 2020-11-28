@@ -54,6 +54,7 @@ def actor_critic(env, estimator, n_episode, writer, gamma, epsilon, epsilon_deca
         state_values = []
         state = env.reset()
         saved_rewards = (0, 0, 0)
+        last_episode = (episode == (n_episode - 1))
         while True:
             action, log_prob, state_value = estimator.get_action(state)
             next_state, reward, is_done, _ = env.step(action)
@@ -81,5 +82,11 @@ def actor_critic(env, estimator, n_episode, writer, gamma, epsilon, epsilon_deca
                 if total_reward_episode[episode] >= -14:
                     estimator.scheduler.step()
                 break
+
+            if render and last_episode:
+                env.render()
+                time.sleep(0.01)
+
             state = next_state
+            
     return total_reward_episode

@@ -30,6 +30,7 @@ class PolicyNetwork():
         self.scheduler = torch.optim.lr_scheduler.StepLR(
             self.optimizer, step_size=10, gamma=0.9)
         self.writer = writer
+        writer.add_graph(self.model, torch.ones(n_state))
 
     def normalise_state(self, s):
         """
