@@ -5,3 +5,4 @@ include gym_cabworld/images/tree.png
 include gym_cabworld/images/person_1.png
 include gym_cabworld/images/person_2.png
 include gym_cabworld/images/person_3.png
+include map.dat

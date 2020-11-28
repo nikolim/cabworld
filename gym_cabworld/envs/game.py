@@ -37,6 +37,8 @@ class Game:
         self.cab = Cab(os.path.join(img_path,'cab.png'), self.map, [60, 60])
         self.game_speed = 100000000
         self.mode = 0
+        # state_deck = self.map.create_state_deck([60, 60])
+        
 
     def action(self, action):
         """"

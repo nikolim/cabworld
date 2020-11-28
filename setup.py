@@ -16,5 +16,6 @@ setup(name='gym_cabworld',
         ('/home/niko/Info/gym-cabworld', [os.path.join('gym_cabworld/images/', 'person_1.png')]),
         ('/home/niko/Info/gym-cabworld', [os.path.join('gym_cabworld/images/', 'person_2.png')]),
         ('/home/niko/Info/gym-cabworld', [os.path.join('gym_cabworld/images/', 'person_3.png')]),
+        ('/home/niko/Info/gym-cabworld', [os.path.join('map.dat')]),
     ],
 )
