@@ -25,15 +25,14 @@ class Game:
 
         self.map = Map(os.path.join(img_path,'map_gen.png'))
         random_pos = self.map.get_random_pos_on_map()
-        #random_pos = [940,940]
         passenger1 = Passenger(os.path.join(img_path,'person_1.png'),
                               self.map, random_pos, 0, [60, 60])
-
-        #passenger2 = Passenger('images/person_2.png',
-        #                self.map, [710, 230], 0, [280, 800])
-
         self.map.add_passenger(passenger1)
-        #self.map.add_passenger(passenger2)
+
+        # passenger2 = Passenger('images/person_2.png',
+        #                self.map, [710, 230], 0, [280, 800])
+        # self.map.add_passenger(passenger2)
+
         self.cab = Cab(os.path.join(img_path,'cab.png'), self.map, [60, 60])
         self.game_speed = 100000000
         self.mode = 0

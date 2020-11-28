@@ -74,6 +74,10 @@ class Map:
         return True
 
     def get_random_pos_on_map(self): 
+        """
+        Get random postion on map (on the street)
+        @return pos  in pixels
+        """
         x,y = 0,0
         while self.streets[x][y] != 1: 
             x = random.randint(0,24)
@@ -81,6 +85,11 @@ class Map:
         return [y*40+20, x*40+20]
 
     def create_layer(self, pos): 
+        """
+        Create layer for state deck
+        @param pos: one-hot
+        @return layer
+        """
         layer = np.ones((25,25))
         x, y = pos 
         x = int((x - 20) / 40)
@@ -89,12 +98,17 @@ class Map:
         return layer
         
     def create_state_deck(self, cab_pos): 
+        """
+        Create state deck
+        @param cab_pos: position of cab
+        @return layer
+        """
         # 1 layer -> map
         street_layer = self.streets
         # 2 layer -> cab 
         cab_layer = self.create_layer(cab_pos)
         # 3 layer -> passenger pos
-        passenger = self.passengers[0]
+        passenger = self.get_nearest_passenger()
         pass_pos_layer = self.create_layer(passenger.pos)
         # 4 layer -> passenger dest
         pass_dest_layer = self.create_layer(passenger.destination)
