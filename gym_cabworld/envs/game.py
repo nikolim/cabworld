@@ -9,7 +9,7 @@ from gym_cabworld.envs.passenger_model import Passenger
 
 screen_width = 1000
 screen_height = 1000
-number_passengers = 1
+number_passengers = 2
 
 
 class Game:
