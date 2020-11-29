@@ -79,10 +79,10 @@ class Map:
         @return pos  in pixels
         """
         x, y = 0, 0
-        while self.streets[x][y] != 1:
+        while self.streets[y][x] != 1:
             x = random.randint(0, 24)
             y = random.randint(0, 24)
-        return [y * 40 + 20, x * 40 + 20]
+        return [x * 40 + 20, y * 40 + 20]
 
     def create_layer(self, pos):
         """

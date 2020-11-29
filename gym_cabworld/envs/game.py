@@ -9,8 +9,8 @@ from gym_cabworld.envs.passenger_model import Passenger
 
 screen_width = 1000
 screen_height = 1000
-number_passengers = 2
-
+number_passengers = 3
+number_cabs = 2
 
 class Game:
     def __init__(self):
@@ -35,38 +35,44 @@ class Game:
                                   self.map, random_pos, 0, random_dest)
             self.map.add_passenger(passenger)
 
-        self.cab = Cab(os.path.join(img_path, 'cab.png'), self.map, [60, 60])
+        self.cabs = []
+
+        for _ in range(number_cabs): 
+            random_pos = self.map.get_random_pos_on_map()
+            cab = Cab(os.path.join(img_path, 'cab.png'), self.map, random_pos)
+            self.cabs.append(cab)
+
         self.game_speed = 100000000
         self.mode = 0
         # state_deck = self.map.create_state_deck([60, 60])
 
-    def action(self, action):
+    def action(self, actions):
         """"
         Execute action on cab
         @param action: action to perform
         """
-        # reset rewards 
-        self.cab.rewards = 0
-
-        if action == 0:
-            self.cab.move_forward()
-        if action == 1:
-            self.cab.turn_left()
-        elif action == 2:
-            self.cab.turn_right()
-        elif action == 3:
-            self.cab.pick_up_passenger()
-        elif action == 4:
-            self.cab.drop_off_passenger()
-
-        self.cab.update()
+        assert len(actions) == len(self.cabs)
+        for i in range(self.cabs): 
+            action = actions[i]
+            cab.rewards = 0
+            if action == 0:
+                cab.move_forward()
+            if action == 1:
+                cab.turn_left()
+            elif action == 2:
+                cab.turn_right()
+            elif action == 3:
+                cab.pick_up_passenger()
+            elif action == 4:
+                cab.drop_off_passenger()
+            cab.update()
 
     def evaluate(self):
         """"
         Evaluate rewards
         @return reward
         """
-        return self.cab.rewards
+        return [cab.rewards for cab in self.cabs]
 
     def is_done(self):
         """"
@@ -80,20 +86,23 @@ class Game:
         Observe environment
         @return state of environment
         """
-        # Possible actions
-        r1, r2, r3 = self.cab.radars
-        pick_up = self.cab.pick_up_possible
-        drop_off = self.cab.drop_off_possible
-        # own position
-        pos_x, pos_y = self.cab.pos
-        angle = self.cab.angle
-        if self.cab.next_passenger:
-            pass_x, pass_y = self.cab.next_passenger.pos
-            dest_x, dest_y = self.cab.next_passenger.destination
-        else:
-            pass_x, pass_y = 0, 0
-            dest_x, dest_y = 0, 0
-        return tuple([r1, r2, r3, pick_up, drop_off, pos_x, pos_y, angle, pass_x, pass_y, dest_x, dest_y])
+        observations = []
+        for cab in self.cabs: 
+            # Possible actions
+            r1, r2, r3 = cab.radars
+            pick_up = cab.pick_up_possible
+            drop_off = cab.drop_off_possible
+            # own position
+            pos_x, pos_y = cab.pos
+            angle = cab.angle
+            if cab.next_passenger:
+                pass_x, pass_y = cab.next_passenger.pos
+                dest_x, dest_y = cab.next_passenger.destination
+            else:
+                pass_x, pass_y = 0, 0
+                dest_x, dest_y = 0, 0
+            observations.append([r1, r2, r3, pick_up, drop_off, pos_x, pos_y, angle, pass_x, pass_y, dest_x, dest_y])
+        return observations
 
     def view(self):
         """"
@@ -110,9 +119,13 @@ class Game:
         self.screen.blit(self.map.map_img, (0, 0))
         if self.mode == 1:
             self.screen.fill((0, 0, 0))
-        self.cab.check_radar()
-        self.cab.draw(self.screen)
-        self.map.draw_passengers(self.screen)
+       
+        for cab in self.cabs: 
+            cab.check_radar()
+            cab.draw(self.screen)
 
+        self.map.draw_passengers(self.screen)
         pygame.display.flip()
         self.clock.tick(self.game_speed)
+
+

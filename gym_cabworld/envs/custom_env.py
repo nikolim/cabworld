@@ -23,11 +23,11 @@ class CustomEnv(gym.Env):
         obs = self.pygame.observe()
         return obs
 
-    def step(self, action):
+    def step(self, actions):
         """
         Execute one step in environment
         """
-        self.pygame.action(action)
+        self.pygame.action(actions)
         obs = self.pygame.observe()
         reward = self.pygame.evaluate()
         done = self.pygame.is_done()
