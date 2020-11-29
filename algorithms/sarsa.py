@@ -1,13 +1,15 @@
 import time
-from tqdm import tqdm
 import torch
-from algorithms.q_learning import *
+from tqdm import tqdm
+
+from algorithms.tensorboard_tracker import track_reward, log_rewards
+from algorithms.q_learning import gen_epsilon_greedy_policy
 
 
 def sarsa(env, estimator, n_episode, writer, gamma, epsilon, epsilon_decay, n_action, render, ):
     """
     Sarsa with NN as q-value approximator
-    @param env: evironment to use
+    @param env: environment to use
     @param estimator: estimator to predict q-values
     @param n_episode: number of episodes 
     @param gamma: discount future rewards

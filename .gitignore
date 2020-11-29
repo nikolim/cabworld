@@ -11,3 +11,5 @@ settings.json
 checkpoints/
 runs/
 __pycache__/
+/algorithms/tmp/
+/.idea/

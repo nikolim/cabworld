@@ -1,20 +1,18 @@
 import os
-import gym
 import torch
-
-from collections import deque
 import random
 
 from torch.autograd import Variable
 
-class DQN():
+
+class DQN:
     def __init__(self, n_state, n_action, n_hidden, lr, writer):
         self.criterion = torch.nn.MSELoss()
         self.model = torch.nn.Sequential(
-                        torch.nn.Linear(n_state, n_hidden),
-                        torch.nn.ReLU(),
-                        torch.nn.Linear(n_hidden, n_action)
-                )
+            torch.nn.Linear(n_state, n_hidden),
+            torch.nn.ReLU(),
+            torch.nn.Linear(n_hidden, n_action)
+        )
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr)
         self.writer = writer
         writer.add_graph(self.model, torch.ones(n_state))
@@ -24,6 +22,7 @@ class DQN():
         Update the weights of the DQN given a training sample
         @param s: state
         @param y: target value
+        @param episode: current episode for tensorboard-writer
         """
         y_pred = self.model(torch.Tensor(s))
         loss = self.criterion(y_pred, Variable(torch.Tensor(y)))
@@ -40,7 +39,6 @@ class DQN():
         """
         with torch.no_grad():
             return self.model(torch.Tensor(s))
-
 
     def replay(self, memory, replay_size, gamma, episode):
         """
@@ -64,10 +62,17 @@ class DQN():
                 td_targets.append(q_values)
             self.update(states, td_targets, episode)
 
-
     def save_models(self, PATH='../checkpoints/dqn_checkpoint.tar'):
-        if not os.path.exists('../checkpoints'):
-            os.mkdir('../checkpoints')
+        """
+        Save all estimators and optimizers in one file
+        @param PATH: where to save to models
+        """
+        dirname = os.path.dirname(__file__)
+        path = os.path.join(dirname, '../checkpoints')
+
+        if not os.path.exists(path):
+            os.mkdir(path)
+
         model_opt_dict = {}
         model_name = 'model_state_dict'
         optimizer_name = 'optimizer_state_dict'
@@ -81,13 +86,11 @@ class DQN():
         self.writer.close()
 
     def load_models(self, PATH='../checkpoints/dqn_checkpoint.tar'):
-
         dirname = os.path.dirname(__file__)
         path = os.path.join(dirname, PATH)
-        print(path)
         try:
             checkpoint = torch.load(path)
-            self.models.load_state_dict(checkpoint['model_state_dict'])
+            self.model.load_state_dict(checkpoint['model_state_dict'])
             self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
             print("Loaded checkpoint")
         except:

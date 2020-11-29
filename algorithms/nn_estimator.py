@@ -41,8 +41,6 @@ class Estimator():
             self.models.append(model)
             optimizer = torch.optim.Adam(model.parameters(), lr)
             self.optimizers.append(optimizer)
-
-        # add graph to tensorboard
         writer.add_graph(self.models[0], torch.ones(n_feat))
 
     def get_feature(self, s):

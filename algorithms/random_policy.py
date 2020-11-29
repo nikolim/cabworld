@@ -1,7 +1,3 @@
-"""
-Demo of the environment with Random Policy
-"""
-
 import random
 import time
 import gym 

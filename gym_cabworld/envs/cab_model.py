@@ -24,24 +24,24 @@ class Cab:
         self.pick_up_possible = 0
         self.drop_off_possible = 0
         self.debug = False
-        
+
         self.cab_img = pygame.image.load(cab_file)
         self.cab_img = pygame.transform.scale(
             self.cab_img, (self.img_size, self.img_size))
         self.rotate_cab_img = self.cab_img
-        self.img_pos = [int(self.pos[0] - (self.img_size/2)),
-                        int(self.pos[1] - (self.img_size/2))]
+        self.img_pos = [int(self.pos[0] - (self.img_size / 2)),
+                        int(self.pos[1] - (self.img_size / 2))]
 
         # rewards
         self.pick_up_reward = 10000
         self.drop_off_reward = 10000
-        
+
         # motivate cab to drive the shortest path
         self.path_penalty = - 10
         self.step_penalty = - 10
-        self.wrong_pick_up_penalty = -100
-        self.wrong_drop_off_penalty = -100
-        self.illegal_move_penalty = -500
+        self.wrong_pick_up_penalty = -300
+        self.wrong_drop_off_penalty = -300
+        self.illegal_move_penalty = -100
         self.rewards = 0
         self.check_radar()
 
@@ -54,24 +54,24 @@ class Cab:
         sensor_field = 40  # how far the sensors of the cab / driver can see
 
         front_x = self.pos[0] + \
-            math.cos(math.radians(360 - self.angle)) * sensor_field
+                  math.cos(math.radians(360 - self.angle)) * sensor_field
         front_y = self.pos[1] + \
-            math.sin(math.radians(360 - self.angle)) * sensor_field
+                  math.sin(math.radians(360 - self.angle)) * sensor_field
 
         if self.check_if_street(front_x, front_y):
             self.radars[0] = 1
 
         left_x = self.pos[0] + \
-            math.cos(math.radians(360 - self.angle - 90)) * sensor_field
+                 math.cos(math.radians(360 - self.angle - 90)) * sensor_field
         left_y = self.pos[1] + \
-            math.sin(math.radians(360 - self.angle - 90)) * sensor_field
+                 math.sin(math.radians(360 - self.angle - 90)) * sensor_field
         if self.check_if_street(left_x, left_y):
             self.radars[1] = 1
 
         right_x = self.pos[0] + \
-            math.cos(math.radians(360 - self.angle + 90)) * sensor_field
+                  math.cos(math.radians(360 - self.angle + 90)) * sensor_field
         right_y = self.pos[1] + \
-            math.sin(math.radians(360 - self.angle + 90)) * sensor_field
+                  math.sin(math.radians(360 - self.angle + 90)) * sensor_field
         if self.check_if_street(right_x, right_y):
             self.radars[2] = 1
 
@@ -85,7 +85,7 @@ class Cab:
 
     def check_for_passengers(self):
         """
-        Check if a pasenger can be picked up or dropped off
+        Check if a passenger can be picked up or dropped off
         """
         self.drop_off_possible = 0
         self.pick_up_possible = 0
@@ -116,37 +116,35 @@ class Cab:
         # keep track of distance and time
         self.distance += self.speed
         self.time_spent += 1
-        self.img_pos = [int(self.pos[0]) - (self.img_size/2),
-                        int(self.pos[1]) - (self.img_size/2)]
+        self.img_pos = [int(self.pos[0]) - (self.img_size / 2),
+                        int(self.pos[1]) - (self.img_size / 2)]
 
         self.speed = 0
         self.check_radar()
         self.calc_rewards()
         self.check_for_passengers()
 
-    def move_forward(self): 
+    def move_forward(self):
         if self.radars[0] == 1:
             self.speed = 40
-        else: 
+        else:
             self.rewards += self.illegal_move_penalty
 
-    def turn_left(self): 
+    def turn_left(self):
         if self.radars[1] == 1:
             self.angle += 90
-        else: 
-            self.rewards += self.illegal_move_penalty
-    
-    def turn_right(self): 
-        if self.radars[2] == 1:
-            self.angle -= 90
-        else: 
+        else:
             self.rewards += self.illegal_move_penalty
 
+    def turn_right(self):
+        if self.radars[2] == 1:
+            self.angle -= 90
+        else:
+            self.rewards += self.illegal_move_penalty
 
     def pick_up_passenger(self):
         """
         Picks up a the nearest passenger if available
-        @param passenger: passenger to pick-up
         """
         self.speed = 0
         if self.passenger is None:
@@ -162,7 +160,6 @@ class Cab:
     def drop_off_passenger(self):
         """
         Drops off a passenger
-        @param passenger: passenger to drop-off
         """
         self.speed = 0
         if self.passenger:
@@ -205,14 +202,14 @@ class Cab:
         """
         delta = 10
         try:
-            color = self.map.map_img.get_at(((int(x), int(y))))
+            color = self.map.map_img.get_at((int(x), int(y)))
             street_color = self.map.street_color
             red_similar = (
-                street_color[0] - delta) < color[0] < (street_color[0] + delta)
+                                  street_color[0] - delta) < color[0] < (street_color[0] + delta)
             green_similar = (
-                street_color[1] - delta) < color[1] < (street_color[1] + delta)
+                                    street_color[1] - delta) < color[1] < (street_color[1] + delta)
             blue_similar = (
-                street_color[2] - delta) < color[2] < (street_color[2] + delta)
+                                   street_color[2] - delta) < color[2] < (street_color[2] + delta)
             return red_similar and green_similar and blue_similar
         except IndexError:
             return False

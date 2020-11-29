@@ -1,50 +1,21 @@
-import os
 import time
-import torch
-import gym
-import gym_cabworld
 from tqdm import tqdm
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.utils.tensorboard import SummaryWriter
-from actor_critic_model import *
-
-def track_reward(reward, saved_rewards):
-    """
-    Count the number of rewards / penalties
-    @param reward: reward for last action 
-    @param saved_rewards: tupel of previous received rewards
-    """
-    saved_rewards = list(saved_rewards)
-    if reward == -10:
-        saved_rewards[0] += 1
-    if reward == -110:
-        saved_rewards[1] += 1
-    if reward == -510:
-        saved_rewards[2] += 1
-    return tuple(saved_rewards)
+from algorithms.actor_critic_model import *
+from algorithms.tensorboard_tracker import track_reward, log_rewards
 
 
-def log_rewards(writer, saved_rewards, episode_reward, episode):
-    """
-    Log rewards for tensorboard
-    @param writer: writer to write to into logs
-    @param saved_rewards: Tupel with penalties (path, pick-up, illegal-move)
-    @param episode_reward: reward for the current episode
-    @param episode: curent number of episode
-    """
-    writer.add_scalar('Path Penalty', saved_rewards[0], episode)
-    writer.add_scalar('Illegal Pick-up / Drop-off', saved_rewards[1], episode)
-    writer.add_scalar('Illegal Move', saved_rewards[2], episode)
-    writer.add_scalar('Reward', episode_reward, episode)
-
-def actor_critic(env, estimator, n_episode, writer, gamma, epsilon, epsilon_decay, n_action, render, ):
+def actor_critic(env, estimator, n_episode, writer, gamma, epsilon, epsilon_decay, n_action, render):
     """
     Actor Critic algorithm
     @param env: Gym environment
     @param estimator: policy network
     @param n_episode: number of episodes
+    @param writer: tensorboard writer
     @param gamma: the discount factor
+    @param epsilon: initial epsilon
+    @param epsilon_decay: epsilon decay for each episode
+    @param n_action: number of possible actions
+    @param render: boolean if last episode should be rendered
     """
     total_reward_episode = [0] * n_episode
 
@@ -88,5 +59,5 @@ def actor_critic(env, estimator, n_episode, writer, gamma, epsilon, epsilon_deca
                 time.sleep(0.01)
 
             state = next_state
-            
+
     return total_reward_episode

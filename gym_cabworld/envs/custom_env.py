@@ -25,7 +25,7 @@ class CustomEnv(gym.Env):
 
     def step(self, action):
         """
-        Execute one step in evironment
+        Execute one step in environment
         """
         self.pygame.action(action)
         obs = self.pygame.observe()

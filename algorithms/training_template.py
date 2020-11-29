@@ -1,7 +1,8 @@
 import os
+import time
 import random
 import argparse
-import time
+
 from tqdm import tqdm
 from collections import deque
 
@@ -10,23 +11,23 @@ import torch
 import torchvision
 from torch.utils.tensorboard import SummaryWriter
 import matplotlib.pyplot as plt
-
 import gym_cabworld
-from dqn import *
-from dqn_estimator import DQN
-from nn_estimator import Estimator
+
+from algorithms.dqn import *
+from algorithms.dqn_estimator import *
+from algorithms.nn_estimator import *
 from algorithms.q_learning import *
 from algorithms.sarsa import *
 from algorithms.actor_critic import *
 
 parser = argparse.ArgumentParser(description="Training selector for Cabworld-v0")
 parser.add_argument('-a', '--algorithm', type=str, required=True,
-                    help="Algorithm to run")    
+                    help="Algorithm to run")
 parser.add_argument('-n', '--number', type=int, required=True,
                     help="Number of episodes to run")
 parser.add_argument('-lr', '--learningrate', type=float, required=False, default=0.01,
                     help="Learning rate to train the network")
-parser.add_argument('-e', '--epsilon', type=float, required=False, default=(1-1/6),
+parser.add_argument('-e', '--epsilon', type=float, required=False, default=(1 - 1 / 6),
                     help="Epsilon for epsilon greedy")
 parser.add_argument('-de', '--decay', type=float, required=False, default=0.975,
                     help="Epsilon decay")
@@ -42,15 +43,15 @@ parser.add_argument('-l', '--load', type=str, required=False, default='True',
                     help="Load model")
 args = parser.parse_args()
 
-
 # Virtual display (requires xvfb)
 if not args.display:
     from pyvirtualdisplay import Display
+
     disp = Display().start()
 
 # Create a new log folder for tensorboard
 dirname = os.path.dirname(__file__)
-log_path = os.path.join(dirname ,'../runs', str(args.algorithm))
+log_path = os.path.join(dirname, '../runs', str(args.algorithm))
 if not os.path.exists(log_path):
     os.mkdir(log_path)
 log_folders = os.listdir(log_path)
@@ -58,7 +59,7 @@ if len(log_folders) == 0:
     folder_number = 0
 else:
     folder_number = max([int(elem) for elem in log_folders]) + 1
-log_path = os.path.join(log_path ,str(folder_number))
+log_path = os.path.join(log_path, str(folder_number))
 writer = SummaryWriter(log_path)
 
 env = gym.make('Cabworld-v0')
@@ -71,22 +72,22 @@ n_episode = args.number
 n_feature = 12
 n_hidden = 12
 
-if args.algorithm == "dqn": 
+if args.algorithm == "dqn":
     algorithm = dqn_learning
     estimator = DQN(n_feature, n_action,
-                      n_hidden, args.learningrate, writer)
+                    n_hidden, args.learningrate, writer)
 elif args.algorithm == "sarsa":
     algorithm = sarsa
     estimator = Estimator(n_feature, n_action,
-                      n_hidden, args.learningrate, writer)
+                          n_hidden, args.learningrate, writer)
 elif args.algorithm == "q":
     algorithm = q_learning
     estimator = Estimator(n_feature, n_action,
-                      n_hidden, args.learningrate, writer)
-elif args.algorithm == "ac": 
+                          n_hidden, args.learningrate, writer)
+elif args.algorithm == "ac":
     algorithm = actor_critic
-    estimator = PolicyNetwork(n_feature, n_action, n_hidden*8 , args.learningrate, writer)
-else: 
+    estimator = PolicyNetwork(n_feature, n_action, n_hidden * 8, args.learningrate, writer)
+else:
     print("No algorithm specified")
     exit()
 
@@ -94,7 +95,7 @@ if args.load == "true" or args.load == "True":
     estimator.load_models()
 
 total_reward_episode = algorithm(env=env, estimator=estimator, n_episode=args.number, writer=writer, gamma=args.gamma,
-                                  epsilon=args.epsilon, epsilon_decay=args.decay, n_action=n_action, render=args.render)
+                                 epsilon=args.epsilon, epsilon_decay=args.decay, n_action=n_action, render=args.render)
 
 if args.save == "true" or args.save == "True":
     estimator.save_models()

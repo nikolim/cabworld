@@ -2,6 +2,7 @@ import pygame
 import math
 from random import randint
 
+
 class Passenger:
     def __init__(self, passenger_file, map, pos, angle, destination):
         """
@@ -14,18 +15,18 @@ class Passenger:
         """
         self.pos = pos
         self.angle = angle
-        self.map = map 
-        self.destination = destination 
+        self.map = map
+        self.destination = destination
         self.reached_destination = False
         self.time_waiting = 0
         self.in_cab = False
-        self.img_size = 20 
+        self.img_size = 20
         self.passenger_img = pygame.image.load(passenger_file)
         self.passenger_img = pygame.transform.scale(self.passenger_img, (self.img_size, self.img_size))
         self.passenger_img_rot = self.rot_center(self.passenger_img, self.angle)
         self.img_pos = [(self.pos[0] - (self.img_size / 2)), (self.pos[1] - (self.img_size / 2))]
 
-        self.color = (randint(0,255), randint(0,255), randint(0,255), 128)
+        self.color = (randint(0, 255), randint(0, 255), randint(0, 255), 128)
 
     def draw(self, screen):
         """
@@ -39,13 +40,13 @@ class Passenger:
         if not self.reached_destination:
             pygame.draw.circle(screen, self.color, self.destination, 20, 3)
 
-    def get_in_cab(self): 
+    def get_in_cab(self):
         """
         Passenger get into cab
         """
         self.in_cab = True
 
-    def get_out_of_cab(self): 
+    def get_out_of_cab(self):
         """
         Passenger get off cab
         """
@@ -63,13 +64,13 @@ class Passenger:
         rot_rect.center = rot_image.get_rect().center
         rot_image = rot_image.subsurface(rot_rect).copy()
         return rot_image
-    
+
     def reached_destination(self):
         """
         Check if the passenger has reached its destination 
         @return
         """
-        delta = 20 # define how close the taxi has to be to the destination of the passenger
+        delta = 20  # define how close the taxi has to be to the destination of the passenger
         x_reached = (self.pos[0] - delta) < self.destination[0] < (self.pos[0] + delta)
         y_reached = (self.pos[1] - delta) < self.destination[1] < (self.pos[1] + delta)
         return x_reached and y_reached

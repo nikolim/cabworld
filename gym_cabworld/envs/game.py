@@ -11,6 +11,7 @@ screen_width = 1000
 screen_height = 1000
 number_passengers = 1
 
+
 class Game:
     def __init__(self):
         """
@@ -24,21 +25,20 @@ class Game:
         dirname = os.path.dirname(__file__)
         img_path = os.path.join(dirname, '..', 'images')
 
-        self.map = Map(os.path.join(img_path,'map_gen.png'))
-        
-        for _ in range(number_passengers): 
+        self.map = Map(os.path.join(img_path, 'map_gen.png'))
+
+        for _ in range(number_passengers):
             random_pos = self.map.get_random_pos_on_map()
             random_dest = self.map.get_random_pos_on_map()
-            img = 'person_' + str(randint(1,3)) + '.png'
-            passenger = Passenger(os.path.join(img_path,img),
-                                self.map, random_pos, 0, random_dest)
+            img = 'person_' + str(randint(1, 3)) + '.png'
+            passenger = Passenger(os.path.join(img_path, img),
+                                  self.map, random_pos, 0, random_dest)
             self.map.add_passenger(passenger)
 
-        self.cab = Cab(os.path.join(img_path,'cab.png'), self.map, [60, 60])
+        self.cab = Cab(os.path.join(img_path, 'cab.png'), self.map, [60, 60])
         self.game_speed = 100000000
         self.mode = 0
         # state_deck = self.map.create_state_deck([60, 60])
-        
 
     def action(self, action):
         """"
@@ -75,10 +75,9 @@ class Game:
         """
         return self.map.all_passengers_reached_dest()
 
-
     def observe(self):
         """"
-        Obsereve environment
+        Observe environment
         @return state of environment
         """
         # Possible actions
@@ -91,14 +90,14 @@ class Game:
         if self.cab.next_passenger:
             pass_x, pass_y = self.cab.next_passenger.pos
             dest_x, dest_y = self.cab.next_passenger.destination
-        else: 
-            pass_x, pass_y = 0,0
-            dest_x, dest_y = 0,0
+        else:
+            pass_x, pass_y = 0, 0
+            dest_x, dest_y = 0, 0
         return tuple([r1, r2, r3, pick_up, drop_off, pos_x, pos_y, angle, pass_x, pass_y, dest_x, dest_y])
 
     def view(self):
         """"
-        Render evironment using Pygame
+        Render environment using Pygame
         """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -117,6 +116,3 @@ class Game:
 
         pygame.display.flip()
         self.clock.tick(self.game_speed)
-
-
-

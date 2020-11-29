@@ -1,12 +1,8 @@
 import os
-import time
 import torch
-import gym
-import gym_cabworld
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.utils.tensorboard import SummaryWriter
-from actor_critic_model import *
+
 
 class ActorCriticModel(nn.Module):
     def __init__(self, n_input, n_output, n_hidden):
@@ -23,7 +19,7 @@ class ActorCriticModel(nn.Module):
         return action_probs, state_values
 
 
-class PolicyNetwork():
+class PolicyNetwork:
     def __init__(self, n_state, n_action, n_hidden, lr, writer):
         self.model = ActorCriticModel(n_state, n_action, n_hidden)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr)
@@ -41,12 +37,12 @@ class PolicyNetwork():
         state = list(s)
         features = []
         for i in range(5):
-            if state[i] == 1: 
+            if state[i] == 1:
                 features.append(1)
-            else: 
+            else:
                 features.append(-1)
-        for j in range(5,12):
-            if j == 7: 
+        for j in range(5, 12):
+            if j == 7:
                 features.append(state[7] / 180 - 1)
             else:
                 features.append(state[j] / 480 - 1)
@@ -66,6 +62,7 @@ class PolicyNetwork():
         @param returns: return (cumulative rewards) for each step in an episode
         @param log_probs: log probability for each step
         @param state_values: state-value for each step
+        @param episode: number of current episode for the tensorboard-writer
         """
         loss = 0
         for log_prob, value, Gt in zip(log_probs, state_values, returns):
@@ -93,7 +90,6 @@ class PolicyNetwork():
     def save_models(self, PATH='../checkpoints/ac_checkpoint.tar'):
         if not os.path.exists('../checkpoints'):
             os.mkdir('../checkpoints')
-
         model_opt_dict = {}
         model_name = 'model_state_dict'
         optimizer_name = 'optimizer_state_dict'
