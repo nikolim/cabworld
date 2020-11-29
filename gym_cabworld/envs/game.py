@@ -36,13 +36,12 @@ class Game:
             self.map.add_passenger(passenger)
 
         self.cabs = []
-
         for _ in range(number_cabs): 
             random_pos = self.map.get_random_pos_on_map()
             cab = Cab(os.path.join(img_path, 'cab.png'), self.map, random_pos)
             self.cabs.append(cab)
 
-        self.game_speed = 100000000
+        self.game_speed = 60
         self.mode = 0
         # state_deck = self.map.create_state_deck([60, 60])
 
@@ -52,8 +51,7 @@ class Game:
         @param action: action to perform
         """
         assert len(actions) == len(self.cabs)
-        for i in range(self.cabs): 
-            action = actions[i]
+        for cab, action in zip(self.cabs, actions): 
             cab.rewards = 0
             if action == 0:
                 cab.move_forward()
