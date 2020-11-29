@@ -3,7 +3,7 @@ import time
 import gym
 import gym_cabworld
 
-env = gym.make('Cabworld-v0')
+env = gym.make('Cabworld-v3')
 n_episodes = 1
 
 for episode in range(n_episodes):

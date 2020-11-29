@@ -10,8 +10,9 @@ from gym_cabworld.envs.game import Game
 
 screen_width = 1000
 screen_height = 1000
-number_passengers = 2
+number_passengers = 3
 number_cabs = 2
+
 
 class MarlGame(Game):
     def __init__(self):
@@ -22,6 +23,8 @@ class MarlGame(Game):
         pygame.display.set_caption('Cabworld-v3')
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.clock = pygame.time.Clock()
+
+        self.number_cabs = number_cabs
 
         dirname = os.path.dirname(__file__)
         img_path = os.path.join(dirname, '..', 'images')
@@ -37,7 +40,7 @@ class MarlGame(Game):
             self.map.add_passenger(passenger)
 
         self.cabs = []
-        for _ in range(number_cabs): 
+        for _ in range(number_cabs):
             random_pos = self.map.get_random_pos_on_map()
             cab = Cab(os.path.join(img_path, 'cab.png'), self.map, random_pos)
             self.cabs.append(cab)
@@ -49,10 +52,10 @@ class MarlGame(Game):
     def action(self, actions):
         """"
         Execute action on cab
-        @param action: action to perform
+        @param actions: action to perform
         """
         assert len(actions) == len(self.cabs)
-        for cab, action in zip(self.cabs, actions): 
+        for cab, action in zip(self.cabs, actions):
             cab.rewards = 0
             if action == 0:
                 cab.move_forward()
@@ -86,7 +89,7 @@ class MarlGame(Game):
         @return state of environment
         """
         observations = []
-        for cab in self.cabs: 
+        for cab in self.cabs:
             # Possible actions
             r1, r2, r3 = cab.radars
             pick_up = cab.pick_up_possible
@@ -118,13 +121,11 @@ class MarlGame(Game):
         self.screen.blit(self.map.map_img, (0, 0))
         if self.mode == 1:
             self.screen.fill((0, 0, 0))
-       
-        for cab in self.cabs: 
+
+        for cab in self.cabs:
             cab.check_radar()
             cab.draw(self.screen)
 
         self.map.draw_passengers(self.screen)
         pygame.display.flip()
         self.clock.tick(self.game_speed)
-
-

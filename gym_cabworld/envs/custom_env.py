@@ -40,6 +40,7 @@ class CustomEnv(gym.Env):
         """
         self.pygame.view()
 
+
 class CustomEnv1(CustomEnv):
     def __init__(self):
         """
@@ -49,7 +50,7 @@ class CustomEnv1(CustomEnv):
         self.action_space = spaces.Discrete(5)
         self.observation_space = spaces.Box(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), np.array(
             [1, 1, 1, 1, 1, 1000, 1000, 360, 1000, 1000, 1000, 1000]), dtype=np.int)
-    
+
     def reset(self):
         """
         Reset Game
@@ -79,16 +80,18 @@ class CustomEnv2(CustomEnv):
         obs = self.pygame.observe()
         return obs
 
+
 class MarlEnv(CustomEnv):
     def __init__(self):
         """
         Create OpenAiGym with Pygame
         """
         self.pygame = MarlGame()
+        number_cabs = self.pygame.number_cabs
         self.action_space = spaces.Discrete(5)
-        self.observation_space = spaces.Box(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), np.array(
-            [1, 1, 1, 1, 1, 1000, 1000, 360, 1000, 1000, 1000, 1000]), dtype=np.int)
-    
+        self.observation_space = spaces.Box(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] * number_cabs), np.array(
+            [1, 1, 1, 1, 1, 1000, 1000, 360, 1000, 1000, 1000, 1000] * number_cabs), dtype=np.int)
+
     def reset(self):
         """
         Reset Game

@@ -2,6 +2,7 @@
 
 Reinforcement Environment based an OpenGymAI and Pygame. 
 A cab is driving around and tries to pick-up passengers to drive them to their destination.
+Each passenger is marked with the same color as his destination
 
 ![Cabworld](demo.gif)
 
@@ -15,6 +16,7 @@ pip install -e .
 ```
 
 ## Usage
+### Single agent
 ```python
 import gym 
 import gym_cabworld 
@@ -22,6 +24,16 @@ env = gym.make('Cabworld-v0')
 env.reset()
 action = env.action_space.sample()
 env.step(action)
+env.render()
+```
+### Multi agent 
+```python
+import gym 
+import gym_cabworld 
+env = gym.make('Cabworld-v3')
+env.reset()
+actions = [0,1]
+env.step(actions)
 env.render()
 ```
 
@@ -66,9 +78,23 @@ python training_template.py -a q -n 100 -e 0.5 -de 0.99 -r True -d True
 * Illegal move penalty: -500
 
 ### 2. Initial conditions
+
+### Cabworld-v0
 1. Cab starting at the top-left-corner
 2. Passenger starting at bottom-right-corner 
 3. Passenger wants to get to the top-left corner 
+
+### Cabworld-v1
+1. Cab starting at the top-left-corner
+2. 3 Passengers with random start-position and random destination
+
+### Cabworld-v2
+1. Cab starting at the random position
+2. 3 Passengers with random start-position and random destination
+
+### Cabworld-v3 (Multi-Agent)
+1. 2 Cabs starting at the random position
+2. 3 Passengers with random start-position and random destination
 
 ### 3. Expected behaviour
 1. Cab picks up passenger as fast as possible 
@@ -84,6 +110,9 @@ tensorboard --logdir=runs
 http://localhost:6006/
 
 ## Changelog
+
+### [0.7] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_0.7) (29.11.2020)
+- Extend to multi-agent, register different versions (v0, v1, v2, v3)
 
 ### [0.6] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_0.6) (28.11.2020)
 - Refactoring, Added State-Deck, Training-template with argparse
