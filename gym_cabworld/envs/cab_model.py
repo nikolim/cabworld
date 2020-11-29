@@ -37,11 +37,11 @@ class Cab:
         self.drop_off_reward = 10000
 
         # motivate cab to drive the shortest path
-        self.path_penalty = - 10
-        self.step_penalty = - 10
-        self.wrong_pick_up_penalty = -300
-        self.wrong_drop_off_penalty = -300
-        self.illegal_move_penalty = -100
+        self.path_penalty = -10
+        self.step_penalty = -10
+        self.wrong_pick_up_penalty = -100
+        self.wrong_drop_off_penalty = -100
+        self.illegal_move_penalty = -500
         self.rewards = 0
         self.check_radar()
 

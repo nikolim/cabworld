@@ -65,10 +65,11 @@ class PolicyNetwork:
         @param episode: number of current episode for the tensorboard-writer
         """
         loss = 0
+        
         for log_prob, value, Gt in zip(log_probs, state_values, returns):
             advantage = Gt - value.item()
             policy_loss = -log_prob * advantage
-            value_loss = F.smooth_l1_loss(value, Gt)
+            value_loss = F.smooth_l1_loss(value[0], Gt)
             loss += policy_loss + value_loss
 
         self.writer.add_scalar('Training Loss', loss, episode)
