@@ -14,5 +14,4 @@ before_script:
 
 test:
     script: 
-        - pip3 install pytest
         - pytest tests.py
