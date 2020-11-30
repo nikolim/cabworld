@@ -29,8 +29,6 @@ google-auth==1.23.0
 google-auth-oauthlib==0.4.2
 grpcio==1.33.2
 gym==0.17.3
--e git+git@gitlab.lrz.de:ru58bol/cabworld.git@28796205d274957d2b9dda928c34849085d90e1d#egg=gym_cabworld
--e git+https://github.com/monokim/PyAssassin.git@50fadde94f12401002bc15bdd41c52735f035c51#egg=gym_tank
 idna==2.10
 iniconfig==1.1.1
 ipykernel==5.3.4

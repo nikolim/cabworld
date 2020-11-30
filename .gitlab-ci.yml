@@ -1,14 +1,15 @@
 image: ubuntu
 
 before_script:
-  - sudo apt install python3 -y
-  - sudo apt install python3-pip -y
+  - apt install python3 -y
+  - apt install python3-pip -y
   - python3 -V 
   - pip3 install virtualenv
   - virtualenv venv
   - source venv/bin/activate
   - pip3 install -r requirements.txt
-  - sudo apt install xvfb
+  - pip3 install -e .
+  - apt install xvfb
 
 test:
     script: 
