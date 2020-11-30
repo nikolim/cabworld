@@ -12,7 +12,8 @@ screen_width = 1000
 screen_height = 1000
 number_passengers = 2
 
-class Game():
+
+class Game:
     def __init__(self, game_mode):
         """
         Create Pygame with map, cab, passenger
@@ -27,34 +28,34 @@ class Game():
         img_path = os.path.join(dirname, '..', 'images')
         self.map = Map(os.path.join(img_path, 'map_gen.png'))
 
-        if game_mode == 0: 
+        if game_mode == 0:
             img = 'person_' + str(randint(1, 3)) + '.png'
             passenger = Passenger(os.path.join(img_path, img),
-                                  self.map, [940,940], 0, [60,60])
+                                  self.map, [940, 940], 0, [60, 60])
             self.map.add_passenger(passenger)
-            cab_pos = [60,60]
+            cab_pos = [60, 60]
 
-        elif game_mode == 1: 
+        elif game_mode == 1:
             for _ in range(3):
                 random_pos = self.map.get_random_pos_on_map()
                 random_dest = self.map.get_random_pos_on_map()
                 img = 'person_' + str(randint(1, 3)) + '.png'
                 passenger = Passenger(os.path.join(img_path, img),
-                                    self.map, random_pos, 0, random_dest)
+                                      self.map, random_pos, 0, random_dest)
                 self.map.add_passenger(passenger)
-            cab_pos =  [60,60]
+            cab_pos = [60, 60]
 
-        elif game_mode == 2: 
+        elif game_mode == 2:
             for _ in range(3):
                 random_pos = self.map.get_random_pos_on_map()
                 random_dest = self.map.get_random_pos_on_map()
                 img = 'person_' + str(randint(1, 3)) + '.png'
                 passenger = Passenger(os.path.join(img_path, img),
-                                    self.map, random_pos, 0, random_dest)
+                                      self.map, random_pos, 0, random_dest)
                 self.map.add_passenger(passenger)
             cab_pos = self.map.get_random_pos_on_map()
 
-        self.cab = Cab(os.path.join(img_path, 'cab.png'), self.map, cab_rand_pos)
+        self.cab = Cab(os.path.join(img_path, 'cab.png'), self.map, cab_pos)
         self.game_speed = 60
         self.mode = 0
 
@@ -120,7 +121,6 @@ class Game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                sys.exit()
 
         self.screen.blit(self.map.map_img, (0, 0))
         if self.mode == 1:

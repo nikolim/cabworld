@@ -183,7 +183,7 @@ class Cab:
         """
         screen.blit(self.rotate_cab_img, self.img_pos)
         if self.passenger:
-            color = (255,0,0)
+            color = (255, 0, 0)
             pygame.draw.circle(screen, self.passenger.color, self.pos, 5, 5)
 
     def rot_center(self, image, angle):

@@ -2,7 +2,7 @@ import gym
 from gym import spaces
 import numpy as np
 from gym_cabworld.envs.game import Game
-from gym_cabworld.envs.game_marl import MarlGame
+from gym_cabworld.envs.game_multi_agent import MultiAgentGame
 
 
 class CustomEnv(gym.Env):
@@ -46,10 +46,8 @@ class CustomEnv1(CustomEnv):
         """
         Partial Dynamic: Fixed cab and three random passengers
         """
+        super().__init__()
         self.pygame = Game(1)
-        self.action_space = spaces.Discrete(5)
-        self.observation_space = spaces.Box(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), np.array(
-            [1, 1, 1, 1, 1, 1000, 1000, 360, 1000, 1000, 1000, 1000]), dtype=np.int)
 
     def reset(self):
         del self.pygame
@@ -63,10 +61,8 @@ class CustomEnv2(CustomEnv):
         """
         Dynamic: random cab and 3 random passengers 
         """
+        super().__init__()
         self.pygame = Game(2)
-        self.action_space = spaces.Discrete(5)
-        self.observation_space = spaces.Box(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), np.array(
-            [1, 1, 1, 1, 1, 1000, 1000, 360, 1000, 1000, 1000, 1000]), dtype=np.int)
 
     def reset(self):
         del self.pygame
@@ -80,7 +76,7 @@ class MarlEnv(CustomEnv):
         """
         Multi Agent with 2 random cabs and 3 random passengers
         """
-        self.pygame = MarlGame()
+        self.pygame = MultiAgentGame()
         number_cabs = self.pygame.number_cabs
         self.action_space = spaces.Discrete(5)
         self.observation_space = spaces.Box(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] * number_cabs), np.array(
@@ -88,6 +84,6 @@ class MarlEnv(CustomEnv):
 
     def reset(self):
         del self.pygame
-        self.pygame = MarlGame()
+        self.pygame = MultiAgentGame()
         obs = self.pygame.observe()
         return obs

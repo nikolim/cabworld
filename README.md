@@ -109,7 +109,16 @@ tensorboard --logdir=runs
 ```
 http://localhost:6006/
 
+## Test 
+Run 10 episodes of each version with random policy
+```bash 
+pytest tests.py
+```
+
 ## Changelog
+
+### [0.8] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_0.8) (30.11.2020)
+- Show color of current passenger, added tests
 
 ### [0.7] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_0.7) (29.11.2020)
 - Extend to multi-agent, register different versions (v0, v1, v2, v3)

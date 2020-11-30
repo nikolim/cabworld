@@ -14,7 +14,7 @@ number_passengers = 3
 number_cabs = 2
 
 
-class MarlGame(Game):
+class MultiAgentGame(Game):
     def __init__(self):
         """
         Multi agent world 
