@@ -41,6 +41,8 @@ parser.add_argument('-s', '--save', type=str, required=False, default='True',
                     help="Save model")
 parser.add_argument('-l', '--load', type=str, required=False, default='True',
                     help="Load model")
+parser.add_argument('-v', '--version', type=str, required=False, default='v0',
+                    help="Select version of cabworld")
 args = parser.parse_args()
 
 # Virtual display (requires xvfb)
@@ -62,7 +64,7 @@ else:
 log_path = os.path.join(log_path, str(folder_number))
 writer = SummaryWriter(log_path)
 
-env = gym.make('Cabworld-v0')
+env = gym.make('Cabworld-' + str(args.version))
 
 """
 Setup

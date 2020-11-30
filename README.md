@@ -10,7 +10,7 @@ Each passenger is marked with the same color as his destination
 
 ```bash
 git clone https://gitlab.com/nlimbrun/cabworld.git
-cd gym-cabworld
+cd cabworld
 pip install -r requirements.txt
 pip install -e .
 ```
