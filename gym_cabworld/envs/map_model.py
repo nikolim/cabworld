@@ -50,7 +50,7 @@ class Map:
         nearest_passenger = None
         min_distance = 100000
         for tmp_passenger in self.passengers:
-            if not tmp_passenger.reached_destination:
+            if not tmp_passenger.reached_destination and not tmp_passenger.in_cab:
                 tmp_distance = self.calc_distance(pos, tmp_passenger.pos)
                 if tmp_distance < min_distance:
                     nearest_passenger = tmp_passenger

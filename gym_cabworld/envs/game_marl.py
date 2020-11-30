@@ -103,7 +103,7 @@ class MarlGame(Game):
                 pass_x, pass_y = 0, 0
                 dest_x, dest_y = 0, 0
             observations.append([r1, r2, r3, pick_up, drop_off,
-                                 pos_x, pos_y, angle, pass_x, pass_y, dest_x, dest_y])
+                                 int(pos_x), int(pos_y), angle, pass_x, pass_y, dest_x, dest_y])
         return observations
 
     def view(self):
