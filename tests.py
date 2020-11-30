@@ -5,6 +5,8 @@ import gym
 
 import gym_cabworld
 
+from pyvirtualdisplay import Display
+disp = Display().start()
 
 def run_single_agent_env(version):
     assert str(version) == '0' or str(version) == '1' or str(version) == '2'
@@ -42,6 +44,10 @@ def run_multi_agent_env():
                     move = 4
                 else:
                     legal_actions = [s for s, a in zip(list(range(5)), allowed_actions) if a == 1]
+                    if len(legal_actions) == 0: 
+                        env.render()
+                        import time 
+                        time.sleep(10)
                     move = random.choice(legal_actions)
                 moves.append(move)
             states, rewards, is_done, info = env.step(moves)
