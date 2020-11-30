@@ -1,9 +1,10 @@
 image: ubuntu
 
 before_script:
+  - dpkg -S /usr/bin/add-apt-repository
+  - apt-get update
   - apt install software-properties-common
   - add-apt-repository universe
-  - apt-get update
   - apt install python3 -y
   - apt install python3-pip -y
   - python3 -V 
