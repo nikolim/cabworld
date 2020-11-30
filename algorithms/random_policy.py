@@ -13,8 +13,13 @@ for episode in range(n_episodes):
         moves = []
         for state in states:
             allowed_actions = state[:5]
-            legal_actions = [s for s, a in zip(list(range(5)), allowed_actions) if a == 1]
-            move = random.choice(legal_actions)
+            if allowed_actions[3] == 1: 
+                move = 3
+            elif allowed_actions[4] == 1: 
+                move = 4
+            else:
+                legal_actions = [s for s, a in zip(list(range(5)), allowed_actions) if a == 1]
+                move = random.choice(legal_actions)
             moves.append(move)
         states, rewards, is_done, info = env.step(moves)
         env.render()

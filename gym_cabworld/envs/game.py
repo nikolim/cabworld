@@ -1,4 +1,5 @@
 import os
+import time
 import math
 import pygame
 from random import randint
@@ -11,7 +12,6 @@ screen_width = 1000
 screen_height = 1000
 number_passengers = 2
 
-
 class Game():
     def __init__(self, game_mode):
         """
@@ -21,10 +21,10 @@ class Game():
         pygame.display.set_caption('Cabworld-v' + str(game_mode))
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.clock = pygame.time.Clock()
+        pygame.time.get_ticks()
 
         dirname = os.path.dirname(__file__)
         img_path = os.path.join(dirname, '..', 'images')
-
         self.map = Map(os.path.join(img_path, 'map_gen.png'))
 
         if game_mode == 0: 
@@ -32,7 +32,7 @@ class Game():
             passenger = Passenger(os.path.join(img_path, img),
                                   self.map, [940,940], 0, [60,60])
             self.map.add_passenger(passenger)
-            self.cab = Cab(os.path.join(img_path, 'cab.png'), self.map, [60, 60])
+            cab_pos = [60,60]
 
         elif game_mode == 1: 
             for _ in range(3):
@@ -42,7 +42,7 @@ class Game():
                 passenger = Passenger(os.path.join(img_path, img),
                                     self.map, random_pos, 0, random_dest)
                 self.map.add_passenger(passenger)
-            self.cab = Cab(os.path.join(img_path, 'cab.png'), self.map, [60, 60])
+            cab_pos =  [60,60]
 
         elif game_mode == 2: 
             for _ in range(3):
@@ -52,10 +52,10 @@ class Game():
                 passenger = Passenger(os.path.join(img_path, img),
                                     self.map, random_pos, 0, random_dest)
                 self.map.add_passenger(passenger)
-            cab_rand_pos = self.map.get_random_pos_on_map()
-            self.cab = Cab(os.path.join(img_path, 'cab.png'), self.map, cab_rand_pos)
+            cab_pos = self.map.get_random_pos_on_map()
 
-        self.game_speed = 100000000
+        self.cab = Cab(os.path.join(img_path, 'cab.png'), self.map, cab_rand_pos)
+        self.game_speed = 60
         self.mode = 0
 
     def action(self, action):
@@ -119,15 +119,13 @@ class Game():
         """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                done = True
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_m:
-                    self.mode += 1
-                    self.mode = self.mode % 3
+                pygame.quit()
+                sys.exit()
 
         self.screen.blit(self.map.map_img, (0, 0))
         if self.mode == 1:
             self.screen.fill((0, 0, 0))
+
         self.cab.check_radar()
         self.cab.draw(self.screen)
         self.map.draw_passengers(self.screen)

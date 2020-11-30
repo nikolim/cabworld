@@ -132,12 +132,14 @@ class Cab:
 
     def turn_left(self):
         if self.radars[1] == 1:
+            self.speed = 40
             self.angle += 90
         else:
             self.rewards += self.illegal_move_penalty
 
     def turn_right(self):
         if self.radars[2] == 1:
+            self.speed = 40
             self.angle -= 90
         else:
             self.rewards += self.illegal_move_penalty

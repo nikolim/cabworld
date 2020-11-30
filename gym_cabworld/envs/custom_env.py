@@ -44,7 +44,7 @@ class CustomEnv(gym.Env):
 class CustomEnv1(CustomEnv):
     def __init__(self):
         """
-        Create OpenAiGym with Pygame
+        Partial Dynamic: Fixed cab and three random passengers
         """
         self.pygame = Game(1)
         self.action_space = spaces.Discrete(5)
@@ -52,9 +52,6 @@ class CustomEnv1(CustomEnv):
             [1, 1, 1, 1, 1, 1000, 1000, 360, 1000, 1000, 1000, 1000]), dtype=np.int)
 
     def reset(self):
-        """
-        Reset Game
-        """
         del self.pygame
         self.pygame = Game(1)
         obs = self.pygame.observe()
@@ -64,7 +61,7 @@ class CustomEnv1(CustomEnv):
 class CustomEnv2(CustomEnv):
     def __init__(self):
         """
-        Create OpenAiGym with Pygame
+        Dynamic: random cab and 3 random passengers 
         """
         self.pygame = Game(2)
         self.action_space = spaces.Discrete(5)
@@ -72,9 +69,6 @@ class CustomEnv2(CustomEnv):
             [1, 1, 1, 1, 1, 1000, 1000, 360, 1000, 1000, 1000, 1000]), dtype=np.int)
 
     def reset(self):
-        """
-        Reset Game
-        """
         del self.pygame
         self.pygame = Game(2)
         obs = self.pygame.observe()
@@ -84,7 +78,7 @@ class CustomEnv2(CustomEnv):
 class MarlEnv(CustomEnv):
     def __init__(self):
         """
-        Create OpenAiGym with Pygame
+        Multi Agent with 2 random cabs and 3 random passengers
         """
         self.pygame = MarlGame()
         number_cabs = self.pygame.number_cabs
@@ -93,9 +87,6 @@ class MarlEnv(CustomEnv):
             [1, 1, 1, 1, 1, 1000, 1000, 360, 1000, 1000, 1000, 1000] * number_cabs), dtype=np.int)
 
     def reset(self):
-        """
-        Reset Game
-        """
         del self.pygame
         self.pygame = MarlGame()
         obs = self.pygame.observe()

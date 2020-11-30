@@ -17,7 +17,7 @@ number_cabs = 2
 class MarlGame(Game):
     def __init__(self):
         """
-        Create Pygame with map, cab, passenger
+        Multi agent world 
         """
         pygame.init()
         pygame.display.set_caption('Cabworld-v3')
@@ -47,7 +47,6 @@ class MarlGame(Game):
 
         self.game_speed = 60
         self.mode = 0
-        # state_deck = self.map.create_state_deck([60, 60])
 
     def action(self, actions):
         """"
@@ -103,7 +102,8 @@ class MarlGame(Game):
             else:
                 pass_x, pass_y = 0, 0
                 dest_x, dest_y = 0, 0
-            observations.append([r1, r2, r3, pick_up, drop_off, pos_x, pos_y, angle, pass_x, pass_y, dest_x, dest_y])
+            observations.append([r1, r2, r3, pick_up, drop_off,
+                                 pos_x, pos_y, angle, pass_x, pass_y, dest_x, dest_y])
         return observations
 
     def view(self):
