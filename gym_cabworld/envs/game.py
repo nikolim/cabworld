@@ -112,7 +112,7 @@ class Game:
         else:
             pass_x, pass_y = 0, 0
             dest_x, dest_y = 0, 0
-        return tuple([r1, r2, r3, pick_up, drop_off, pos_x, pos_y, angle, pass_x, pass_y, dest_x, dest_y])
+        return tuple([r1, r2, r3, pick_up, drop_off, round(pos_x), round(pos_y), angle, pass_x, pass_y, dest_x, dest_y])
 
     def view(self):
         """"
