@@ -31,9 +31,9 @@ class Game:
         if game_mode == 0:
             img = 'person_' + str(randint(1, 3)) + '.png'
             passenger = Passenger(os.path.join(img_path, img),
-                                  self.map, [940, 940], 0, [60, 60])
+                                  self.map, [850, 850], 0, [150, 150])
             self.map.add_passenger(passenger)
-            cab_pos = [60, 60]
+            cab_pos = [150, 150]
 
         elif game_mode == 1:
             for _ in range(3):
@@ -43,7 +43,7 @@ class Game:
                 passenger = Passenger(os.path.join(img_path, img),
                                       self.map, random_pos, 0, random_dest)
                 self.map.add_passenger(passenger)
-            cab_pos = [60, 60]
+            cab_pos = [150, 150]
 
         elif game_mode == 2:
             for _ in range(3):
@@ -112,7 +112,17 @@ class Game:
         else:
             pass_x, pass_y = 0, 0
             dest_x, dest_y = 0, 0
-        return tuple([r1, r2, r3, pick_up, drop_off, round(pos_x), round(pos_y), angle, pass_x, pass_y, dest_x, dest_y])
+        state = [r1, r2, r3, pick_up, drop_off, round(pos_x), round(pos_y), pass_x, pass_y, dest_x, dest_y]
+        # normalise features
+        features = []
+        for i in range(5):
+            if state[i] == 1: 
+                features.append(1)
+            else: 
+                features.append(-1)
+        for j in range(5,11):
+            features.append(state[j] / 425 - 1)
+        return tuple(features)
 
     def view(self):
         """"

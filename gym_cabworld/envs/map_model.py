@@ -24,6 +24,7 @@ class Map:
             for row in reader:
                 streets.append([int(x) for x in row])
         self.streets = np.array(streets)
+        self.grid_size = int(1000 / len(self.streets))
 
     def add_passenger(self, passenger):
         """
@@ -81,9 +82,9 @@ class Map:
         """
         x, y = 0, 0
         while self.streets[y][x] != 1:
-            x = random.randint(0, 24)
-            y = random.randint(0, 24)
-        return [x * 40 + 20, y * 40 + 20]
+            x = random.randint(0, len(self.streets)-1)
+            y = random.randint(0, len(self.streets)-1)
+        return [x * self.grid_size + int(self.grid_size/2), y * self.grid_size + int(self.grid_size/2)]
 
     def create_layer(self, pos):
         """
@@ -91,10 +92,10 @@ class Map:
         @param pos: one-hot
         @return layer
         """
-        layer = np.ones((25, 25))
+        layer = np.ones((len(self.streets), len(self.streets)))
         x, y = pos
-        x = int((x - 20) / 40)
-        y = int((y - 20) / 40)
+        x = int((x - (self.grid_size/2)) / self.grid_size)
+        y = int((y - (self.grid_size/2)) / self.grid_size)
         layer[x][y] = 1
         return layer
 

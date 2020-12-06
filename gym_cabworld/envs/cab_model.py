@@ -11,7 +11,7 @@ class Cab:
         @param pos: position of the passenger 
         """
         self.map = map
-        self.img_size = 40
+        self.img_size = 100
         self.pos = pos
         self.angle = 0
         self.speed = 0
@@ -33,15 +33,15 @@ class Cab:
                         int(self.pos[1] - (self.img_size / 2))]
 
         # rewards
-        self.pick_up_reward = 10000
-        self.drop_off_reward = 10000
+        self.pick_up_reward = 50
+        self.drop_off_reward = 50
 
         # motivate cab to drive the shortest path
-        self.path_penalty = -10
-        self.step_penalty = -10
-        self.wrong_pick_up_penalty = -100
-        self.wrong_drop_off_penalty = -100
-        self.illegal_move_penalty = -500
+        self.path_penalty = -1
+        self.step_penalty = -1
+        self.wrong_pick_up_penalty = -10
+        self.wrong_drop_off_penalty = -10
+        self.illegal_move_penalty = -10
         self.rewards = 0
         self.check_radar()
 
@@ -51,27 +51,27 @@ class Cab:
         Uses compares color values
         """
         self.radars = [0, 0, 0]
-        sensor_field = 40  # how far the sensors of the cab / driver can see
+        sensor_field = 100  # how far the sensors of the cab / driver can see
 
         front_x = self.pos[0] + \
-                  math.cos(math.radians(360 - self.angle)) * sensor_field
+            math.cos(math.radians(360 - self.angle)) * sensor_field
         front_y = self.pos[1] + \
-                  math.sin(math.radians(360 - self.angle)) * sensor_field
+            math.sin(math.radians(360 - self.angle)) * sensor_field
 
         if self.check_if_street(front_x, front_y):
             self.radars[0] = 1
 
         left_x = self.pos[0] + \
-                 math.cos(math.radians(360 - self.angle - 90)) * sensor_field
+            math.cos(math.radians(360 - self.angle - 90)) * sensor_field
         left_y = self.pos[1] + \
-                 math.sin(math.radians(360 - self.angle - 90)) * sensor_field
+            math.sin(math.radians(360 - self.angle - 90)) * sensor_field
         if self.check_if_street(left_x, left_y):
             self.radars[1] = 1
 
         right_x = self.pos[0] + \
-                  math.cos(math.radians(360 - self.angle + 90)) * sensor_field
+            math.cos(math.radians(360 - self.angle + 90)) * sensor_field
         right_y = self.pos[1] + \
-                  math.sin(math.radians(360 - self.angle + 90)) * sensor_field
+            math.sin(math.radians(360 - self.angle + 90)) * sensor_field
         if self.check_if_street(right_x, right_y):
             self.radars[2] = 1
 
@@ -126,20 +126,20 @@ class Cab:
 
     def move_forward(self):
         if self.radars[0] == 1:
-            self.speed = 40
+            self.speed = 100
         else:
             self.rewards += self.illegal_move_penalty
 
     def turn_left(self):
         if self.radars[1] == 1:
-            self.speed = 40
+            self.speed = 100
             self.angle += 90
         else:
             self.rewards += self.illegal_move_penalty
 
     def turn_right(self):
         if self.radars[2] == 1:
-            self.speed = 40
+            self.speed = 100
             self.angle -= 90
         else:
             self.rewards += self.illegal_move_penalty
@@ -210,11 +210,11 @@ class Cab:
             color = self.map.map_img.get_at((int(x), int(y)))
             street_color = self.map.street_color
             red_similar = (
-                                  street_color[0] - delta) < color[0] < (street_color[0] + delta)
+                street_color[0] - delta) < color[0] < (street_color[0] + delta)
             green_similar = (
-                                    street_color[1] - delta) < color[1] < (street_color[1] + delta)
+                street_color[1] - delta) < color[1] < (street_color[1] + delta)
             blue_similar = (
-                                   street_color[2] - delta) < color[2] < (street_color[2] + delta)
+                street_color[2] - delta) < color[2] < (street_color[2] + delta)
             return red_similar and green_similar and blue_similar
         except IndexError:
             return False
