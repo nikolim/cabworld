@@ -42,7 +42,7 @@ class Cab:
         self.step_penalty = -1
         self.wrong_pick_up_penalty = -10
         self.wrong_drop_off_penalty = -10
-        self.illegal_move_penalty = -10
+        self.illegal_move_penalty = -5
         self.rewards = 0
         self.check_radar()
 
@@ -157,8 +157,8 @@ class Cab:
                     self.passenger = passenger
                     self.passenger.get_in_cab()
                     self.rewards += self.pick_up_reward
-        else:
-            self.rewards += self.wrong_pick_up_penalty
+                    return
+        self.rewards += self.wrong_pick_up_penalty
 
     def drop_off_passenger(self):
         """
@@ -174,8 +174,9 @@ class Cab:
                 self.passenger.get_out_of_cab()
                 self.passenger = None
                 self.rewards += self.drop_off_reward
-        else:
-            self.rewards += self.wrong_drop_off_penalty
+                return
+        
+        self.rewards += self.wrong_drop_off_penalty
 
     def draw(self, screen):
         """
