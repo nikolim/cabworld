@@ -29,20 +29,21 @@ class MultiAgentGame(Game):
         dirname = os.path.dirname(__file__)
         img_path = os.path.join(dirname, '..', 'images')
 
-        self.map = Map(os.path.join(img_path, 'map_gen.png'))
+        self.map = Map(os.path.join(img_path, 'map_gen.png'), screen_width)
+        self.grid_size = self.map.get_grid_size()
 
         for _ in range(number_passengers):
             random_pos = self.map.get_random_pos_on_map()
             random_dest = self.map.get_random_pos_on_map()
             img = 'person_' + str(randint(1, 3)) + '.png'
             passenger = Passenger(os.path.join(img_path, img),
-                                  self.map, random_pos, 0, random_dest)
+                                  self.map, random_pos, 0, random_dest, self.grid_size)
             self.map.add_passenger(passenger)
 
         self.cabs = []
         for _ in range(number_cabs):
             random_pos = self.map.get_random_pos_on_map()
-            cab = Cab(os.path.join(img_path, 'cab.png'), self.map, random_pos)
+            cab = Cab(os.path.join(img_path, 'cab.png'), self.map, random_pos, self.grid_size)
             self.cabs.append(cab)
 
         self.game_speed = 60

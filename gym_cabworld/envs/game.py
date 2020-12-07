@@ -12,7 +12,6 @@ screen_width = 1000
 screen_height = 1000
 number_passengers = 2
 
-
 class Game:
     def __init__(self, game_mode):
         """
@@ -26,14 +25,16 @@ class Game:
 
         dirname = os.path.dirname(__file__)
         img_path = os.path.join(dirname, '..', 'images')
-        self.map = Map(os.path.join(img_path, 'map_gen.png'))
+        self.map = Map(os.path.join(img_path, 'map_gen.png'), screen_width)
+        self.grid_size = self.map.get_grid_size()
 
         if game_mode == 0:
             img = 'person_' + str(randint(1, 3)) + '.png'
             passenger = Passenger(os.path.join(img_path, img),
-                                  self.map, [850, 850], 0, [150, 150])
+                                  self.map, [screen_width-int(1.5*self.grid_size), screen_width-int(1.5*self.grid_size)], 
+                                  0, [int(1.5*self.grid_size), int(1.5*self.grid_size)], self.grid_size)
             self.map.add_passenger(passenger)
-            cab_pos = [150, 150]
+            cab_pos = [int(1.5*self.grid_size), int(1.5*self.grid_size)]
 
         elif game_mode == 1:
             for _ in range(3):
@@ -41,9 +42,9 @@ class Game:
                 random_dest = self.map.get_random_pos_on_map()
                 img = 'person_' + str(randint(1, 3)) + '.png'
                 passenger = Passenger(os.path.join(img_path, img),
-                                      self.map, random_pos, 0, random_dest)
+                                      self.map, random_pos, 0, random_dest, self.grid_size)
                 self.map.add_passenger(passenger)
-            cab_pos = [150, 150]
+            cab_pos = [int(1.5*self.grid_size), int(1.5*self.grid_size)]
 
         elif game_mode == 2:
             for _ in range(3):
@@ -51,11 +52,11 @@ class Game:
                 random_dest = self.map.get_random_pos_on_map()
                 img = 'person_' + str(randint(1, 3)) + '.png'
                 passenger = Passenger(os.path.join(img_path, img),
-                                      self.map, random_pos, 0, random_dest)
+                                      self.map, random_pos, 0, random_dest, self.grid_size)
                 self.map.add_passenger(passenger)
             cab_pos = self.map.get_random_pos_on_map()
 
-        self.cab = Cab(os.path.join(img_path, 'cab.png'), self.map, cab_pos)
+        self.cab = Cab(os.path.join(img_path, 'cab.png'), self.map, cab_pos, self.grid_size)
         self.game_speed = 60
         self.mode = 0
 
@@ -64,7 +65,7 @@ class Game:
         Execute action on cab
         @param action: action to perform
         """
-        # reset rewards 
+        # reset rewards
         self.cab.rewards = 0
 
         if action == 0:
@@ -112,16 +113,17 @@ class Game:
         else:
             pass_x, pass_y = 0, 0
             dest_x, dest_y = 0, 0
-        state = [r1, r2, r3, pick_up, drop_off, round(pos_x), round(pos_y), pass_x, pass_y, dest_x, dest_y]
+        state = [r1, r2, r3, pick_up, drop_off, round(
+            pos_x), round(pos_y), pass_x, pass_y, dest_x, dest_y]
         # normalise features
         features = []
         for i in range(5):
-            if state[i] == 1: 
+            if state[i] == 1:
                 features.append(1)
-            else: 
+            else:
                 features.append(-1)
-        for j in range(5,11):
-            features.append(state[j] / 425 - 1)
+        for j in range(5, 11):
+            features.append(state[j] / ((screen_width-int(1.5*self.grid_size)/2)) - 1)
         return tuple(features)
 
     def view(self):

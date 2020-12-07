@@ -11,7 +11,7 @@ disp = Display().start()
 def run_single_agent_env(version):
     assert str(version) == '0' or str(version) == '1' or str(version) == '2'
     env = gym.make('Cabworld-v' + str(version))
-    n_episodes = 10
+    n_episodes = 25
     for episode in range(n_episodes):
         state = env.reset()
         is_done = False
@@ -30,7 +30,7 @@ def run_single_agent_env(version):
 
 def run_multi_agent_env():
     env = gym.make('Cabworld-v3')
-    n_episodes = 10
+    n_episodes = 25
     for episode in range(n_episodes):
         states = env.reset()
         is_done = False

@@ -7,7 +7,7 @@ import numpy as np
 
 
 class Map:
-    def __init__(self, map_file):
+    def __init__(self, map_file, screen_size):
         """
         Map for the cabworld definded by image
         @param map_file: map to create world
@@ -23,8 +23,12 @@ class Map:
             reader = csv.reader(fd)
             for row in reader:
                 streets.append([int(x) for x in row])
+
         self.streets = np.array(streets)
-        self.grid_size = int(1000 / len(self.streets))
+        self.grid_size = int(screen_size / len(self.streets))
+    
+    def get_grid_size(self): 
+        return self.grid_size
 
     def add_passenger(self, passenger):
         """

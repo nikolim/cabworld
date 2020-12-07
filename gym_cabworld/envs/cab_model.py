@@ -3,7 +3,7 @@ import math
 
 
 class Cab:
-    def __init__(self, cab_file, map, pos):
+    def __init__(self, cab_file, map, pos, grid_size):
         """
         Cab moving on map trying to pickup passengers
         @param cab_file: icon for cab 
@@ -11,7 +11,7 @@ class Cab:
         @param pos: position of the passenger 
         """
         self.map = map
-        self.img_size = 100
+        self.img_size = grid_size
         self.pos = pos
         self.angle = 0
         self.speed = 0
@@ -24,6 +24,7 @@ class Cab:
         self.pick_up_possible = 0
         self.drop_off_possible = 0
         self.debug = False
+        self.grid_size = grid_size
 
         self.cab_img = pygame.image.load(cab_file)
         self.cab_img = pygame.transform.scale(
@@ -51,7 +52,7 @@ class Cab:
         Uses compares color values
         """
         self.radars = [0, 0, 0]
-        sensor_field = 100  # how far the sensors of the cab / driver can see
+        sensor_field = self.grid_size  # how far the sensors of the cab / driver can see
 
         front_x = self.pos[0] + \
             math.cos(math.radians(360 - self.angle)) * sensor_field
@@ -126,20 +127,20 @@ class Cab:
 
     def move_forward(self):
         if self.radars[0] == 1:
-            self.speed = 100
+            self.speed = self.grid_size
         else:
             self.rewards += self.illegal_move_penalty
 
     def turn_left(self):
         if self.radars[1] == 1:
-            self.speed = 100
+            self.speed = self.grid_size
             self.angle += 90
         else:
             self.rewards += self.illegal_move_penalty
 
     def turn_right(self):
         if self.radars[2] == 1:
-            self.speed = 100
+            self.speed = self.grid_size
             self.angle -= 90
         else:
             self.rewards += self.illegal_move_penalty
@@ -184,7 +185,8 @@ class Cab:
         screen.blit(self.rotate_cab_img, self.img_pos)
         if self.passenger:
             color = (255, 0, 0)
-            pygame.draw.circle(screen, self.passenger.color, self.pos, 5, 5)
+            light_size = int(self.grid_size/10)
+            pygame.draw.circle(screen, self.passenger.color, self.pos, light_size, light_size)
 
     def rot_center(self, image, angle):
         """
