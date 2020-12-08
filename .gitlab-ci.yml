@@ -19,7 +19,8 @@ test:
 
 deploy:
     script: 
-    - cat $PYPIRC > /tmp/.pypirc
+    - echo $PYPIRC > /tmp/.pypirc
+    - cat /tmp/.pypirc
     - pip3 install twine
     - python3 setup.py  bdist_wheel
-    - python3 -m twine upload dist/* --repository pypi --config-file /tmp/.pypirc
+    - TWINE_USERNAME=$TWINE_USERNAME TWINE_PASSWORD=$TWINE_PASSWORD python3 -m twine upload dist/* --repository pypi --config-file /tmp/.pypirc

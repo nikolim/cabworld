@@ -2,7 +2,9 @@ import os
 from setuptools import setup, find_packages
 
 setup(name='gym_cabworld',
-      version='0.9.1',
+      description='Cabworld Reinforcement Environment',
+      long_description='Reinforcement Learning Environment an environment with the goal of teaching cabs to bring passengers efficiently to their destination. Based on OpenAIGym and Pygame',
+      version='0.9.2',
       install_requires=['gym', 'pygame', 'wheel'],
       author='Nikolai Limbrunner',
       author_email='nikolai.limbrunner@web.de',
