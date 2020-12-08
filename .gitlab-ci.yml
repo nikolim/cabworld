@@ -6,6 +6,7 @@ before_script:
   - apt install python3-pip -y
   - python3 -V 
   - pip3 install virtualenv
+  - pip3 install wheel
   - virtualenv venv
   - source venv/bin/activate
   - pip3 install -r requirements.txt
@@ -15,3 +16,11 @@ before_script:
 test:
     script: 
         - pytest tests.py
+
+deploy:
+     cat $PYPIRC > /tmp/.pypirc
+    - pip3 install twine
+    - python3 setup.py  bdist_wheel
+    - python3 -m twine upload --repository pypi --config-file /tmp/.pypirc
+  only:
+    - tags

@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 
 setup(name='gym_cabworld',
-      version='0.9',
+      version='0.9.1',
       install_requires=['gym', 'pygame', 'wheel'],
       author='Nikolai Limbrunner',
       author_email='nikolai.limbrunner@web.de',
