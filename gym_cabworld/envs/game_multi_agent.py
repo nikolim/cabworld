@@ -15,7 +15,7 @@ number_cabs = 2
 
 
 class MultiAgentGame(Game):
-    def __init__(self):
+    def __init__(self, game_mode):
         """
         Multi agent world 
         """
@@ -29,7 +29,12 @@ class MultiAgentGame(Game):
         dirname = os.path.dirname(__file__)
         img_path = os.path.join(dirname, '..', 'images')
 
-        self.map = Map(os.path.join(img_path, 'map_gen.png'), screen_width)
+        if game_mode < 4: 
+            img = 'map_gen.png'
+        else: 
+            img = 'small_map_gen.png'
+
+        self.map = Map(os.path.join(img_path, img), screen_width, game_mode)
         self.grid_size = self.map.get_grid_size()
 
         for _ in range(number_passengers):

@@ -7,7 +7,7 @@ import numpy as np
 
 
 class Map:
-    def __init__(self, map_file, screen_size):
+    def __init__(self, map_file, screen_size, game_mode):
         """
         Map for the cabworld definded by image
         @param map_file: map to create world
@@ -17,7 +17,13 @@ class Map:
         self.passengers = []
 
         dirname = os.path.dirname(__file__)
-        map_dat_path = os.path.join(dirname, '..', '..', 'map.dat')
+        
+        if game_mode < 4: 
+            map_file = 'map.dat'
+        else: 
+            map_file = 'small_map.dat'
+
+        map_dat_path = os.path.join(dirname, '..', '..', map_file)
         streets = []
         with open(map_dat_path, 'r') as fd:
             reader = csv.reader(fd)
@@ -26,6 +32,8 @@ class Map:
 
         self.streets = np.array(streets)
         self.grid_size = int(screen_size / len(self.streets))
+
+        self.used_rand_pos = []
     
     def get_grid_size(self): 
         return self.grid_size
@@ -85,9 +93,10 @@ class Map:
         @return pos  in pixels
         """
         x, y = 0, 0
-        while self.streets[y][x] != 1:
+        while (self.streets[y][x] != 1 or (x,y) in self.used_rand_pos):
             x = random.randint(0, len(self.streets)-1)
             y = random.randint(0, len(self.streets)-1)
+        self.used_rand_pos.append((x,y))
         return [x * self.grid_size + int(self.grid_size/2), y * self.grid_size + int(self.grid_size/2)]
 
     def create_layer(self, pos):

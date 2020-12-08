@@ -25,10 +25,16 @@ class Game:
 
         dirname = os.path.dirname(__file__)
         img_path = os.path.join(dirname, '..', 'images')
-        self.map = Map(os.path.join(img_path, 'map_gen.png'), screen_width)
+        
+        if game_mode < 4: 
+            img = 'map_gen.png'
+        else: 
+            img = 'small_map_gen.png'
+
+        self.map = Map(os.path.join(img_path, img), screen_width, game_mode)
         self.grid_size = self.map.get_grid_size()
 
-        if game_mode == 0:
+        if (game_mode % 4) == 0:
             img = 'person_' + str(randint(1, 3)) + '.png'
             passenger = Passenger(os.path.join(img_path, img),
                                   self.map, [screen_width-int(1.5*self.grid_size), screen_width-int(1.5*self.grid_size)], 
@@ -36,7 +42,7 @@ class Game:
             self.map.add_passenger(passenger)
             cab_pos = [int(1.5*self.grid_size), int(1.5*self.grid_size)]
 
-        elif game_mode == 1:
+        elif (game_mode % 4) == 1:
             for _ in range(3):
                 random_pos = self.map.get_random_pos_on_map()
                 random_dest = self.map.get_random_pos_on_map()
@@ -46,7 +52,7 @@ class Game:
                 self.map.add_passenger(passenger)
             cab_pos = [int(1.5*self.grid_size), int(1.5*self.grid_size)]
 
-        elif game_mode == 2:
+        elif (game_mode % 4) == 2:
             for _ in range(3):
                 random_pos = self.map.get_random_pos_on_map()
                 random_dest = self.map.get_random_pos_on_map()
