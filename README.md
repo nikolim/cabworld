@@ -9,10 +9,7 @@ Each passenger is marked with the same color as his destination
 ## Installation 
 
 ```bash
-git clone https://gitlab.com/nlimbrun/cabworld.git
-cd cabworld
-pip install -r requirements.txt
-pip install -e .
+pip install gym-cabworld
 ```
 
 ## Usage
@@ -26,6 +23,7 @@ action = env.action_space.sample()
 env.step(action)
 env.render()
 ```
+
 ### Multi agent 
 ```python
 import gym 
@@ -37,33 +35,9 @@ env.step(actions)
 env.render()
 ```
 
-## Training Template
-```bash
-python training_template.py -a dqn -n 100
-python training_template.py -a sarsa -n 100 -e 0.5 -de 0.99
-python training_template.py -a q -n 100 -e 0.5 -de 0.99 -r True -d True
-```
-### Flags 
-#### Required 
--a / --algorithm Algorithm to run (q, dqn, ac, sarsa) <br/>
--n / --number Number of episodes to run <br/>
-#### Optional
--lr / --learningrate Learning rate to train the network <br/>
--e / --epsilon Epsilon for epsilon greedy <br/>
--de / --decay Epsilon decay <br/>
--g / --gamma Gamma (discount) <br/>
--d / --display True: display game, False: use virtual display <br/>
--r / --render Render last episode <br/>
--s / --save Save model <br/>
--l / --load Load model <br/>
-
-### Note 
-**To use a virtual display (--display False) you have to install xvfb. Only tested on Linux (Pop-os 20.04)**
-
 ## Problem Statement
 ### 1. Environment description
-
-1. The Map has 1000 x 1000 pixels but actions are limited to 25x25
+1. The Map has 1000 x 1000 pixels (action space is limited to 25x25 and 10x10)
 2. The cab can only perform discrete actions
 * 0: drive forward (40px)
 * 1: turn right (90 deg)
@@ -71,11 +45,11 @@ python training_template.py -a q -n 100 -e 0.5 -de 0.99 -r True -d True
 * 3: pick-up passenger
 * 4: drop-off passenger
 3. Rewards / Penalties
-* Pick-up-reward: 10000 
-* Drop-off-reward: 10000
-* Step-penality: -10
-* Wrong pick-up/drop-off penality: -100
-* Illegal move penalty: -500
+* Pick-up-reward: 50 
+* Drop-off-reward: 50
+* Step-penality: -1
+* Wrong pick-up/drop-off penality: -10
+* Illegal move penalty: -5
 
 ### 2. Initial conditions
 
@@ -101,7 +75,6 @@ python training_template.py -a q -n 100 -e 0.5 -de 0.99 -r True -d True
 2. Cab brings passenger to their destination as fast as possible
 3. Cab drops off passenger at their destination
 
-
 ## Tensorboard 
 Use Tensorboard to compare different algorithms and tune hyperparameters
 ```bash 
@@ -110,12 +83,15 @@ tensorboard --logdir=runs
 http://localhost:6006/
 
 ## Test 
-Run 10 episodes of each version with random policy
+Run 25 episodes of each version with random policy
 ```bash 
 pytest tests.py
 ```
 
 ## Changelog
+
+### [0.9] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_0.9) (08.12.2020)
+- Integrated small world (10x10) and publish packet
 
 ### [0.8] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_0.8) (30.11.2020)
 - Show color of current passenger, added tests
