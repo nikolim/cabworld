@@ -23,5 +23,3 @@ deploy:
     - pip3 install twine
     - python3 setup.py  bdist_wheel
     - python3 -m twine upload dist/* --repository pypi --config-file /tmp/.pypirc
-  only:
-    - tags
