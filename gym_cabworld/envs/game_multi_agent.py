@@ -28,13 +28,14 @@ class MultiAgentGame(Game):
 
         dirname = os.path.dirname(__file__)
         img_path = os.path.join(dirname, '..', 'images')
+        data_path = os.path.join(dirname, '..', 'data')
 
         if game_mode < 4:
             img = 'map_gen.png'
         else:
             img = 'small_map_gen.png'
 
-        self.map = Map(os.path.join(img_path, img), screen_width, game_mode)
+        self.map = Map(os.path.join(img_path, img), screen_width, game_mode, data_path)
         self.grid_size = self.map.get_grid_size()
 
         for _ in range(number_passengers):

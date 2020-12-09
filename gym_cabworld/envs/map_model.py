@@ -8,7 +8,7 @@ import pygame
 
 
 class Map:
-    def __init__(self, map_file, screen_size, game_mode):
+    def __init__(self, map_file, screen_size, game_mode, data_path):
         """
         Map for the cabworld defined by image
         @param map_file: map to create world
@@ -17,14 +17,12 @@ class Map:
         self.street_color = (175, 171, 171, 255)  # define color of street for radar
         self.passengers = []
 
-        dirname = os.path.dirname(__file__)
-        
         if game_mode < 4: 
-            map_file = 'gym_cabworld/data/map.dat'
+            map_file = 'map.dat'
         else: 
-            map_file = 'gym_cabworld/data/small_map.dat'
+            map_file = 'small_map.dat'
 
-        map_dat_path = os.path.join(dirname, '..', '..', map_file)
+        map_dat_path = os.path.join(data_path, map_file)        
         streets = []
         with open(map_dat_path, 'r') as fd:
             reader = csv.reader(fd)
