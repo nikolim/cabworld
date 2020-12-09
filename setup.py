@@ -14,7 +14,7 @@ setup(name='gym_cabworld',
       package_data={
           '': ['*.png'],
           'gym_cabworld': ['gym_cabworld/images/*.png'],
-          'gym_cabworld': ['*.dat'],
+          'gym_cabworld': ['gym_cabworld/data/*.dat'],
       },
       data_files=[
           ('/home/niko/Info/gym-cabworld', [os.path.join('gym_cabworld/images/', 'map_gen.png')]),
@@ -23,7 +23,7 @@ setup(name='gym_cabworld',
           ('/home/niko/Info/gym-cabworld', [os.path.join('gym_cabworld/images/', 'person_1.png')]),
           ('/home/niko/Info/gym-cabworld', [os.path.join('gym_cabworld/images/', 'person_2.png')]),
           ('/home/niko/Info/gym-cabworld', [os.path.join('gym_cabworld/images/', 'person_3.png')]),
-          ('/home/niko/Info/gym-cabworld', [os.path.join('map.dat')]),
+          ('/home/niko/Info/gym-cabworld', [os.path.join('gym_cabworld/data/small_map.dat')]),
           ('/home/niko/Info/gym-cabworld', [os.path.join('gym_cabworld/data/small_map.dat')]),
       ],
       )
