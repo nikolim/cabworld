@@ -1,6 +1,7 @@
 import gym
-from gym import spaces
 import numpy as np
+from gym import spaces
+
 from gym_cabworld.envs.game import Game
 from gym_cabworld.envs.game_multi_agent import MultiAgentGame
 
@@ -91,12 +92,14 @@ class CustomEnv4(CustomEnv):
         """
         super().__init__(4)
 
+
 class CustomEnv5(CustomEnv):
     def __init__(self):
         """
         Partial Dynamic: Fixed cab and three random passengers
         """
         super().__init__(5)
+
 
 class CustomEnv6(CustomEnv):
     def __init__(self):

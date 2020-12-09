@@ -1,12 +1,12 @@
 import os
-import math
-import pygame
 from random import randint
 
+import pygame
+
 from gym_cabworld.envs.cab_model import Cab
+from gym_cabworld.envs.game import Game
 from gym_cabworld.envs.map_model import Map
 from gym_cabworld.envs.passenger_model import Passenger
-from gym_cabworld.envs.game import Game
 
 screen_width = 1000
 screen_height = 1000
@@ -29,9 +29,9 @@ class MultiAgentGame(Game):
         dirname = os.path.dirname(__file__)
         img_path = os.path.join(dirname, '..', 'images')
 
-        if game_mode < 4: 
+        if game_mode < 4:
             img = 'map_gen.png'
-        else: 
+        else:
             img = 'small_map_gen.png'
 
         self.map = Map(os.path.join(img_path, img), screen_width, game_mode)
@@ -108,8 +108,9 @@ class MultiAgentGame(Game):
             else:
                 pass_x, pass_y = 0, 0
                 dest_x, dest_y = 0, 0
-            observations.append([r1, r2, r3, pick_up, drop_off,
-                                 int(pos_x), int(pos_y), pass_x, pass_y, dest_x, dest_y])
+            state = [r1, r2, r3, pick_up, drop_off,
+                     int(pos_x), int(pos_y), pass_x, pass_y, dest_x, dest_y]
+            observations.append(self.normalise(state))
         return observations
 
     def view(self):

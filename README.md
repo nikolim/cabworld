@@ -2,7 +2,7 @@
 
 Reinforcement Environment based an OpenGymAI and Pygame. 
 A cab is driving around and tries to pick-up passengers to drive them to their destination.
-Each passenger is marked with the same color as his destination
+Each passenger is marked with the same color as his destination.
 
 ![Cabworld](demo.gif)
 
@@ -39,7 +39,7 @@ env.render()
 ### 1. Environment description
 1. The Map has 1000 x 1000 pixels (action space is limited to 25x25 and 10x10)
 2. The cab can only perform discrete actions
-* 0: drive forward (40px)
+* 0: drive forward (1 grid (40px, 100px))
 * 1: turn right (90 deg)
 * 2: turn left (90 deg)
 * 3: pick-up passenger
@@ -53,20 +53,23 @@ env.render()
 
 ### 2. Initial conditions
 
-### Cabworld-v0
+To test algorithms the smaller environment (v4, v5, v6, v7) can be used.
+Moreover, with the help of jupyter notebooks a map of any size and with any streets can be created.
+
+### Cabworld-v0 (v4 small map)
 1. Cab starting at the top-left-corner
 2. Passenger starting at bottom-right-corner 
 3. Passenger wants to get to the top-left corner 
 
-### Cabworld-v1
+### Cabworld-v1 (v5 small map)
 1. Cab starting at the top-left-corner
 2. 3 Passengers with random start-position and random destination
 
-### Cabworld-v2
+### Cabworld-v2 (v6 small map)
 1. Cab starting at the random position
 2. 3 Passengers with random start-position and random destination
 
-### Cabworld-v3 (Multi-Agent)
+### Cabworld-v3 (Multi-Agent) (v7 small map)
 1. 2 Cabs starting at the random position
 2. 3 Passengers with random start-position and random destination
 
@@ -75,13 +78,6 @@ env.render()
 2. Cab brings passenger to their destination as fast as possible
 3. Cab drops off passenger at their destination
 
-## Tensorboard 
-Use Tensorboard to compare different algorithms and tune hyperparameters
-```bash 
-tensorboard --logdir=runs
-```
-http://localhost:6006/
-
 ## Test 
 Run 25 episodes of each version with random policy
 ```bash 
@@ -89,6 +85,9 @@ pytest tests.py
 ```
 
 ## Changelog
+
+### [1.0] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.0) (09.12.2020)
+- Clean-up for first release
 
 ### [0.9] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_0.9) (08.12.2020)
 - Integrated small world (10x10) and publish packet

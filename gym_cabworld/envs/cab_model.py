@@ -1,5 +1,6 @@
-import pygame
 import math
+
+import pygame
 
 
 class Cab:
@@ -55,24 +56,24 @@ class Cab:
         sensor_field = self.grid_size  # how far the sensors of the cab / driver can see
 
         front_x = self.pos[0] + \
-            math.cos(math.radians(360 - self.angle)) * sensor_field
+                  math.cos(math.radians(360 - self.angle)) * sensor_field
         front_y = self.pos[1] + \
-            math.sin(math.radians(360 - self.angle)) * sensor_field
+                  math.sin(math.radians(360 - self.angle)) * sensor_field
 
         if self.check_if_street(front_x, front_y):
             self.radars[0] = 1
 
         left_x = self.pos[0] + \
-            math.cos(math.radians(360 - self.angle - 90)) * sensor_field
+                 math.cos(math.radians(360 - self.angle - 90)) * sensor_field
         left_y = self.pos[1] + \
-            math.sin(math.radians(360 - self.angle - 90)) * sensor_field
+                 math.sin(math.radians(360 - self.angle - 90)) * sensor_field
         if self.check_if_street(left_x, left_y):
             self.radars[1] = 1
 
         right_x = self.pos[0] + \
-            math.cos(math.radians(360 - self.angle + 90)) * sensor_field
+                  math.cos(math.radians(360 - self.angle + 90)) * sensor_field
         right_y = self.pos[1] + \
-            math.sin(math.radians(360 - self.angle + 90)) * sensor_field
+                  math.sin(math.radians(360 - self.angle + 90)) * sensor_field
         if self.check_if_street(right_x, right_y):
             self.radars[2] = 1
 
@@ -175,7 +176,7 @@ class Cab:
                 self.passenger = None
                 self.rewards += self.drop_off_reward
                 return
-        
+
         self.rewards += self.wrong_drop_off_penalty
 
     def draw(self, screen):
@@ -186,7 +187,7 @@ class Cab:
         screen.blit(self.rotate_cab_img, self.img_pos)
         if self.passenger:
             color = (255, 0, 0)
-            light_size = int(self.grid_size/10)
+            light_size = int(self.grid_size / 10)
             pygame.draw.circle(screen, self.passenger.color, self.pos, light_size, light_size)
 
     def rot_center(self, image, angle):
@@ -213,11 +214,11 @@ class Cab:
             color = self.map.map_img.get_at((int(x), int(y)))
             street_color = self.map.street_color
             red_similar = (
-                street_color[0] - delta) < color[0] < (street_color[0] + delta)
+                                  street_color[0] - delta) < color[0] < (street_color[0] + delta)
             green_similar = (
-                street_color[1] - delta) < color[1] < (street_color[1] + delta)
+                                    street_color[1] - delta) < color[1] < (street_color[1] + delta)
             blue_similar = (
-                street_color[2] - delta) < color[2] < (street_color[2] + delta)
+                                   street_color[2] - delta) < color[2] < (street_color[2] + delta)
             return red_similar and green_similar and blue_similar
         except IndexError:
             return False

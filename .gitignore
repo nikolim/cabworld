@@ -12,3 +12,4 @@ __pycache__/
 /.idea/
 .eggs/
 /builds
+/venv

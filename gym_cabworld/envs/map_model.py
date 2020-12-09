@@ -1,15 +1,16 @@
-import os
 import csv
-import pygame
 import math
+import os
 import random
+
 import numpy as np
+import pygame
 
 
 class Map:
     def __init__(self, map_file, screen_size, game_mode):
         """
-        Map for the cabworld definded by image
+        Map for the cabworld defined by image
         @param map_file: map to create world
         """
         self.map_img = pygame.image.load(map_file)
@@ -19,9 +20,9 @@ class Map:
         dirname = os.path.dirname(__file__)
         
         if game_mode < 4: 
-            map_file = 'map.dat'
+            map_file = 'gym_cabworld/data/map.dat'
         else: 
-            map_file = 'small_map.dat'
+            map_file = 'gym_cabworld/data/small_map.dat'
 
         map_dat_path = os.path.join(dirname, '..', '..', map_file)
         streets = []
@@ -89,11 +90,11 @@ class Map:
 
     def get_random_pos_on_map(self):
         """
-        Get random postion on map (on the street)
+        Get random position on map (on the street)
         @return pos  in pixels
         """
         x, y = 0, 0
-        while (self.streets[y][x] != 1 or (x,y) in self.used_rand_pos):
+        while self.streets[y][x] != 1 or (x, y) in self.used_rand_pos:
             x = random.randint(0, len(self.streets)-1)
             y = random.randint(0, len(self.streets)-1)
         self.used_rand_pos.append((x,y))
@@ -105,7 +106,7 @@ class Map:
         @param pos: one-hot
         @return layer
         """
-        layer = np.ones((len(self.streets), len(self.streets)))
+        layer = np.zeros((len(self.streets), len(self.streets)))
         x, y = pos
         x = int((x - (self.grid_size/2)) / self.grid_size)
         y = int((y - (self.grid_size/2)) / self.grid_size)
@@ -123,7 +124,7 @@ class Map:
         # 2 layer -> cab 
         cab_layer = self.create_layer(cab_pos)
         # 3 layer -> passenger pos
-        passenger = self.get_nearest_passenger()
+        passenger = self.get_nearest_passenger(cab_pos)
         pass_pos_layer = self.create_layer(passenger.pos)
         # 4 layer -> passenger dest
         pass_dest_layer = self.create_layer(passenger.destination)

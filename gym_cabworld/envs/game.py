@@ -1,8 +1,7 @@
 import os
-import time
-import math
-import pygame
 from random import randint
+
+import pygame
 
 from gym_cabworld.envs.cab_model import Cab
 from gym_cabworld.envs.map_model import Map
@@ -11,6 +10,7 @@ from gym_cabworld.envs.passenger_model import Passenger
 screen_width = 1000
 screen_height = 1000
 number_passengers = 2
+
 
 class Game:
     def __init__(self, game_mode):
@@ -25,10 +25,10 @@ class Game:
 
         dirname = os.path.dirname(__file__)
         img_path = os.path.join(dirname, '..', 'images')
-        
-        if game_mode < 4: 
+
+        if game_mode < 4:
             img = 'map_gen.png'
-        else: 
+        else:
             img = 'small_map_gen.png'
 
         self.map = Map(os.path.join(img_path, img), screen_width, game_mode)
@@ -37,10 +37,11 @@ class Game:
         if (game_mode % 4) == 0:
             img = 'person_' + str(randint(1, 3)) + '.png'
             passenger = Passenger(os.path.join(img_path, img),
-                                  self.map, [screen_width-int(1.5*self.grid_size), screen_width-int(1.5*self.grid_size)], 
-                                  0, [int(1.5*self.grid_size), int(1.5*self.grid_size)], self.grid_size)
+                                  self.map,
+                                  [screen_width - int(1.5 * self.grid_size), screen_width - int(1.5 * self.grid_size)],
+                                  0, [int(1.5 * self.grid_size), int(1.5 * self.grid_size)], self.grid_size)
             self.map.add_passenger(passenger)
-            cab_pos = [int(1.5*self.grid_size), int(1.5*self.grid_size)]
+            cab_pos = [int(1.5 * self.grid_size), int(1.5 * self.grid_size)]
 
         elif (game_mode % 4) == 1:
             for _ in range(3):
@@ -50,7 +51,7 @@ class Game:
                 passenger = Passenger(os.path.join(img_path, img),
                                       self.map, random_pos, 0, random_dest, self.grid_size)
                 self.map.add_passenger(passenger)
-            cab_pos = [int(1.5*self.grid_size), int(1.5*self.grid_size)]
+            cab_pos = [int(1.5 * self.grid_size), int(1.5 * self.grid_size)]
 
         elif (game_mode % 4) == 2:
             for _ in range(3):
@@ -101,6 +102,22 @@ class Game:
         """
         return self.map.all_passengers_reached_dest()
 
+    def normalise(self, state):
+        """"
+        Normalise state
+        @param state
+        @return normalised state
+        """
+        features = []
+        for i in range(5):
+            if state[i] == 1:
+                features.append(1)
+            else:
+                features.append(-1)
+        for j in range(5, 11):
+            features.append(state[j] / (screen_width - int(1.5 * self.grid_size) / 2) - 1)
+        return tuple(features)
+
     def observe(self):
         """"
         Observe environment
@@ -112,7 +129,6 @@ class Game:
         drop_off = self.cab.drop_off_possible
         # own position
         pos_x, pos_y = self.cab.pos
-        angle = self.cab.angle
         if self.cab.next_passenger:
             pass_x, pass_y = self.cab.next_passenger.pos
             dest_x, dest_y = self.cab.next_passenger.destination
@@ -121,19 +137,10 @@ class Game:
             dest_x, dest_y = 0, 0
         state = [r1, r2, r3, pick_up, drop_off, round(
             pos_x), round(pos_y), pass_x, pass_y, dest_x, dest_y]
-        # normalise features
-        features = []
-        for i in range(5):
-            if state[i] == 1:
-                features.append(1)
-            else:
-                features.append(-1)
-        for j in range(5, 11):
-            features.append(state[j] / ((screen_width-int(1.5*self.grid_size)/2)) - 1)
-        return tuple(features)
+        return self.normalise(state)
 
     def view(self):
-        """"
+        """
         Render environment using Pygame
         """
         for event in pygame.event.get():

@@ -1,6 +1,6 @@
-import pygame
-import math
 from random import randint
+
+import pygame
 
 
 class Passenger:
@@ -34,11 +34,11 @@ class Passenger:
         @param screen: to print on
         """
         if not self.in_cab and not self.reached_destination:
-            pygame.draw.circle(screen, self.color, self.pos, self.img_size, int(self.img_size/10))
+            pygame.draw.circle(screen, self.color, self.pos, self.img_size, int(self.img_size/8))
             screen.blit(self.passenger_img, self.img_pos)
 
         if not self.reached_destination:
-            pygame.draw.circle(screen, self.color, self.destination, self.img_size, int(self.img_size/10))
+            pygame.draw.circle(screen, self.color, self.destination, self.img_size, int(self.img_size/8))
 
     def get_in_cab(self):
         """
