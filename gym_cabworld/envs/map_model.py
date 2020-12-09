@@ -6,6 +6,7 @@ import random
 import numpy as np
 import pygame
 
+random.seed(0)
 
 class Map:
     def __init__(self, map_file, screen_size, game_mode, data_path):

@@ -1,4 +1,5 @@
 import os
+import random
 from random import randint
 
 import pygame
@@ -13,6 +14,7 @@ screen_height = 1000
 number_passengers = 3
 number_cabs = 2
 
+random.seed(0)
 
 class MultiAgentGame(Game):
     def __init__(self, game_mode):
