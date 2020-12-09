@@ -5,7 +5,7 @@ setup(name='gym_cabworld',
       description='Cabworld Reinforcement Environment',
       long_description='Reinforcement Learning environment with the goal of teaching cabs to bring passengers '
                        'efficiently to their destination. Based on OpenAIGym and Pygame',
-      version='1.0',
+      version='1.0.0',
       install_requires=['gym', 'pygame', 'wheel'],
       author='Nikolai Limbrunner',
       author_email='nikolai.limbrunner@web.de',
@@ -26,4 +26,4 @@ setup(name='gym_cabworld',
           ('/gym_cabworld/data', [os.path.join('gym_cabworld/data/small_map.dat')]),
           ('/gym_cabworld/data', [os.path.join('gym_cabworld/data/map.dat')]),
       ],
-      )
+  )
