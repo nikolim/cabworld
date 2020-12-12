@@ -45,8 +45,8 @@ env.render()
 * 3: pick-up passenger
 * 4: drop-off passenger
 3. Rewards / Penalties
-* Pick-up-reward: 50 
-* Drop-off-reward: 50
+* Pick-up-reward: 100 
+* Drop-off-reward: 100
 * Step-penality: -1
 * Wrong pick-up/drop-off penality: -10
 * Illegal move penalty: -5
@@ -85,6 +85,9 @@ pytest tests.py
 ```
 
 ## Changelog
+
+### [1.0.1] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.0.1) (12.12.2020)
+- Added random seed, increase pick-up and drop-off reward to 100
 
 ### [1.0] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.0) (09.12.2020)
 - Clean-up for first release
