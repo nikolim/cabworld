@@ -1,5 +1,6 @@
 import os
 from random import randint
+import random
 
 import pygame
 
@@ -11,6 +12,7 @@ screen_width = 1000
 screen_height = 1000
 number_passengers = 2
 
+random.seed(0)
 
 class Game:
     def __init__(self, game_mode):

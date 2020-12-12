@@ -35,8 +35,8 @@ class Cab:
                         int(self.pos[1] - (self.img_size / 2))]
 
         # rewards
-        self.pick_up_reward = 50
-        self.drop_off_reward = 50
+        self.pick_up_reward = 100
+        self.drop_off_reward = 100
 
         # motivate cab to drive the shortest path
         self.path_penalty = -1
