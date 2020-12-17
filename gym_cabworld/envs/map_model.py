@@ -8,6 +8,7 @@ import pygame
 
 random.seed(0)
 
+
 class Map:
     def __init__(self, map_file, screen_size, game_mode, data_path):
         """
@@ -18,14 +19,14 @@ class Map:
         self.street_color = (175, 171, 171, 255)  # define color of street for radar
         self.passengers = []
 
-        if game_mode < 4: 
-            map_file = 'map.dat'
-        else: 
-            map_file = 'small_map.dat'
+        if game_mode < 4:
+            map_file = "map.dat"
+        else:
+            map_file = "small_map.dat"
 
-        map_dat_path = os.path.join(data_path, map_file)        
+        map_dat_path = os.path.join(data_path, map_file)
         streets = []
-        with open(map_dat_path, 'r') as fd:
+        with open(map_dat_path, "r") as fd:
             reader = csv.reader(fd)
             for row in reader:
                 streets.append([int(x) for x in row])
@@ -34,8 +35,8 @@ class Map:
         self.grid_size = int(screen_size / len(self.streets))
 
         self.used_rand_pos = []
-    
-    def get_grid_size(self): 
+
+    def get_grid_size(self):
         return self.grid_size
 
     def add_passenger(self, passenger):
@@ -49,16 +50,16 @@ class Map:
         """
         Calculate distance between two objects
         @param pos1: position of 1.object
-        @param pos2: position of 2.object 
+        @param pos2: position of 2.object
         @return distance in pixels
         """
         return round(math.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2))
 
     def get_n_nearest_passengers(self, pos, n):
         """
-        Get nearest passenger 
+        Get n nearest passenger
         @param pos: position of cab
-        @return nearest passenger
+        @return nearest passengers
         """
         distances = []
         passenger_dict = {}
@@ -68,9 +69,9 @@ class Map:
                 tmp_distance = self.calc_distance(pos, tmp_passenger.pos)
                 distances.append(tmp_distance)
                 passenger_dict[tmp_distance] = tmp_passenger
-        
+
         distances.sort()
-        keys = distances[:(min(n, len(distances)))]
+        keys = distances[: (min(n, len(distances)))]
         passengers = [passenger_dict[key] for key in keys]
         return passengers
 
@@ -98,10 +99,15 @@ class Map:
         """
         x, y = 0, 0
         while self.streets[y][x] != 1 or (x, y) in self.used_rand_pos:
-            x = random.randint(0, len(self.streets)-1)
-            y = random.randint(0, len(self.streets)-1)
-        self.used_rand_pos.append((x,y))
-        return [x * self.grid_size + int(self.grid_size/2), y * self.grid_size + int(self.grid_size/2)]
+            x = random.randint(0, len(self.streets) - 1)
+            y = random.randint(0, len(self.streets) - 1)
+        self.used_rand_pos.append((x, y))
+        if len(self.used_rand_pos) > 10: 
+            self.used_rand_pos.pop(0)
+        return [
+            x * self.grid_size + int(self.grid_size / 2),
+            y * self.grid_size + int(self.grid_size / 2),
+        ]
 
     def create_layer(self, pos):
         """
@@ -111,8 +117,8 @@ class Map:
         """
         layer = np.zeros((len(self.streets), len(self.streets)))
         x, y = pos
-        x = int((x - (self.grid_size/2)) / self.grid_size)
-        y = int((y - (self.grid_size/2)) / self.grid_size)
+        x = int((x - (self.grid_size / 2)) / self.grid_size)
+        y = int((y - (self.grid_size / 2)) / self.grid_size)
         layer[x][y] = 1
         return layer
 
@@ -124,7 +130,7 @@ class Map:
         """
         # 1 layer -> map
         street_layer = self.streets
-        # 2 layer -> cab 
+        # 2 layer -> cab
         cab_layer = self.create_layer(cab_pos)
         # 3 layer -> passenger pos
         passenger = self.get_nearest_passenger(cab_pos)
@@ -132,5 +138,7 @@ class Map:
         # 4 layer -> passenger dest
         pass_dest_layer = self.create_layer(passenger.destination)
 
-        state_deck = np.array([street_layer, cab_layer, pass_pos_layer, pass_dest_layer])
+        state_deck = np.array(
+            [street_layer, cab_layer, pass_pos_layer, pass_dest_layer]
+        )
         return state_deck

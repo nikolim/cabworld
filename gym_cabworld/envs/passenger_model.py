@@ -5,14 +5,15 @@ import pygame
 
 random.seed(0)
 
+
 class Passenger:
     def __init__(self, passenger_file, map, pos, angle, destination, grid_size):
         """
         Passenger who is waiting to be picked up by a cab
-        @param passenger_file: icon for passenger 
-        @param map: to put the passenger on 
-        @param pos: position of the passenger 
-        @param angle: of the passenger 
+        @param passenger_file: icon for passenger
+        @param map: to put the passenger on
+        @param pos: position of the passenger
+        @param angle: of the passenger
         @param destination: of the passenger
         """
         self.pos = pos
@@ -22,14 +23,18 @@ class Passenger:
         self.reached_destination = False
         self.time_waiting = 0
         self.in_cab = False
-        self.img_size = int(grid_size/2)
+        self.img_size = int(grid_size / 2)
         self.passenger_img = pygame.image.load(passenger_file)
-        self.passenger_img = pygame.transform.scale(self.passenger_img, (self.img_size, self.img_size))
+        self.passenger_img = pygame.transform.scale(
+            self.passenger_img, (self.img_size, self.img_size)
+        )
         self.passenger_img_rot = self.rot_center(self.passenger_img, self.angle)
-        self.img_pos = [(self.pos[0] - (self.img_size / 2)), (self.pos[1] - (self.img_size / 2))]
+        self.img_pos = [
+            (self.pos[0] - (self.img_size / 2)),
+            (self.pos[1] - (self.img_size / 2)),
+        ]
 
         self.color = (randint(0, 255), randint(0, 255), randint(0, 255), 128)
-
 
     def draw(self, screen):
         """
@@ -37,11 +42,19 @@ class Passenger:
         @param screen: to print on
         """
         if not self.in_cab and not self.reached_destination:
-            pygame.draw.circle(screen, self.color, self.pos, self.img_size, int(self.img_size/8))
+            pygame.draw.circle(
+                screen, self.color, self.pos, self.img_size, int(self.img_size / 8)
+            )
             screen.blit(self.passenger_img, self.img_pos)
 
         if not self.reached_destination:
-            pygame.draw.circle(screen, self.color, self.destination, self.img_size, int(self.img_size/8))
+            pygame.draw.circle(
+                screen,
+                self.color,
+                self.destination,
+                self.img_size,
+                int(self.img_size / 8),
+            )
 
     def get_in_cab(self):
         """
@@ -70,7 +83,7 @@ class Passenger:
 
     def reached_destination(self):
         """
-        Check if the passenger has reached its destination 
+        Check if the passenger has reached its destination
         @return
         """
         delta = 20  # define how close the taxi has to be to the destination of the passenger

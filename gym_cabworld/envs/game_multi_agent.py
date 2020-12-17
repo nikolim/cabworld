@@ -16,49 +16,52 @@ number_cabs = 2
 
 random.seed(0)
 
+
 class MultiAgentGame(Game):
     def __init__(self, game_mode):
         """
-        Multi agent world 
+        Multi agent world
         """
         pygame.init()
-        pygame.display.set_caption('Cabworld-v3')
+        pygame.display.set_caption("Cabworld-v3")
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.clock = pygame.time.Clock()
 
         self.number_cabs = number_cabs
 
         dirname = os.path.dirname(__file__)
-        img_path = os.path.join(dirname, '..', 'images')
-        data_path = os.path.join(dirname, '..', 'data')
+        self.img_path = os.path.join(dirname, "..", "images")
+        data_path = os.path.join(dirname, "..", "data")
 
         if game_mode < 4:
-            img = 'map_gen.png'
+            img = "map_gen.png"
         else:
-            img = 'small_map_gen.png'
+            img = "small_map_gen.png"
 
-        self.map = Map(os.path.join(img_path, img), screen_width, game_mode, data_path)
+        self.map = Map(
+            os.path.join(self.img_path, img), screen_width, game_mode, data_path
+        )
         self.grid_size = self.map.get_grid_size()
 
         for _ in range(number_passengers):
-            random_pos = self.map.get_random_pos_on_map()
-            random_dest = self.map.get_random_pos_on_map()
-            img = 'person_' + str(randint(1, 3)) + '.png'
-            passenger = Passenger(os.path.join(img_path, img),
-                                  self.map, random_pos, 0, random_dest, self.grid_size)
-            self.map.add_passenger(passenger)
+            self.add_passenger()
 
         self.cabs = []
         for _ in range(number_cabs):
             random_pos = self.map.get_random_pos_on_map()
-            cab = Cab(os.path.join(img_path, 'cab.png'), self.map, random_pos, self.grid_size)
+            cab = Cab(
+                os.path.join(self.img_path, "cab.png"),
+                self.map,
+                random_pos,
+                self.grid_size,
+            )
             self.cabs.append(cab)
 
         self.game_speed = 60
         self.mode = 0
 
     def action(self, actions):
-        """"
+        """ "
         Execute action on cab
         @param actions: action to perform
         """
@@ -78,21 +81,21 @@ class MultiAgentGame(Game):
             cab.update()
 
     def evaluate(self):
-        """"
+        """ "
         Evaluate rewards
         @return reward
         """
         return [cab.rewards for cab in self.cabs]
 
     def is_done(self):
-        """"
+        """ "
         Check if all passengers have reached their destination
         @return bool
         """
         return self.map.all_passengers_reached_dest()
 
     def observe(self):
-        """"
+        """ "
         Observe environment
         @return state of environment
         """
@@ -100,12 +103,11 @@ class MultiAgentGame(Game):
         for cab in self.cabs:
             # Possible actions
             r1, r2, r3 = cab.radars
-            pick_up =cab.pick_up_possible
+            pick_up = cab.pick_up_possible
             drop_off = cab.drop_off_possible
             # own position
             pos_x, pos_y = cab.pos
-            state = [r1, r2, r3, pick_up, drop_off, round(
-                pos_x), round(pos_y)]
+            state = [r1, r2, r3, pick_up, drop_off, round(pos_x), round(pos_y)]
             for passenger in cab.next_passengers:
                 pass_x, pass_y = passenger.pos
                 dest_x, dest_y = passenger.destination
@@ -117,7 +119,7 @@ class MultiAgentGame(Game):
         return observations
 
     def view(self):
-        """"
+        """ "
         Render environment using Pygame
         """
         for event in pygame.event.get():
