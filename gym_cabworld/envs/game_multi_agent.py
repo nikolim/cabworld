@@ -100,19 +100,19 @@ class MultiAgentGame(Game):
         for cab in self.cabs:
             # Possible actions
             r1, r2, r3 = cab.radars
-            pick_up = cab.pick_up_possible
+            pick_up =cab.pick_up_possible
             drop_off = cab.drop_off_possible
             # own position
             pos_x, pos_y = cab.pos
-            angle = cab.angle
-            if cab.next_passenger:
-                pass_x, pass_y = cab.next_passenger.pos
-                dest_x, dest_y = cab.next_passenger.destination
-            else:
-                pass_x, pass_y = 0, 0
-                dest_x, dest_y = 0, 0
-            state = [r1, r2, r3, pick_up, drop_off,
-                     int(pos_x), int(pos_y), pass_x, pass_y, dest_x, dest_y]
+            state = [r1, r2, r3, pick_up, drop_off, round(
+                pos_x), round(pos_y)]
+            for passenger in cab.next_passengers:
+                pass_x, pass_y = passenger.pos
+                dest_x, dest_y = passenger.destination
+                state.append(pass_x)
+                state.append(pass_y)
+                state.append(dest_x)
+                state.append(dest_y)
             observations.append(self.normalise(state))
         return observations
 

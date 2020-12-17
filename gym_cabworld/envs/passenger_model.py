@@ -30,6 +30,7 @@ class Passenger:
 
         self.color = (randint(0, 255), randint(0, 255), randint(0, 255), 128)
 
+
     def draw(self, screen):
         """
         Draw the passenger with icon on map

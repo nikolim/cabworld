@@ -54,21 +54,25 @@ class Map:
         """
         return round(math.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2))
 
-    def get_nearest_passenger(self, pos):
+    def get_n_nearest_passengers(self, pos, n):
         """
         Get nearest passenger 
         @param pos: position of cab
         @return nearest passenger
         """
-        nearest_passenger = None
-        min_distance = 100000
+        distances = []
+        passenger_dict = {}
+
         for tmp_passenger in self.passengers:
             if not tmp_passenger.reached_destination and not tmp_passenger.in_cab:
                 tmp_distance = self.calc_distance(pos, tmp_passenger.pos)
-                if tmp_distance < min_distance:
-                    nearest_passenger = tmp_passenger
-                    min_distance = tmp_distance
-        return nearest_passenger
+                distances.append(tmp_distance)
+                passenger_dict[tmp_distance] = tmp_passenger
+        
+        distances.sort()
+        keys = distances[:(min(n, len(distances)))]
+        passengers = [passenger_dict[key] for key in keys]
+        return passengers
 
     def draw_passengers(self, screen):
         """

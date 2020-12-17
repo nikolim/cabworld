@@ -21,7 +21,7 @@ class Cab:
         self.distance = 0
         self.time_spent = 0
         self.passenger = None
-        self.next_passenger = self.map.get_nearest_passenger(self.pos)
+        self.next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
         self.pick_up_possible = 0
         self.drop_off_possible = 0
         self.debug = False
@@ -93,12 +93,13 @@ class Cab:
         self.pick_up_possible = 0
         if self.passenger is None:
             # Empty cab -> check if pick-up is possible
-            self.next_passenger = self.map.get_nearest_passenger(self.pos)
-            if self.next_passenger:
+            self.next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
+            for passenger in self.next_passengers:
                 distance = self.map.calc_distance(
-                    self.pos, self.next_passenger.pos)
+                    self.pos, passenger.pos)
                 if distance == 0:
                     self.pick_up_possible = 1
+                    break
         if self.passenger:
             # Occupied cab -> check if drop-off possible
             distance = self.map.calc_distance(
@@ -152,12 +153,13 @@ class Cab:
         """
         self.speed = 0
         if self.passenger is None:
-            passenger = self.map.get_nearest_passenger(self.pos)
-            if passenger:
+            next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
+            if len(next_passengers) > 0:
+                passenger = next_passengers[0]
                 if self.map.calc_distance(self.pos, passenger.pos) == 0:
                     self.passenger = passenger
                     self.passenger.get_in_cab()
-                    self.rewards += self.pick_up_reward
+                    self.rewards += (self.pick_up_reward + 1)
                     return
         self.rewards += self.wrong_pick_up_penalty
 
@@ -174,7 +176,7 @@ class Cab:
                 self.passenger.reached_destination = True
                 self.passenger.get_out_of_cab()
                 self.passenger = None
-                self.rewards += self.drop_off_reward
+                self.rewards += (self.drop_off_reward +1)
                 return
 
         self.rewards += self.wrong_drop_off_penalty

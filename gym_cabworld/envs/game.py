@@ -117,8 +117,12 @@ class Game:
                 features.append(1)
             else:
                 features.append(-1)
-        for j in range(5, 11):
-            features.append(state[j] / (screen_width - int(1.5 * self.grid_size) / 2) - 1)
+        for j in range(5, len(state)):
+            features.append(state[j] / (screen_width - int(1.5 * self.grid_size)))
+
+        # fill up the state if not enough passengers
+        for _ in range(len(state), 19): 
+            features.append(-1)
         return tuple(features)
 
     def observe(self):
@@ -132,14 +136,15 @@ class Game:
         drop_off = self.cab.drop_off_possible
         # own position
         pos_x, pos_y = self.cab.pos
-        if self.cab.next_passenger:
-            pass_x, pass_y = self.cab.next_passenger.pos
-            dest_x, dest_y = self.cab.next_passenger.destination
-        else:
-            pass_x, pass_y = 0, 0
-            dest_x, dest_y = 0, 0
         state = [r1, r2, r3, pick_up, drop_off, round(
-            pos_x), round(pos_y), pass_x, pass_y, dest_x, dest_y]
+            pos_x), round(pos_y)]
+        for passenger in self.cab.next_passengers:
+            pass_x, pass_y = passenger.pos
+            dest_x, dest_y = passenger.destination
+            state.append(pass_x)
+            state.append(pass_y)
+            state.append(dest_x)
+            state.append(dest_y)
         return self.normalise(state)
 
     def view(self):
