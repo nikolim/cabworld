@@ -10,8 +10,9 @@ from gym_cabworld.envs.passenger_model import Passenger
 
 screen_width = 1000
 screen_height = 1000
-number_passengers = 2
-respawn_rate = 500
+number_passengers = 3
+max_number_passengers = 5
+respawn_rate = 100
 
 
 class Game:
@@ -41,16 +42,29 @@ class Game:
         self.grid_size = self.map.get_grid_size()
 
         if (game_mode % 4) == 0:
-            self.add_passenger()
+            img = "person_" + str(randint(1, 3)) + ".png"
+            passenger = Passenger(
+                os.path.join(self.img_path, img),
+                self.map,
+                [
+                    screen_width - int(1.5 * self.grid_size),
+                    screen_width - int(1.5 * self.grid_size),
+                ],
+                0,
+                [int(1.5 * self.grid_size), int(1.5 * self.grid_size)],
+                self.grid_size,
+            )
+            self.map.add_passenger(passenger)
+
             cab_pos = [int(1.5 * self.grid_size), int(1.5 * self.grid_size)]
 
         elif (game_mode % 4) == 1:
-            for _ in range(3):
+            for _ in range(number_passengers):
                 self.add_passenger()
             cab_pos = [int(1.5 * self.grid_size), int(1.5 * self.grid_size)]
 
         elif (game_mode % 4) == 2:
-            for _ in range(3):
+            for _ in range(number_passengers):
                 self.add_passenger()
             cab_pos = self.map.get_random_pos_on_map()
 
@@ -97,11 +111,15 @@ class Game:
         elif action == 4:
             self.cab.drop_off_passenger()
 
-        self.cab.update()
         self.steps += 1
-
-        if (respawn_rate % self.steps) == 0:
+        # repawn new passengers
+        if (
+            len(self.map.passengers) < max_number_passengers
+            and self.steps % respawn_rate == 0
+        ):
             self.add_passenger()
+
+        self.cab.update()
 
     def evaluate(self):
         """ "
@@ -130,7 +148,9 @@ class Game:
             else:
                 features.append(-1)
         for j in range(5, len(state)):
-            features.append(state[j] / (screen_width - int(1.5 * self.grid_size)))
+            features.append(
+                round(state[j] / (screen_width - int(1.5 * self.grid_size)), 8)
+            )
 
         # fill up the state if not enough passengers
         for _ in range(len(state), 19):

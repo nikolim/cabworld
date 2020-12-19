@@ -13,8 +13,7 @@ screen_width = 1000
 screen_height = 1000
 number_passengers = 3
 number_cabs = 2
-
-random.seed(0)
+respawn_rate = 500
 
 
 class MultiAgentGame(Game):
@@ -59,6 +58,7 @@ class MultiAgentGame(Game):
 
         self.game_speed = 60
         self.mode = 0
+        self.steps = 0
 
     def action(self, actions):
         """ "
@@ -79,6 +79,12 @@ class MultiAgentGame(Game):
             elif action == 4:
                 cab.drop_off_passenger()
             cab.update()
+            self.steps += 1
+
+        if (self.steps % respawn_rate == 0 and len(self.map.passengers) < 5) or (
+            len(self.map.passengers) < 2
+        ):
+            self.add_passenger()
 
     def evaluate(self):
         """ "

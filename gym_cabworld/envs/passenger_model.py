@@ -3,8 +3,6 @@ from random import randint
 
 import pygame
 
-random.seed(0)
-
 
 class Passenger:
     def __init__(self, passenger_file, map, pos, angle, destination, grid_size):

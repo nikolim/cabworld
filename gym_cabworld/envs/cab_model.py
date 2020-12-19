@@ -86,9 +86,7 @@ class Cab:
         """
         Calculate current rewards
         """
-        if self.passenger:
-            self.rewards += self.path_penalty
-        self.rewards += self.path_penalty
+        self.rewards += self.step_penalty
 
     def check_for_passengers(self):
         """
@@ -136,21 +134,21 @@ class Cab:
         if self.radars[0] == 1:
             self.speed = self.grid_size
         else:
-            self.rewards += self.illegal_move_penalty
+            self.rewards += self.illegal_move_penalty + 1
 
     def turn_left(self):
         if self.radars[1] == 1:
             self.speed = self.grid_size
             self.angle += 90
         else:
-            self.rewards += self.illegal_move_penalty
+            self.rewards += self.illegal_move_penalty + 1
 
     def turn_right(self):
         if self.radars[2] == 1:
             self.speed = self.grid_size
             self.angle -= 90
         else:
-            self.rewards += self.illegal_move_penalty
+            self.rewards += self.illegal_move_penalty + 1
 
     def pick_up_passenger(self):
         """
@@ -166,7 +164,7 @@ class Cab:
                     self.passenger.get_in_cab()
                     self.rewards += self.pick_up_reward + 1
                     return
-        self.rewards += self.wrong_pick_up_penalty
+        self.rewards += self.wrong_pick_up_penalty + 1
 
     def drop_off_passenger(self):
         """
@@ -184,8 +182,7 @@ class Cab:
                 self.passenger = None
                 self.rewards += self.drop_off_reward + 1
                 return
-
-        self.rewards += self.wrong_drop_off_penalty
+        self.rewards += self.wrong_drop_off_penalty + 1
 
     def draw(self, screen):
         """

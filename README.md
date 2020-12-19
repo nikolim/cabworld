@@ -86,7 +86,10 @@ pytest tests.py
 
 ## Changelog
 
-### [1.0.2] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.0.12) (17.12.2020)
+### [1.0.3] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.0.3) (19.12.2020)
+- Extended tests, fixed bug in reward system, set max-steps to 10k, respawn-rate to 100 steps
+
+### [1.0.2] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.0.2) (17.12.2020)
 - Extended state with 3 nearest passengers, added respawn rate for passengers
 
 ### [1.0.1] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.0.1) (12.12.2020)

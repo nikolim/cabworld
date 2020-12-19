@@ -6,8 +6,6 @@ import random
 import numpy as np
 import pygame
 
-random.seed(0)
-
 
 class Map:
     def __init__(self, map_file, screen_size, game_mode, data_path):
@@ -102,7 +100,7 @@ class Map:
             x = random.randint(0, len(self.streets) - 1)
             y = random.randint(0, len(self.streets) - 1)
         self.used_rand_pos.append((x, y))
-        if len(self.used_rand_pos) > 10: 
+        if len(self.used_rand_pos) > 10:
             self.used_rand_pos.pop(0)
         return [
             x * self.grid_size + int(self.grid_size / 2),
