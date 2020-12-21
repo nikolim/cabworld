@@ -10,9 +10,12 @@ from gym_cabworld.envs.passenger_model import Passenger
 
 screen_width = 1000
 screen_height = 1000
-number_passengers = 3
+number_cabs = 2
+
+number_passengers = 3 # initial
 max_number_passengers = 5
-respawn_rate = 100
+min_number_passengers = 2
+respawn_rate = 100 # steps
 
 
 class Game:
@@ -110,15 +113,17 @@ class Game:
             self.cab.pick_up_passenger()
         elif action == 4:
             self.cab.drop_off_passenger()
+        elif action == 5:
+            pass
 
         self.steps += 1
         # repawn new passengers
-        if (
-            len(self.map.passengers) < max_number_passengers
-            and self.steps % respawn_rate == 0
-        ):
-            self.add_passenger()
-
+        if (self.game_mode % 4) != 0:
+            if (
+                len(self.map.passengers) < max_number_passengers
+                and self.steps % respawn_rate == 0
+            ) or len(self.map.passengers) < min_number_passengers:
+                self.add_passenger()
         self.cab.update()
 
     def evaluate(self):

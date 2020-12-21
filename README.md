@@ -44,6 +44,7 @@ env.render()
 * 2: turn left (90 deg)
 * 3: pick-up passenger
 * 4: drop-off passenger
+* 5: do nothing (receives step-penalty)
 3. Rewards / Penalties
 * Pick-up-reward: 100 
 * Drop-off-reward: 100
@@ -56,6 +57,8 @@ env.render()
 To test algorithms the smaller environment (v4, v5, v6, v7) can be used.
 Moreover, with the help of jupyter notebooks a map of any size and with any streets can be created.
 
+Every dynamic environment (expect v0,v4) start with 2 initial passengers. Every 100 timesteps a new passenger is respawn up to a maximum of 5 passengers.
+
 ### Cabworld-v0 (v4 small map)
 1. Cab starting at the top-left-corner
 2. Passenger starting at bottom-right-corner 
@@ -63,15 +66,15 @@ Moreover, with the help of jupyter notebooks a map of any size and with any stre
 
 ### Cabworld-v1 (v5 small map)
 1. Cab starting at the top-left-corner
-2. 3 Passengers with random start-position and random destination
+2. Passengers with random start-position and random destination
 
 ### Cabworld-v2 (v6 small map)
 1. Cab starting at the random position
-2. 3 Passengers with random start-position and random destination
+2. Passengers with random start-position and random destination
 
 ### Cabworld-v3 (Multi-Agent) (v7 small map)
 1. 2 Cabs starting at the random position
-2. 3 Passengers with random start-position and random destination
+2. Passengers with random start-position and random destination
 
 ### 3. Expected behaviour
 1. Cab picks up passenger as fast as possible 
@@ -79,12 +82,15 @@ Moreover, with the help of jupyter notebooks a map of any size and with any stre
 3. Cab drops off passenger at their destination
 
 ## Test 
-Run 25 episodes of each version with random policy
+Run 10 episodes of each version with random policy and check if states and rewards are valid.
 ```bash 
 pytest tests.py
 ```
 
 ## Changelog
+
+### [1.1.0] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.1.0) (21.12.2020)
+- New features: Do-nothing-action, Bug-Fix: remove passengers after arival
 
 ### [1.0.3] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.0.3) (19.12.2020)
 - Extended tests, fixed bug in reward system, set max-steps to 10k, respawn-rate to 100 steps

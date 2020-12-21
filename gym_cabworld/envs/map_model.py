@@ -44,6 +44,14 @@ class Map:
         """
         self.passengers.append(passenger)
 
+    def remove_passenger(self, passenger):
+        """
+        Remove passenger from map
+        @param passenger: passenger to remove from map
+        """
+        if passenger in self.passengers:
+            self.passengers.remove(passenger)
+
     def calc_distance(self, pos1, pos2):
         """
         Calculate distance between two objects

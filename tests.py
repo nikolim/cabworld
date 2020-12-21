@@ -8,7 +8,6 @@ import gym_cabworld
 from pyvirtualdisplay import Display
 
 disp = Display().start()
-
 possible_rewards = [-1, -5, -10, 100]
 
 
@@ -63,6 +62,7 @@ def run_single_agent_env(version):
                 legal_actions = [
                     s for s, a in zip(list(range(5)), allowed_actions) if a == 1
                 ]
+                legal_actions.append(5)
                 move = random.choice(legal_actions)
             states, rewards, is_done, info = env.step(move)
             assert rewards in possible_rewards
@@ -92,11 +92,7 @@ def run_multi_agent_env(version):
                     legal_actions = [
                         s for s, a in zip(list(range(5)), allowed_actions) if a == 1
                     ]
-                    if len(legal_actions) == 0:
-                        env.render()
-                        import time
-
-                        time.sleep(10)
+                    legal_actions.append(5)
                     move = random.choice(legal_actions)
                 moves.append(move)
             states, rewards, is_done, info = env.step(moves)

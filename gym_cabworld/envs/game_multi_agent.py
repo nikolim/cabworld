@@ -11,9 +11,11 @@ from gym_cabworld.envs.passenger_model import Passenger
 
 screen_width = 1000
 screen_height = 1000
-number_passengers = 3
 number_cabs = 2
-respawn_rate = 500
+number_passengers = 3
+max_number_passengers = 5
+min_number_passengers = 2
+respawn_rate = 100
 
 
 class MultiAgentGame(Game):
@@ -25,7 +27,7 @@ class MultiAgentGame(Game):
         pygame.display.set_caption("Cabworld-v3")
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.clock = pygame.time.Clock()
-
+        self.game_mode = game_mode
         self.number_cabs = number_cabs
 
         dirname = os.path.dirname(__file__)
@@ -38,7 +40,8 @@ class MultiAgentGame(Game):
             img = "small_map_gen.png"
 
         self.map = Map(
-            os.path.join(self.img_path, img), screen_width, game_mode, data_path
+            os.path.join(
+                self.img_path, img), screen_width, game_mode, data_path
         )
         self.grid_size = self.map.get_grid_size()
 
@@ -78,13 +81,17 @@ class MultiAgentGame(Game):
                 cab.pick_up_passenger()
             elif action == 4:
                 cab.drop_off_passenger()
+            elif action == 5:
+                pass
             cab.update()
             self.steps += 1
-
-        if (self.steps % respawn_rate == 0 and len(self.map.passengers) < 5) or (
-            len(self.map.passengers) < 2
-        ):
-            self.add_passenger()
+            
+        if (self.game_mode % 4) != 0:
+            if (
+                len(self.map.passengers) < max_number_passengers
+                and self.steps % respawn_rate == 0
+            ) or len(self.map.passengers) < min_number_passengers:
+                self.add_passenger()
 
     def evaluate(self):
         """ "

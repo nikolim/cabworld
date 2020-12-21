@@ -179,6 +179,7 @@ class Cab:
                 self.passenger.pos[0], self.passenger.pos[1] = self.pos[0], self.pos[1]
                 self.passenger.reached_destination = True
                 self.passenger.get_out_of_cab()
+                self.map.remove_passenger(self.passenger)
                 self.passenger = None
                 self.rewards += self.drop_off_reward + 1
                 return
