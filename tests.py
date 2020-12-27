@@ -12,29 +12,27 @@ possible_rewards = [-1, -5, -10, 100]
 
 
 def check_states_static(state):
-    assert len(state) == 19
-    for k in range(0, 5):
+    assert len(state) == 17
+    for k in range(0, 3):
         assert state[k] == 1 or state[k] == -1
-    for j in range(5, 11):
-        assert 0 <= state[j] <= 1
-    for i in range(11, len(state)):
+    for i in range(3, len(state)):
         assert state[i] == -1 or 0 <= state[i] <= 1
 
 
 def check_states_dynamic(state):
-    assert len(state) == 19
-    for k in range(0, 5):
+    assert len(state) == 17
+    for k in range(0, 3):
         assert state[k] == 1 or state[k] == -1
-    for i in range(5, len(state)):
+    for i in range(3, len(state)):
         assert state[i] == -1 or 0 <= state[i] <= 1
 
 
 def check_states_multi(states):
     for state in states:
-        assert len(state) == 19
-        for k in range(0, 5):
+        assert len(state) == 17
+        for k in range(0, 3):
             assert state[k] == 1 or state[k] == -1
-        for i in range(5, len(state)):
+        for i in range(3, len(state)):
             assert state[i] == -1 or 0 <= state[i] <= 1
 
 
@@ -53,17 +51,7 @@ def run_single_agent_env(version):
         state = env.reset()
         is_done = False
         while not is_done:
-            allowed_actions = state[:5]
-            if allowed_actions[3] == 1:
-                move = 3
-            elif allowed_actions[4] == 1:
-                move = 4
-            else:
-                legal_actions = [
-                    s for s, a in zip(list(range(5)), allowed_actions) if a == 1
-                ]
-                legal_actions.append(5)
-                move = random.choice(legal_actions)
+            move = random.choice(list(range(6)))
             states, rewards, is_done, info = env.step(move)
             assert rewards in possible_rewards
             if version in [0, 4]:
@@ -83,17 +71,7 @@ def run_multi_agent_env(version):
         while not is_done:
             moves = []
             for state in states:
-                allowed_actions = state[:5]
-                if allowed_actions[3] == 1:
-                    move = 3
-                elif allowed_actions[4] == 1:
-                    move = 4
-                else:
-                    legal_actions = [
-                        s for s, a in zip(list(range(5)), allowed_actions) if a == 1
-                    ]
-                    legal_actions.append(5)
-                    move = random.choice(legal_actions)
+                move = random.choice(list(range(6)))
                 moves.append(move)
             states, rewards, is_done, info = env.step(moves)
             for reward in rewards:

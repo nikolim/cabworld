@@ -22,8 +22,6 @@ class Cab:
         self.time_spent = 0
         self.passenger = None
         self.next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
-        self.pick_up_possible = 0
-        self.drop_off_possible = 0
         self.debug = False
         self.grid_size = grid_size
 
@@ -88,26 +86,6 @@ class Cab:
         """
         self.rewards += self.step_penalty
 
-    def check_for_passengers(self):
-        """
-        Check if a passenger can be picked up or dropped off
-        """
-        self.drop_off_possible = 0
-        self.pick_up_possible = 0
-        if self.passenger is None:
-            # Empty cab -> check if pick-up is possible
-            self.next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
-            for passenger in self.next_passengers:
-                distance = self.map.calc_distance(self.pos, passenger.pos)
-                if distance == 0:
-                    self.pick_up_possible = 1
-                    break
-        if self.passenger:
-            # Occupied cab -> check if drop-off possible
-            distance = self.map.calc_distance(self.pos, self.passenger.destination)
-            if distance == 0:
-                self.drop_off_possible = 1
-
     def update(self):
         """
         Update the values of the cab after movement
@@ -128,7 +106,6 @@ class Cab:
         self.speed = 0
         self.check_radar()
         self.calc_rewards()
-        self.check_for_passengers()
 
     def move_forward(self):
         if self.radars[0] == 1:
@@ -157,8 +134,7 @@ class Cab:
         self.speed = 0
         if self.passenger is None:
             next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
-            if len(next_passengers) > 0:
-                passenger = next_passengers[0]
+            for passenger in next_passengers:
                 if self.map.calc_distance(self.pos, passenger.pos) == 0:
                     self.passenger = passenger
                     self.passenger.get_in_cab()

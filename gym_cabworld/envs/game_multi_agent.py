@@ -40,8 +40,7 @@ class MultiAgentGame(Game):
             img = "small_map_gen.png"
 
         self.map = Map(
-            os.path.join(
-                self.img_path, img), screen_width, game_mode, data_path
+            os.path.join(self.img_path, img), screen_width, game_mode, data_path
         )
         self.grid_size = self.map.get_grid_size()
 
@@ -85,7 +84,7 @@ class MultiAgentGame(Game):
                 pass
             cab.update()
             self.steps += 1
-            
+
         if (self.game_mode % 4) != 0:
             if (
                 len(self.map.passengers) < max_number_passengers
@@ -116,11 +115,8 @@ class MultiAgentGame(Game):
         for cab in self.cabs:
             # Possible actions
             r1, r2, r3 = cab.radars
-            pick_up = cab.pick_up_possible
-            drop_off = cab.drop_off_possible
-            # own position
             pos_x, pos_y = cab.pos
-            state = [r1, r2, r3, pick_up, drop_off, round(pos_x), round(pos_y)]
+            state = [r1, r2, r3, round(pos_x), round(pos_y)]
             for passenger in cab.next_passengers:
                 pass_x, pass_y = passenger.pos
                 dest_x, dest_y = passenger.destination

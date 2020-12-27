@@ -15,7 +15,7 @@ class CustomEnv(gym.Env):
         self.pygame = Game(self.mode)
         self.action_space = spaces.Discrete(6)
         self.observation_space = spaces.Box(
-            np.array([[-1] * 19]), np.array([[1] * 19]), dtype=np.int
+            np.array([[-1] * 17]), np.array([[1] * 17]), dtype=np.int
         )
 
     def reset(self):
@@ -77,8 +77,8 @@ class MarlEnv(CustomEnv):
         number_cabs = self.pygame.number_cabs
         self.action_space = spaces.Discrete(6)
         self.observation_space = spaces.Box(
-            np.array([[-1] * 19] * number_cabs),
-            np.array([[1] * 19] * number_cabs),
+            np.array([[-1] * 17] * number_cabs),
+            np.array([[1] * 17] * number_cabs),
             dtype=np.int,
         )
 
@@ -122,8 +122,8 @@ class MarlEnv2(CustomEnv):
         number_cabs = self.pygame.number_cabs
         self.action_space = spaces.Discrete(6)
         self.observation_space = spaces.Box(
-            np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] * number_cabs),
-            np.array([1, 1, 1, 1, 1, 1000, 1000, 1000, 1000, 1000, 1000] * number_cabs),
+            np.array([[-1] * 17] * number_cabs),
+            np.array([[1] * 17] * number_cabs),
             dtype=np.int,
         )
 
