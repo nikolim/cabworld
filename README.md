@@ -81,6 +81,20 @@ Every dynamic environment (expect v0,v4) start with 2 initial passengers. Every 
 2. Cab brings passenger to their destination as fast as possible
 3. Cab drops off passenger at their destination
 
+### 4. State 
+
+The state of every environment consists of 17 values. 
+* 1-3: radar-front, radar-left, radar-right 
+* 4-5: x-position, y-position of cab 
+* 6-9: x-position, y-position, x-destination, y-destination of passenger 1
+* 10-13: "" passenger 2
+* 14-17: "" passenger 3
+
+Note: 
+* Radar: 1 for street, -1 for terrain
+* Positions are normalized [0,1]
+* If not enough passengers on map, values are filled with -1
+
 ## Test 
 Run 10 episodes of each version with random policy and check if states and rewards are valid.
 ```bash 
@@ -88,6 +102,9 @@ pytest tests.py
 ```
 
 ## Changelog
+
+### [1.2.0] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.2.0) (28.12.2020)
+- New state: remove pick-up, drop-off flag, extend state to 3 nearest passengers 
 
 ### [1.1.0] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.1.0) (21.12.2020)
 - New features: Do-nothing-action, Bug-Fix: remove passengers after arival

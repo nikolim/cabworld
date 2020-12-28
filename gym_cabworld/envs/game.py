@@ -147,12 +147,12 @@ class Game:
         @return normalised state
         """
         features = []
-        for i in range(5):
+        for i in range(3):
             if state[i] == 1:
                 features.append(1)
             else:
                 features.append(-1)
-        for j in range(5, len(state)):
+        for j in range(3, len(state)):
             features.append(
                 round(state[j] / (screen_width - int(1.5 * self.grid_size)), 8)
             )

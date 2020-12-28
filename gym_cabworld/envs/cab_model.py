@@ -102,7 +102,6 @@ class Cab:
             int(self.pos[0]) - (self.img_size / 2),
             int(self.pos[1]) - (self.img_size / 2),
         ]
-
         self.speed = 0
         self.check_radar()
         self.calc_rewards()
@@ -168,7 +167,6 @@ class Cab:
         """
         screen.blit(self.rotate_cab_img, self.img_pos)
         if self.passenger:
-            color = (255, 0, 0)
             light_size = int(self.grid_size / 10)
             pygame.draw.circle(
                 screen, self.passenger.color, self.pos, light_size, light_size
