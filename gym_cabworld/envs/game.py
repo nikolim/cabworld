@@ -154,7 +154,7 @@ class Game:
                 features.append(-1)
         for j in range(3, len(state)):
             features.append(
-                round(state[j] / (screen_width - int(1.5 * self.grid_size)), 8)
+                round((state[j] - (1.5 * self.grid_size)) / (screen_width - (3 * self.grid_size)), 8)
             )
 
         # fill up the state if not enough passengers

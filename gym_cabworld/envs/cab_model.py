@@ -104,6 +104,8 @@ class Cab:
         ]
         self.speed = 0
         self.check_radar()
+        if not self.passenger: 
+            self.next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
         self.calc_rewards()
 
     def move_forward(self):
