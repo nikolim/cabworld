@@ -83,7 +83,8 @@ Every dynamic environment (expect v0,v4) start with 2 initial passengers. Every 
 
 ### 4. State 
 
-The state of every environment consists of 17 values. 
+The state of every environment consists of 18 values. 
+* 0: cab occupied (1) or free (-1)
 * 1-3: radar-front, radar-left, radar-right 
 * 4-5: x-position, y-position of cab 
 * 6-9: x-position, y-position, x-destination, y-destination of passenger 1

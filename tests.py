@@ -12,27 +12,27 @@ possible_rewards = [-1, -5, -10, 100]
 
 
 def check_states_static(state):
-    assert len(state) == 17
-    for k in range(0, 3):
+    assert len(state) == 18
+    for k in range(0, 4):
         assert state[k] == 1 or state[k] == -1
-    for i in range(3, len(state)):
+    for i in range(4, len(state)):
         assert state[i] == -1 or 0 <= state[i] <= 1
 
 
 def check_states_dynamic(state):
-    assert len(state) == 17
-    for k in range(0, 3):
+    assert len(state) == 18
+    for k in range(0, 4):
         assert state[k] == 1 or state[k] == -1
-    for i in range(3, len(state)):
+    for i in range(4, len(state)):
         assert state[i] == -1 or 0 <= state[i] <= 1
 
 
 def check_states_multi(states):
     for state in states:
-        assert len(state) == 17
-        for k in range(0, 3):
+        assert len(state) == 18
+        for k in range(0, 4):
             assert state[k] == 1 or state[k] == -1
-        for i in range(3, len(state)):
+        for i in range(4, len(state)):
             assert state[i] == -1 or 0 <= state[i] <= 1
 
 

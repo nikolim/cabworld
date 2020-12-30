@@ -147,18 +147,18 @@ class Game:
         @return normalised state
         """
         features = []
-        for i in range(3):
+        for i in range(4):
             if state[i] == 1:
                 features.append(1)
             else:
                 features.append(-1)
-        for j in range(3, len(state)):
+        for j in range(4, len(state)):
             features.append(
                 round((state[j] - (1.5 * self.grid_size)) / (screen_width - (3 * self.grid_size)), 8)
             )
 
         # fill up the state if not enough passengers
-        for _ in range(len(state), 17):
+        for _ in range(len(state), 18):
             features.append(-1)
         return tuple(features)
 
@@ -167,11 +167,13 @@ class Game:
         Observe environment
         @return state of environment
         """
+        # check for passenger 
+        p = 1 if self.cab.passenger else -1
         # Possible actions
         r1, r2, r3 = self.cab.radars
         # own position
         pos_x, pos_y = self.cab.pos
-        state = [r1, r2, r3, pos_x, pos_y]
+        state = [p, r1, r2, r3, pos_x, pos_y]
         for passenger in self.cab.next_passengers:
             pass_x, pass_y = passenger.pos
             dest_x, dest_y = passenger.destination
