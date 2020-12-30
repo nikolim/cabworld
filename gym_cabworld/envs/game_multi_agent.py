@@ -71,16 +71,18 @@ class MultiAgentGame(Game):
         for cab, action in zip(self.cabs, actions):
             cab.rewards = 0
             if action == 0:
-                cab.move_forward()
+                cab.move_up()
             if action == 1:
-                cab.turn_left()
+                cab.move_right()
             elif action == 2:
-                cab.turn_right()
+                cab.move_down()
             elif action == 3:
-                cab.pick_up_passenger()
+                cab.move_left()
             elif action == 4:
-                cab.drop_off_passenger()
+                cab.pick_up_passenger()
             elif action == 5:
+                cab.drop_off_passenger()
+            elif action == 6:
                 pass
             cab.update()
             self.steps += 1
@@ -114,9 +116,9 @@ class MultiAgentGame(Game):
         observations = []
         for cab in self.cabs:
             # Possible actions
-            r1, r2, r3 = cab.radars
+            r1, r2, r3, r4 = cab.radars
             pos_x, pos_y = cab.pos
-            state = [r1, r2, r3, round(pos_x), round(pos_y)]
+            state = [r1, r2, r3, r4, round(pos_x), round(pos_y)]
             for passenger in cab.next_passengers:
                 pass_x, pass_y = passenger.pos
                 dest_x, dest_y = passenger.destination

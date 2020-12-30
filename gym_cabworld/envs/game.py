@@ -104,16 +104,18 @@ class Game:
         self.cab.rewards = 0
 
         if action == 0:
-            self.cab.move_forward()
+            self.cab.move_up()
         if action == 1:
-            self.cab.turn_left()
+            self.cab.move_right()
         elif action == 2:
-            self.cab.turn_right()
+            self.cab.move_down()
         elif action == 3:
-            self.cab.pick_up_passenger()
+            self.cab.move_left()
         elif action == 4:
-            self.cab.drop_off_passenger()
+            self.cab.pick_up_passenger()
         elif action == 5:
+            self.cab.drop_off_passenger()
+        elif action == 6:
             pass
 
         self.steps += 1
@@ -147,18 +149,17 @@ class Game:
         @return normalised state
         """
         features = []
-        for i in range(4):
+        for i in range(5):
             if state[i] == 1:
                 features.append(1)
             else:
                 features.append(-1)
-        for j in range(4, len(state)):
+        for j in range(5, len(state)):
             features.append(
-                round((state[j] - (1.5 * self.grid_size)) / (screen_width - (3 * self.grid_size)), 8)
+                abs(round((state[j] - (1.5 * self.grid_size)) / (screen_width - (3 * self.grid_size)), 3))
             )
-
         # fill up the state if not enough passengers
-        for _ in range(len(state), 18):
+        for _ in range(len(state), 19):
             features.append(-1)
         return tuple(features)
 
@@ -170,10 +171,10 @@ class Game:
         # check for passenger 
         p = 1 if self.cab.passenger else -1
         # Possible actions
-        r1, r2, r3 = self.cab.radars
+        r1, r2, r3, r4 = self.cab.radars
         # own position
         pos_x, pos_y = self.cab.pos
-        state = [p, r1, r2, r3, pos_x, pos_y]
+        state = [p, r1, r2, r3, r4, pos_x, pos_y]
         for passenger in self.cab.next_passengers:
             pass_x, pass_y = passenger.pos
             dest_x, dest_y = passenger.destination

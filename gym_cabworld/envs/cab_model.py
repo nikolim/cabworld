@@ -16,7 +16,7 @@ class Cab:
         self.pos = pos
         self.angle = 0
         self.speed = 0
-        self.radars = [0, 0, 0]  # 0: forward-move 1: left-turn 2: right-turn
+        self.radars = [0, 0, 0, 0]
         self.is_alive = True
         self.distance = 0
         self.time_spent = 0
@@ -50,35 +50,24 @@ class Cab:
 
     def check_radar(self):
         """
-        Check if there is a street in front, on the left, on the right
+        Check if there is a street up, right, down, left
         Uses compares color values
         """
-        self.radars = [0, 0, 0]
-        sensor_field = self.grid_size  # how far the sensors of the cab / driver can see
+        self.radars = [0, 0, 0, 0]
+        sensor_field = self.grid_size
 
-        front_x = self.pos[0] + math.cos(math.radians(360 - self.angle)) * sensor_field
-        front_y = self.pos[1] + math.sin(math.radians(360 - self.angle)) * sensor_field
-
-        if self.check_if_street(front_x, front_y):
+        # up
+        if self.check_if_street(self.pos[0], self.pos[1] - sensor_field):
             self.radars[0] = 1
-
-        left_x = (
-            self.pos[0] + math.cos(math.radians(360 - self.angle - 90)) * sensor_field
-        )
-        left_y = (
-            self.pos[1] + math.sin(math.radians(360 - self.angle - 90)) * sensor_field
-        )
-        if self.check_if_street(left_x, left_y):
+        # right
+        if self.check_if_street(self.pos[0] + sensor_field, self.pos[1]):
             self.radars[1] = 1
-
-        right_x = (
-            self.pos[0] + math.cos(math.radians(360 - self.angle + 90)) * sensor_field
-        )
-        right_y = (
-            self.pos[1] + math.sin(math.radians(360 - self.angle + 90)) * sensor_field
-        )
-        if self.check_if_street(right_x, right_y):
+        # down
+        if self.check_if_street(self.pos[0], self.pos[1] + sensor_field):
             self.radars[2] = 1
+        # left
+        if self.check_if_street(self.pos[0] - sensor_field, self.pos[1]):
+            self.radars[3] = 1
 
     def calc_rewards(self):
         """
@@ -95,6 +84,7 @@ class Cab:
         # move cab
         self.pos[0] += math.cos(math.radians(360 - self.angle)) * self.speed
         self.pos[1] += math.sin(math.radians(360 - self.angle)) * self.speed
+
         # keep track of distance and time
         self.distance += self.speed
         self.time_spent += 1
@@ -104,27 +94,36 @@ class Cab:
         ]
         self.speed = 0
         self.check_radar()
-        if not self.passenger: 
-            self.next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
+        if not self.passenger:
+            self.next_passengers = self.map.get_n_nearest_passengers(
+                self.pos, 3)
         self.calc_rewards()
 
-    def move_forward(self):
+    def move_up(self):
         if self.radars[0] == 1:
             self.speed = self.grid_size
+            self.angle = 90
         else:
             self.rewards += self.illegal_move_penalty + 1
 
-    def turn_left(self):
+    def move_right(self):
         if self.radars[1] == 1:
             self.speed = self.grid_size
-            self.angle += 90
+            self.angle = 0
         else:
             self.rewards += self.illegal_move_penalty + 1
 
-    def turn_right(self):
+    def move_down(self):
         if self.radars[2] == 1:
             self.speed = self.grid_size
-            self.angle -= 90
+            self.angle = -90
+        else:
+            self.rewards += self.illegal_move_penalty + 1
+
+    def move_left(self):
+        if self.radars[3] == 1:
+            self.speed = self.grid_size
+            self.angle = 180
         else:
             self.rewards += self.illegal_move_penalty + 1
 
@@ -198,13 +197,16 @@ class Cab:
             color = self.map.map_img.get_at((int(x), int(y)))
             street_color = self.map.street_color
             red_similar = (
-                (street_color[0] - delta) < color[0] < (street_color[0] + delta)
+                (street_color[0] -
+                 delta) < color[0] < (street_color[0] + delta)
             )
             green_similar = (
-                (street_color[1] - delta) < color[1] < (street_color[1] + delta)
+                (street_color[1] -
+                 delta) < color[1] < (street_color[1] + delta)
             )
             blue_similar = (
-                (street_color[2] - delta) < color[2] < (street_color[2] + delta)
+                (street_color[2] -
+                 delta) < color[2] < (street_color[2] + delta)
             )
             return red_similar and green_similar and blue_similar
         except IndexError:

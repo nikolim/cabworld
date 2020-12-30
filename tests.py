@@ -12,27 +12,27 @@ possible_rewards = [-1, -5, -10, 100]
 
 
 def check_states_static(state):
-    assert len(state) == 18
-    for k in range(0, 4):
+    assert len(state) == 19
+    for k in range(0, 5):
         assert state[k] == 1 or state[k] == -1
-    for i in range(4, len(state)):
+    for i in range(5, len(state)):
         assert state[i] == -1 or 0 <= state[i] <= 1
 
 
 def check_states_dynamic(state):
-    assert len(state) == 18
-    for k in range(0, 4):
+    assert len(state) == 19
+    for k in range(0, 5):
         assert state[k] == 1 or state[k] == -1
-    for i in range(4, len(state)):
+    for i in range(5, len(state)):
         assert state[i] == -1 or 0 <= state[i] <= 1
 
 
 def check_states_multi(states):
     for state in states:
-        assert len(state) == 18
-        for k in range(0, 4):
+        assert len(state) == 19
+        for k in range(0, 5):
             assert state[k] == 1 or state[k] == -1
-        for i in range(4, len(state)):
+        for i in range(5, len(state)):
             assert state[i] == -1 or 0 <= state[i] <= 1
 
 
@@ -51,7 +51,7 @@ def run_single_agent_env(version):
         state = env.reset()
         is_done = False
         while not is_done:
-            move = random.choice(list(range(6)))
+            move = random.choice(list(range(7)))
             states, rewards, is_done, info = env.step(move)
             assert rewards in possible_rewards
             if version in [0, 4]:
@@ -71,7 +71,7 @@ def run_multi_agent_env(version):
         while not is_done:
             moves = []
             for state in states:
-                move = random.choice(list(range(6)))
+                move = random.choice(list(range(7)))
                 moves.append(move)
             states, rewards, is_done, info = env.step(moves)
             for reward in rewards:
