@@ -17,6 +17,10 @@ class Cab:
         self.angle = 0
         self.speed = 0
         self.radars = [0, 0, 0, 0]
+
+        self.pick_up_possible = 0
+        self.drop_off_possible = 0
+
         self.is_alive = True
         self.distance = 0
         self.time_spent = 0
@@ -24,7 +28,7 @@ class Cab:
         self.next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
         self.debug = False
         self.grid_size = grid_size
-
+        
         self.cab_img = pygame.image.load(cab_file)
         self.cab_img = pygame.transform.scale(
             self.cab_img, (self.img_size, self.img_size)
@@ -57,17 +61,37 @@ class Cab:
         sensor_field = self.grid_size
 
         # up
-        if self.check_if_street(self.pos[0], self.pos[1] - sensor_field):
+        if self.check_if_street(self.pos[0], self.pos[1] - sensor_field) and self.angle != -90:
             self.radars[0] = 1
         # right
-        if self.check_if_street(self.pos[0] + sensor_field, self.pos[1]):
+        if self.check_if_street(self.pos[0] + sensor_field, self.pos[1]) and self.angle != 180:
             self.radars[1] = 1
         # down
-        if self.check_if_street(self.pos[0], self.pos[1] + sensor_field):
+        if self.check_if_street(self.pos[0], self.pos[1] + sensor_field) and self.angle != 90:
             self.radars[2] = 1
         # left
-        if self.check_if_street(self.pos[0] - sensor_field, self.pos[1]):
+        if self.check_if_street(self.pos[0] - sensor_field, self.pos[1]) and self.angle != 0:
             self.radars[3] = 1
+    
+    def check_for_passengers(self):
+        """
+        Check if a passenger can be picked up or dropped off
+        """
+        self.drop_off_possible = 0
+        self.pick_up_possible = 0
+        if self.passenger is None:
+            # Empty cab -> check if pick-up is possible
+            self.next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
+            for passenger in self.next_passengers:
+                distance = self.map.calc_distance(self.pos, passenger.pos)
+                if distance == 0:
+                    self.pick_up_possible = 1
+                    break
+        if self.passenger:
+            # Occupied cab -> check if drop-off possible
+            distance = self.map.calc_distance(self.pos, self.passenger.destination)
+            if distance == 0:
+                self.drop_off_possible = 1
 
     def calc_rewards(self):
         """
@@ -98,30 +122,31 @@ class Cab:
             self.next_passengers = self.map.get_n_nearest_passengers(
                 self.pos, 3)
         self.calc_rewards()
+        self.check_for_passengers()
 
     def move_up(self):
-        if self.radars[0] == 1:
+        if self.radars[0] == 1 and self.angle != -90:
             self.speed = self.grid_size
             self.angle = 90
         else:
             self.rewards += self.illegal_move_penalty + 1
 
     def move_right(self):
-        if self.radars[1] == 1:
+        if self.radars[1] == 1 and self.angle != 180:
             self.speed = self.grid_size
             self.angle = 0
         else:
             self.rewards += self.illegal_move_penalty + 1
 
     def move_down(self):
-        if self.radars[2] == 1:
+        if self.radars[2] == 1 and self.angle != 90:
             self.speed = self.grid_size
             self.angle = -90
         else:
             self.rewards += self.illegal_move_penalty + 1
 
     def move_left(self):
-        if self.radars[3] == 1:
+        if self.radars[3] == 1 and self.angle != 0:
             self.speed = self.grid_size
             self.angle = 180
         else:

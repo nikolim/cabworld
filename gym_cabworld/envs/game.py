@@ -12,9 +12,9 @@ screen_width = 1000
 screen_height = 1000
 number_cabs = 2
 
-number_passengers = 3  # initial
+number_passengers = 5  # initial
 max_number_passengers = 5
-min_number_passengers = 2
+min_number_passengers = 5
 respawn_rate = 100  # steps
 
 
@@ -149,17 +149,17 @@ class Game:
         @return normalised state
         """
         features = []
-        for i in range(5):
+        for i in range(6):
             if state[i] == 1:
                 features.append(1)
             else:
                 features.append(-1)
-        for j in range(5, len(state)):
+        for j in range(6, len(state)):
             features.append(
                 abs(round((state[j] - (1.5 * self.grid_size)) / (screen_width - (3 * self.grid_size)), 3))
             )
         # fill up the state if not enough passengers
-        for _ in range(len(state), 19):
+        for _ in range(len(state), 20):
             features.append(-1)
         return tuple(features)
 
@@ -169,12 +169,12 @@ class Game:
         @return state of environment
         """
         # check for passenger 
-        p = 1 if self.cab.passenger else -1
+        p1, p2 = self.cab.pick_up_possible, self.cab.drop_off_possible
         # Possible actions
         r1, r2, r3, r4 = self.cab.radars
         # own position
         pos_x, pos_y = self.cab.pos
-        state = [p, r1, r2, r3, r4, pos_x, pos_y]
+        state = [r1, r2, r3, r4, p1, p2, pos_x, pos_y]
         for passenger in self.cab.next_passengers:
             pass_x, pass_y = passenger.pos
             dest_x, dest_y = passenger.destination
