@@ -12,9 +12,9 @@ screen_width = 1000
 screen_height = 1000
 number_cabs = 2
 
-number_passengers = 5  # initial
-max_number_passengers = 5
-min_number_passengers = 5
+number_passengers = 3  # initial
+max_number_passengers = 4
+min_number_passengers = 2
 respawn_rate = 100  # steps
 
 

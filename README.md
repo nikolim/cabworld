@@ -39,12 +39,13 @@ env.render()
 ### 1. Environment description
 1. The Map has 1000 x 1000 pixels (action space is limited to 25x25 and 10x10)
 2. The cab can only perform discrete actions
-* 0: drive forward (1 grid (40px, 100px))
-* 1: turn right (90 deg)
-* 2: turn left (90 deg)
-* 3: pick-up passenger
-* 4: drop-off passenger
-* 5: do nothing (receives step-penalty)
+* 0: drive up (1 grid (40px, 100px))
+* 1: drive right 
+* 2: drive down 
+* 3: drive left 
+* 4: pick-up passenger
+* 5: drop-off passenger
+* 6: do nothing (receives step-penalty)
 3. Rewards / Penalties
 * Pick-up-reward: 100 
 * Drop-off-reward: 100
@@ -57,7 +58,7 @@ env.render()
 To test algorithms the smaller environment (v4, v5, v6, v7) can be used.
 Moreover, with the help of jupyter notebooks a map of any size and with any streets can be created.
 
-Every dynamic environment (expect v0,v4) start with 2 initial passengers. Every 100 timesteps a new passenger is respawn up to a maximum of 5 passengers.
+Every dynamic environment (expect v0,v4) start with 3 initial passengers. Every 100 timesteps a new passenger is respawn up to a maximum of 5 passengers. Min-Passsengers: 2, Max-Passengers: 4.
 
 ### Cabworld-v0 (v4 small map)
 1. Cab starting at the top-left-corner
@@ -84,12 +85,12 @@ Every dynamic environment (expect v0,v4) start with 2 initial passengers. Every 
 ### 4. State 
 
 The state of every environment consists of 18 values. 
-* 0: cab occupied (1) or free (-1)
-* 1-3: radar-front, radar-left, radar-right 
-* 4-5: x-position, y-position of cab 
-* 6-9: x-position, y-position, x-destination, y-destination of passenger 1
-* 10-13: "" passenger 2
-* 14-17: "" passenger 3
+* 1-4: radar-front, radar-left, radar-right 
+* 5-6: pick-up-possible, drop-off-possible
+* 7-8: x-position, y-position of cab 
+* 9-12: x-position, y-position, x-destination, y-destination of passenger 1
+* 13-16: "" passenger 2
+* 17-20: "" passenger 3
 
 Note: 
 * Radar: 1 for street, -1 for terrain
@@ -103,6 +104,9 @@ pytest tests.py
 ```
 
 ## Changelog
+
+### [1.3.0] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.3.0) (03.01.2021)
+- Absolute actions, drive-forward only
 
 ### [1.2.0] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.2.0) (28.12.2020)
 - New state: remove pick-up, drop-off flag, extend state to 3 nearest passengers 
