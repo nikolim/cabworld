@@ -167,6 +167,3 @@ class Game:
 
         pygame.display.flip()
         self.clock.tick(self.game_speed)
-
-
-game = Game(6)

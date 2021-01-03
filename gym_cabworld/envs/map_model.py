@@ -2,6 +2,7 @@ import csv
 import math
 import os
 import random
+import copy
 
 import numpy as np
 import pygame
@@ -134,12 +135,13 @@ class Map:
         @param cab_pos
         @return map
         """
-        tmp_map = self.streets[1:9, 1:9]
+        street_copy = copy.deepcopy(self.streets)
+        tmp_map = street_copy[1:9, 1:9]
         tmp_map = self.add_n_to_map(tmp_map, cab_pos, 2)
         n_passenger = 3
         passengers = self.get_n_nearest_passengers(cab_pos, n_passenger)
         for i, passenger in enumerate(passengers):
-            map = self.add_n_to_map(tmp_map, passenger.pos, 3 + i)
-            map = self.add_n_to_map(tmp_map, passenger.destination, 3 + i + n_passenger)
+            tmp_map = self.add_n_to_map(tmp_map, passenger.pos, 3 + i)
+            tmp_map = self.add_n_to_map(tmp_map, passenger.destination, 3 + i + n_passenger)
         tmp_map = tmp_map / 8
         return tmp_map.flatten()
