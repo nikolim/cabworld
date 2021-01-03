@@ -28,7 +28,7 @@ class Cab:
         self.next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
         self.debug = False
         self.grid_size = grid_size
-        
+
         self.cab_img = pygame.image.load(cab_file)
         self.cab_img = pygame.transform.scale(
             self.cab_img, (self.img_size, self.img_size)
@@ -61,18 +61,30 @@ class Cab:
         sensor_field = self.grid_size
 
         # up
-        if self.check_if_street(self.pos[0], self.pos[1] - sensor_field) and self.angle != -90:
+        if (
+            self.check_if_street(self.pos[0], self.pos[1] - sensor_field)
+            and self.angle != -90
+        ):
             self.radars[0] = 1
         # right
-        if self.check_if_street(self.pos[0] + sensor_field, self.pos[1]) and self.angle != 180:
+        if (
+            self.check_if_street(self.pos[0] + sensor_field, self.pos[1])
+            and self.angle != 180
+        ):
             self.radars[1] = 1
         # down
-        if self.check_if_street(self.pos[0], self.pos[1] + sensor_field) and self.angle != 90:
+        if (
+            self.check_if_street(self.pos[0], self.pos[1] + sensor_field)
+            and self.angle != 90
+        ):
             self.radars[2] = 1
         # left
-        if self.check_if_street(self.pos[0] - sensor_field, self.pos[1]) and self.angle != 0:
+        if (
+            self.check_if_street(self.pos[0] - sensor_field, self.pos[1])
+            and self.angle != 0
+        ):
             self.radars[3] = 1
-    
+
     def check_for_passengers(self):
         """
         Check if a passenger can be picked up or dropped off
@@ -119,8 +131,7 @@ class Cab:
         self.speed = 0
         self.check_radar()
         if not self.passenger:
-            self.next_passengers = self.map.get_n_nearest_passengers(
-                self.pos, 3)
+            self.next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
         self.calc_rewards()
         self.check_for_passengers()
 
@@ -222,16 +233,13 @@ class Cab:
             color = self.map.map_img.get_at((int(x), int(y)))
             street_color = self.map.street_color
             red_similar = (
-                (street_color[0] -
-                 delta) < color[0] < (street_color[0] + delta)
+                (street_color[0] - delta) < color[0] < (street_color[0] + delta)
             )
             green_similar = (
-                (street_color[1] -
-                 delta) < color[1] < (street_color[1] + delta)
+                (street_color[1] - delta) < color[1] < (street_color[1] + delta)
             )
             blue_similar = (
-                (street_color[2] -
-                 delta) < color[2] < (street_color[2] + delta)
+                (street_color[2] - delta) < color[2] < (street_color[2] + delta)
             )
             return red_similar and green_similar and blue_similar
         except IndexError:

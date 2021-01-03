@@ -142,47 +142,12 @@ class Game:
         """
         return self.map.all_passengers_reached_dest()
 
-    def normalise(self, state):
-        """ "
-        Normalise state
-        @param state
-        @return normalised state
-        """
-        features = []
-        for i in range(6):
-            if state[i] == 1:
-                features.append(1)
-            else:
-                features.append(-1)
-        for j in range(6, len(state)):
-            features.append(
-                abs(round((state[j] - (1.5 * self.grid_size)) / (screen_width - (3 * self.grid_size)), 3))
-            )
-        # fill up the state if not enough passengers
-        for _ in range(len(state), 20):
-            features.append(-1)
-        return tuple(features)
-
     def observe(self):
         """ "
         Observe environment
         @return state of environment
         """
-        # check for passenger 
-        p1, p2 = self.cab.pick_up_possible, self.cab.drop_off_possible
-        # Possible actions
-        r1, r2, r3, r4 = self.cab.radars
-        # own position
-        pos_x, pos_y = self.cab.pos
-        state = [r1, r2, r3, r4, p1, p2, pos_x, pos_y]
-        for passenger in self.cab.next_passengers:
-            pass_x, pass_y = passenger.pos
-            dest_x, dest_y = passenger.destination
-            state.append(pass_x)
-            state.append(pass_y)
-            state.append(dest_x)
-            state.append(dest_y)
-        return self.normalise(state)
+        return self.map.create_state_deck(self.cab.pos)
 
     def view(self):
         """
@@ -202,3 +167,6 @@ class Game:
 
         pygame.display.flip()
         self.clock.tick(self.game_speed)
+
+
+game = Game(6)

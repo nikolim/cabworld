@@ -17,7 +17,7 @@ def check_states_static(state):
         assert state[k] == 1 or state[k] == -1
     for i in range(6, len(state)):
         assert state[i] == -1 or 0 <= state[i] <= 1
-    
+
 
 def check_states_dynamic(state):
     assert len(state) == 20
@@ -79,7 +79,6 @@ def run_multi_agent_env(version):
             check_states_multi(states)
         assert is_done
 
-
 def test_env_v0():
     run_single_agent_env(0)
 
@@ -103,10 +102,10 @@ def test_env_v4():
 def test_env_v5():
     run_single_agent_env(5)
 
-
 def test_env_v6():
     run_single_agent_env(6)
 
 
 def test_env_v7():
     run_multi_agent_env(7)
+

@@ -75,7 +75,6 @@ class Map:
                 tmp_distance = self.calc_distance(pos, tmp_passenger.pos)
                 distances.append(tmp_distance)
                 passenger_dict[tmp_distance] = tmp_passenger
-
         distances.sort()
         keys = distances[: (min(n, len(distances)))]
         passengers = [passenger_dict[key] for key in keys]
@@ -115,36 +114,32 @@ class Map:
             y * self.grid_size + int(self.grid_size / 2),
         ]
 
-    def create_layer(self, pos):
+    def add_n_to_map(self, tmp_map, pos, number):
         """
-        Create layer for state deck
-        @param pos: one-hot
-        @return layer
+        Add number to map at certain
+        @param map
+        @param pos
+        @param number
+        @return map
         """
-        layer = np.zeros((len(self.streets), len(self.streets)))
         x, y = pos
-        x = int((x - (self.grid_size / 2)) / self.grid_size)
-        y = int((y - (self.grid_size / 2)) / self.grid_size)
-        layer[x][y] = 1
-        return layer
+        x = int((x - (self.grid_size / 2)) / self.grid_size) - 1
+        y = int((y - (self.grid_size / 2)) / self.grid_size) - 1
+        tmp_map[y][x] = number
+        return tmp_map
 
     def create_state_deck(self, cab_pos):
         """
-        Create state deck
-        @param cab_pos: position of cab
-        @return layer
+        Create fully observed map
+        @param cab_pos
+        @return map
         """
-        # 1 layer -> map
-        street_layer = self.streets
-        # 2 layer -> cab
-        cab_layer = self.create_layer(cab_pos)
-        # 3 layer -> passenger pos
-        passenger = self.get_nearest_passenger(cab_pos)
-        pass_pos_layer = self.create_layer(passenger.pos)
-        # 4 layer -> passenger dest
-        pass_dest_layer = self.create_layer(passenger.destination)
-
-        state_deck = np.array(
-            [street_layer, cab_layer, pass_pos_layer, pass_dest_layer]
-        )
-        return state_deck
+        tmp_map = self.streets[1:9, 1:9]
+        tmp_map = self.add_n_to_map(tmp_map, cab_pos, 2)
+        n_passenger = 3
+        passengers = self.get_n_nearest_passengers(cab_pos, n_passenger)
+        for i, passenger in enumerate(passengers):
+            map = self.add_n_to_map(tmp_map, passenger.pos, 3 + i)
+            map = self.add_n_to_map(tmp_map, passenger.destination, 3 + i + n_passenger)
+        tmp_map = tmp_map / 8
+        return tmp_map.flatten()
