@@ -63,25 +63,25 @@ class Cab:
         # up
         if (
             self.check_if_street(self.pos[0], self.pos[1] - sensor_field)
-            and self.angle != -90
+            #and self.angle != -90
         ):
             self.radars[0] = 1
         # right
         if (
             self.check_if_street(self.pos[0] + sensor_field, self.pos[1])
-            and self.angle != 180
+            #and self.angle != 180
         ):
             self.radars[1] = 1
         # down
         if (
             self.check_if_street(self.pos[0], self.pos[1] + sensor_field)
-            and self.angle != 90
+            #and self.angle != 90
         ):
             self.radars[2] = 1
         # left
         if (
             self.check_if_street(self.pos[0] - sensor_field, self.pos[1])
-            and self.angle != 0
+            #and self.angle != 0
         ):
             self.radars[3] = 1
 
@@ -136,28 +136,28 @@ class Cab:
         self.check_for_passengers()
 
     def move_up(self):
-        if self.radars[0] == 1 and self.angle != -90:
+        if self.radars[0] == 1: #and self.angle != -90:
             self.speed = self.grid_size
             self.angle = 90
         else:
             self.rewards += self.illegal_move_penalty + 1
 
     def move_right(self):
-        if self.radars[1] == 1 and self.angle != 180:
+        if self.radars[1] == 1: # and self.angle != 180:
             self.speed = self.grid_size
             self.angle = 0
         else:
             self.rewards += self.illegal_move_penalty + 1
 
     def move_down(self):
-        if self.radars[2] == 1 and self.angle != 90:
+        if self.radars[2] == 1: # and self.angle != 90:
             self.speed = self.grid_size
             self.angle = -90
         else:
             self.rewards += self.illegal_move_penalty + 1
 
     def move_left(self):
-        if self.radars[3] == 1 and self.angle != 0:
+        if self.radars[3] == 1: # and self.angle != 0:
             self.speed = self.grid_size
             self.angle = 180
         else:

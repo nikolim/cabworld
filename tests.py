@@ -78,7 +78,7 @@ def run_multi_agent_env(version):
                 assert reward in possible_rewards
             check_states_multi(states)
         assert is_done
-#
+
 #def test_env_v0():
 #    run_single_agent_env(0)
 #
@@ -102,11 +102,8 @@ def run_multi_agent_env(version):
 #def test_env_v5():
 #    run_single_agent_env(5)
 #
-
-def test_env_v6():
-    run_single_agent_env(6)
-
-#
+#def test_env_v6():
+#    run_single_agent_env(6)
 #
 #def test_env_v7():
 #    run_multi_agent_env(7)

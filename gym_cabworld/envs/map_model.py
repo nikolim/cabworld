@@ -126,10 +126,10 @@ class Map:
         x, y = pos
         x = int((x - (self.grid_size / 2)) / self.grid_size) - 1
         y = int((y - (self.grid_size / 2)) / self.grid_size) - 1
-        tmp_map[y][x] = number
+        tmp_map[y][x] += number
         return tmp_map
 
-    def create_state_deck(self, cab_pos):
+    def create_state_deck(self, cab_pos, cab_pass):
         """
         Create fully observed map
         @param cab_pos
@@ -137,11 +137,12 @@ class Map:
         """
         street_copy = copy.deepcopy(self.streets)
         tmp_map = street_copy[1:9, 1:9]
-        tmp_map = self.add_n_to_map(tmp_map, cab_pos, 2)
         n_passenger = 3
         passengers = self.get_n_nearest_passengers(cab_pos, n_passenger)
         for i, passenger in enumerate(passengers):
-            tmp_map = self.add_n_to_map(tmp_map, passenger.pos, 3 + i)
-            tmp_map = self.add_n_to_map(tmp_map, passenger.destination, 3 + i + n_passenger)
-        tmp_map = tmp_map / 8
+            tmp_map = self.add_n_to_map(tmp_map, passenger.pos, 2 + i)
+            tmp_map = self.add_n_to_map(tmp_map, passenger.destination, 2 + i + n_passenger)
+        cab_number = 9 if cab_pass else 8
+        tmp_map = self.add_n_to_map(tmp_map, cab_pos, cab_number)
+        tmp_map = tmp_map / 16
         return tmp_map.flatten()

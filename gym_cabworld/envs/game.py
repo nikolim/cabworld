@@ -147,7 +147,7 @@ class Game:
         Observe environment
         @return state of environment
         """
-        return self.map.create_state_deck(self.cab.pos)
+        return self.map.create_state_deck(self.cab.pos, self.cab.passenger)
 
     def view(self):
         """
