@@ -57,7 +57,7 @@ class Cab:
         Check if there is a street up, right, down, left
         Uses compares color values
         """
-        self.radars = [0, 0, 0, 0]
+        self.radars = [-1, -1, -1, -1]
         sensor_field = self.grid_size
 
         # up

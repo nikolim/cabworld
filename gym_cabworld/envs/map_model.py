@@ -17,10 +17,10 @@ class Map:
         self.street_color = (175, 171, 171, 255)  # define color of street for radar
         self.passengers = []
 
-        if game_mode < 4:
-            map_file = "map.dat"
-        else:
+        if game_mode in [0,1]:
             map_file = "small_map.dat"
+        else:
+            map_file = "map.dat"
 
         map_dat_path = os.path.join(data_path, map_file)
         streets = []

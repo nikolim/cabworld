@@ -18,6 +18,8 @@ test:
         - pytest tests.py
 
 deploy:
+    only:
+    - master
     script: 
     - echo $PYPIRC > /tmp/.pypirc
     - cat /tmp/.pypirc

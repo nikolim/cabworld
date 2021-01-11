@@ -13,7 +13,7 @@ screen_width = 1000
 screen_height = 1000
 number_cabs = 2
 number_passengers = 3
-max_number_passengers = 5
+max_number_passengers = 4
 min_number_passengers = 2
 respawn_rate = 100
 
@@ -24,7 +24,7 @@ class MultiAgentGame(Game):
         Multi agent world
         """
         pygame.init()
-        pygame.display.set_caption("Cabworld-v3")
+        pygame.display.set_caption("Cabworld-v" + str(game_mode))
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.clock = pygame.time.Clock()
         self.game_mode = game_mode
@@ -34,14 +34,14 @@ class MultiAgentGame(Game):
         self.img_path = os.path.join(dirname, "..", "images")
         data_path = os.path.join(dirname, "..", "data")
 
-        if game_mode < 4:
-            img = "map_gen.png"
-        else:
-            img = "small_map_gen.png"
+        assert game_mode in [1,3]
 
-        self.map = Map(
-            os.path.join(self.img_path, img), screen_width, game_mode, data_path
-        )
+        if game_mode == 1:
+            img = "small_map_gen.png"
+        elif game_mode == 3:
+            img = "map_gen.png"
+
+        self.map = Map(os.path.join(self.img_path, img), screen_width, game_mode, data_path)
         self.grid_size = self.map.get_grid_size()
 
         for _ in range(number_passengers):
@@ -87,12 +87,11 @@ class MultiAgentGame(Game):
             cab.update()
             self.steps += 1
 
-        if (self.game_mode % 4) != 0:
-            if (
-                len(self.map.passengers) < max_number_passengers
-                and self.steps % respawn_rate == 0
-            ) or len(self.map.passengers) < min_number_passengers:
-                self.add_passenger()
+        if (
+            len(self.map.passengers) < max_number_passengers
+            and self.steps % respawn_rate == 0
+        ) or len(self.map.passengers) < min_number_passengers:
+            self.add_passenger()
 
     def evaluate(self):
         """ "
@@ -117,15 +116,19 @@ class MultiAgentGame(Game):
         for cab in self.cabs:
             # Possible actions
             r1, r2, r3, r4 = cab.radars
+            # own position
             pos_x, pos_y = cab.pos
-            state = [r1, r2, r3, r4, round(pos_x), round(pos_y)]
+            # passenger destination 
+            if cab.passenger: 
+                dest_x, dest_y = cab.passenger.destination
+            else: 
+                dest_x, dest_y = -1, -1
+            state = [r1, r2, r3, r4, pos_x, pos_y, dest_x, dest_y]
+            # add positions of passengers
             for passenger in cab.next_passengers:
                 pass_x, pass_y = passenger.pos
-                dest_x, dest_y = passenger.destination
                 state.append(pass_x)
                 state.append(pass_y)
-                state.append(dest_x)
-                state.append(dest_y)
             observations.append(self.normalise(state))
         return observations
 

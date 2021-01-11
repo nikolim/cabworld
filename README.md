@@ -1,12 +1,39 @@
+<div align="center">
+		<img width="auto" height="200px" src="assets/icon.png">
+</div>
+
+<br/>
+<div align="center">
+	<a href="https://opensource.org/licenses/MIT">
+		<img alt="License MIT" src="https://img.shields.io/badge/build-passing-success">
+	</a>
+	<a href="https://opensource.org/licenses/MIT">
+		<img alt="coverage" src="https://img.shields.io/badge/coverage-95%25-green">
+	</a>
+	<a href="https://opensource.org/licenses/MIT">
+		<img alt="License MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg">
+	</a>
+</div>
+
+<p>
+</p>
+
 # Gym-Cabworld
 
-<a href='https://coveralls.io/gitlab/nlimbrun/cabworld?branch=master'><img src='https://coveralls.io/repos/gitlab/nlimbrun/cabworld/badge.svg?branch=master' alt='Coverage Status'/></a>
-
 Reinforcement Environment based an OpenGymAI and Pygame. 
-A cab is driving around and tries to pick-up passengers to drive them to their destination.
-Each passenger is marked with the same color as his destination.
+A cab is driving around and tries to pick-up passengers in order to drive them to their destination. For each passenger the destination is marked on the map in the same color.
+The environment has two different sizes (small and large) and respectively two modes (single and multi agent)
 
-![Cabworld](demo.gif)
+<br>
+<p>
+	<div align="center">
+		<img width="auto" height="400px" src="assets/demo_small.gif" align="center">
+		<img width="auto" height="400px" src="assets/demo.gif" align="center">
+	</div>
+</p>
+<br>
+
+
 
 ## Installation 
 
@@ -15,7 +42,7 @@ pip install gym-cabworld
 ```
 
 ## Usage
-### Single agent
+### Single agent (Small World)
 ```python
 import gym 
 import gym_cabworld 
@@ -26,7 +53,7 @@ env.step(action)
 env.render()
 ```
 
-### Multi agent 
+### Multi agent (Big World)
 ```python
 import gym 
 import gym_cabworld 
@@ -38,63 +65,67 @@ env.render()
 ```
 
 ## Problem Statement
+
+The cab(s) should learn to chauffeur as many passengers as possible to their destination in a fixed number of time steps (10k).
+
 ### 1. Environment description
-1. The Map has 1000 x 1000 pixels (action space is limited to 25x25 and 10x10)
+1. The Map has 8x8 grids for the small world (23x23 for the big world)
 2. The cab can only perform discrete actions
-* 0: drive up (1 grid (40px, 100px))
+* 0: drive up 
 * 1: drive right 
 * 2: drive down 
 * 3: drive left 
 * 4: pick-up passenger
 * 5: drop-off passenger
-* 6: do nothing (receives step-penalty)
+* 6: do nothing 
 3. Rewards / Penalties
 * Pick-up-reward: 100 
 * Drop-off-reward: 100
 * Step-penality: -1
+* Do-nothing-penalty: -1
 * Wrong pick-up/drop-off penality: -10
 * Illegal move penalty: -5
 
+Note: the cab is currently not allowed to drive in the opposite direction as in the previous step.
+
 ### 2. Initial conditions
 
-To test algorithms the smaller environment (v4, v5, v6, v7) can be used.
-Moreover, with the help of jupyter notebooks a map of any size and with any streets can be created.
+Every environment starts with 3 initial passengers. Every 100 timesteps a new passenger is respawn up to a maximum of 4 passengers. 
+The minimum number of passsengers is 2.
+Note: with the help of jupyter notebooks a map of any size and with any street leading can be created.
 
-Every dynamic environment (expect v0,v4) start with 3 initial passengers. Every 100 timesteps a new passenger is respawn up to a maximum of 5 passengers. Min-Passsengers: 2, Max-Passengers: 4.
-
-### Cabworld-v0 (v4 small map)
-1. Cab starting at the top-left-corner
-2. Passenger starting at bottom-right-corner 
-3. Passenger wants to get to the top-left corner 
-
-### Cabworld-v1 (v5 small map)
-1. Cab starting at the top-left-corner
+### Cabworld-v0 (Single Agent, small map)
+1. Cab starting at random position
 2. Passengers with random start-position and random destination
 
-### Cabworld-v2 (v6 small map)
-1. Cab starting at the random position
+### Cabworld-v1 (Multi-Agent, small map)
+1. 2 Cabs starting at the random position
 2. Passengers with random start-position and random destination
 
-### Cabworld-v3 (Multi-Agent) (v7 small map)
+### Cabworld-v2 (Single Agent, big map)
+1. Cab starting at random position
+2. Passengers with random start-position and random destination
+
+### Cabworld-v3 (Multi-Agent, big map)
 1. 2 Cabs starting at the random position
 2. Passengers with random start-position and random destination
 
 ### 3. Expected behaviour
-1. Cab picks up passenger as fast as possible 
-2. Cab brings passenger to their destination as fast as possible
-3. Cab drops off passenger at their destination
+1. Cab(s) pick(s) up passengers as fast as possible 
+2. Cab(s) bring(s) passengers to their destination as fast as possible
+3. Cab(s) drop(s) off passengers at their destination
 
 ### 4. State 
 
-The state of every environment consists of 18 values. 
-* 1-4: radar-front, radar-left, radar-right 
-* 5-6: pick-up-possible, drop-off-possible
-* 7-8: x-position, y-position of cab 
-* 9-12: x-position, y-position, x-destination, y-destination of passenger 1
-* 13-16: "" passenger 2
-* 17-20: "" passenger 3
+The state of every environment consists of 14 values. 
+* 1-4: radar-up, radar-right, radar-down, radar-left &#8712; {-1,1}
+* 5-6: x-position, y-position of cab &#8712; [0;1]
+* 7-8: x-destination, y-destination of passenger &#8712; [0;1] or -1 if no passenger
+* 9-10: x-position, y-position passenger 1 &#8712; [0;1]
+* 11-12: "" passenger 2
+* 13-14: "" passenger 3
 
-Note: 
+Notes: 
 * Radar: 1 for street, -1 for terrain
 * Positions are normalized [0,1]
 * If not enough passengers on map, values are filled with -1
@@ -106,6 +137,9 @@ pytest tests.py
 ```
 
 ## Changelog
+
+### [1.4.0] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.4.0) (11.01.2021)
+- New states, removed static environments
 
 ### [1.3.0] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.3.0) (03.01.2021)
 - Absolute actions, drive-forward only
