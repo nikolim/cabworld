@@ -1,5 +1,7 @@
 # Gym-Cabworld
 
+<a href='https://coveralls.io/gitlab/nlimbrun/cabworld?branch=master'><img src='https://coveralls.io/repos/gitlab/nlimbrun/cabworld/badge.svg?branch=master' alt='Coverage Status'/></a>
+
 Reinforcement Environment based an OpenGymAI and Pygame. 
 A cab is driving around and tries to pick-up passengers to drive them to their destination.
 Each passenger is marked with the same color as his destination.

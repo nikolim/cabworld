@@ -160,7 +160,7 @@ class Game:
             )
         # fill up the state if not enough passengers
         for _ in range(len(state), 20):
-            features.append(-1)
+            features.append(0)
         return tuple(features)
 
     def observe(self):
@@ -175,13 +175,24 @@ class Game:
         # own position
         pos_x, pos_y = self.cab.pos
         state = [r1, r2, r3, r4, p1, p2, pos_x, pos_y]
-        for passenger in self.cab.next_passengers:
-            pass_x, pass_y = passenger.pos
-            dest_x, dest_y = passenger.destination
-            state.append(pass_x)
-            state.append(pass_y)
+
+        if self.cab.passenger: 
+            dest_x, dest_y = self.cab.passenger.destination
             state.append(dest_x)
             state.append(dest_y)
+        else: 
+            pass_x, pass_y = self.cab.next_passengers[0].pos
+            state.append(pass_x)
+            state.append(pass_y)
+
+        # for passenger in self.cab.next_passengers:
+        #     pass_x, pass_y = passenger.pos
+        #     dest_x, dest_y = passenger.destination
+        #     state.append(pass_x)
+        #     state.append(pass_y)
+        #     state.append(dest_x)
+        #     state.append(dest_y)
+
         return self.normalise(state)
 
     def view(self):

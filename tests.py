@@ -80,8 +80,8 @@ def run_multi_agent_env(version):
         assert is_done
 
 
-def test_env_v0():
-    run_single_agent_env(0)
+# def test_env_v0():
+#     run_single_agent_env(0)
 
 
 def test_env_v1():
@@ -96,8 +96,8 @@ def test_env_v3():
     run_multi_agent_env(3)
 
 
-def test_env_v4():
-    run_single_agent_env(4)
+# def test_env_v4():
+#     run_single_agent_env(4)
 
 
 def test_env_v5():
