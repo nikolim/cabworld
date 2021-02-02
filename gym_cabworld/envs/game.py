@@ -121,14 +121,11 @@ class Game:
         @param state
         @return normalised state
         """
-        features = list(state)[:4]
-        for i in range(4, len(state)):
-            if state[i] == -1: 
-                features.append(-1)
-            else:
-                features.append(
-                    abs(round((state[i] - (1.5 * self.grid_size)) / (screen_width - (3 * self.grid_size)), 3))
-                )
+        features = list(state)[:6]
+        for i in range(6, len(state)):
+            features.append(
+                abs(round((state[i] - (1.5 * self.grid_size)) / (screen_width - (3 * self.grid_size)), 3))
+            )
         # fill up the state if not enough passengers
         for _ in range(len(state), 14):
             features.append(0)
@@ -141,19 +138,25 @@ class Game:
         """
         # Possible actions
         r1, r2, r3, r4 = self.cab.radars
+        # p1 = 1 if self.cab.passenger else 0
+        # p2 = 0
+        p1 = self.cab.pick_up_possible
+        p2 = self.cab.drop_off_possible
         # own position
         pos_x, pos_y = self.cab.pos
-        # passenger destination 
+        state = [r1, r2, r3, r4, p1, p2, pos_x, pos_y]
+
         if self.cab.passenger: 
+            # add destination of passenger
             dest_x, dest_y = self.cab.passenger.destination
-        else: 
-            dest_x, dest_y = -1, -1
-        state = [r1, r2, r3, r4, pos_x, pos_y, dest_x, dest_y]
-        # add positions of passengers
-        for passenger in self.cab.next_passengers:
-            pass_x, pass_y = passenger.pos
-            state.append(pass_x)
-            state.append(pass_y)
+            state.append(dest_x)
+            state.append(dest_y)
+        else:
+            # add positions of passengers
+            for passenger in self.cab.next_passengers:
+                pass_x, pass_y = passenger.pos
+                state.append(pass_x)
+                state.append(pass_y)
         return self.normalise(state)
 
     def view(self):

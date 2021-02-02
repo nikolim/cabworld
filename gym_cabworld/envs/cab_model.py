@@ -18,8 +18,9 @@ class Cab:
         self.speed = 0
         self.radars = [0, 0, 0, 0]
 
-        self.pick_up_possible = 0
-        self.drop_off_possible = 0
+        self.pick_up_possible = -1
+        self.drop_off_possible = -1
+        self.pick_up_index = 0
 
         self.is_alive = True
         self.distance = 0
@@ -77,15 +78,16 @@ class Cab:
         """
         Check if a passenger can be picked up or dropped off
         """
-        self.drop_off_possible = 0
-        self.pick_up_possible = 0
+        self.drop_off_possible = -1
+        self.pick_up_possible = -1
         if self.passenger is None:
             # Empty cab -> check if pick-up is possible
             self.next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
-            for passenger in self.next_passengers:
+            for i, passenger in enumerate(self.next_passengers):
                 distance = self.map.calc_distance(self.pos, passenger.pos)
                 if distance == 0:
                     self.pick_up_possible = 1
+                    self.pick_up_index = i
                     break
         if self.passenger:
             # Occupied cab -> check if drop-off possible

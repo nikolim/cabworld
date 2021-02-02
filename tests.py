@@ -13,18 +13,18 @@ possible_rewards = [-1, -5, -10, 100]
 
 def check_states(state):
     assert len(state) == 14
-    for k in range(0, 4):
+    for k in range(0, 6):
         assert state[k] == 1 or state[k] == -1
-    for i in range(4, len(state)):
+    for i in range(6, len(state)):
         assert state[i] == -1 or 0 <= state[i] <= 1
 
 
 def check_states_multi(states):
     for state in states:
         assert len(state) == 14
-        for k in range(0, 4):
+        for k in range(0, 6):
             assert state[k] == 1 or state[k] == -1
-        for i in range(4, len(state)):
+        for i in range(6, len(state)):
             assert state[i] == -1 or 0 <= state[i] <= 1
 
 
