@@ -26,7 +26,7 @@ class Cab:
         self.distance = 0
         self.time_spent = 0
         self.passenger = None
-        self.next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
+        self.next_passengers = self.map.get_n_passengers(self.pos, 3)
         self.debug = False
         self.grid_size = grid_size
         
@@ -41,14 +41,14 @@ class Cab:
         ]
 
         # rewards
-        self.pick_up_reward = 99
-        self.drop_off_reward = 99
+        self.pick_up_reward = 100
+        self.drop_off_reward = 100
 
         # motivate cab to drive the shortest path
         self.path_penalty = -1
-        self.step_penalty = 0
-        self.wrong_pick_up_penalty = -11
-        self.wrong_drop_off_penalty = -11
+        self.step_penalty = -1
+        self.wrong_pick_up_penalty = -10
+        self.wrong_drop_off_penalty = -10
         self.illegal_move_penalty = -5
         self.rewards = 0
         self.check_radar()
@@ -82,7 +82,7 @@ class Cab:
         self.pick_up_possible = -1
         if self.passenger is None:
             # Empty cab -> check if pick-up is possible
-            self.next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
+            self.next_passengers = self.map.get_n_passengers(self.pos, 3)
             for i, passenger in enumerate(self.next_passengers):
                 distance = self.map.calc_distance(self.pos, passenger.pos)
                 if distance == 0:
@@ -121,42 +121,38 @@ class Cab:
         self.speed = 0
         self.check_radar()
         if not self.passenger:
-            self.next_passengers = self.map.get_n_nearest_passengers(
+            self.next_passengers = self.map.get_n_passengers(
                 self.pos, 3)
         self.calc_rewards()
         self.check_for_passengers()
 
     def move_up(self):
-        if self.radars[0] == 1 and self.angle != -90:
+        if self.radars[0] == 1:
             self.speed = self.grid_size
             self.angle = 90
-            self.rewards += -1
         else:
-            self.rewards += self.illegal_move_penalty 
+            self.rewards += self.illegal_move_penalty + 1
 
     def move_right(self):
-        if self.radars[1] == 1 and self.angle != 180:
+        if self.radars[1] == 1:
             self.speed = self.grid_size
             self.angle = 0
-            self.rewards += -1
         else:
-            self.rewards += self.illegal_move_penalty 
+            self.rewards += self.illegal_move_penalty + 1
 
     def move_down(self):
-        if self.radars[2] == 1 and self.angle != 90:
+        if self.radars[2] == 1:
             self.speed = self.grid_size
             self.angle = -90
-            self.rewards += -1
         else:
-            self.rewards += self.illegal_move_penalty 
+            self.rewards += self.illegal_move_penalty + 1
 
     def move_left(self):
-        if self.radars[3] == 1 and self.angle != 0:
+        if self.radars[3] == 1:
             self.speed = self.grid_size
             self.angle = 180
-            self.rewards += -1
         else:
-            self.rewards += self.illegal_move_penalty 
+            self.rewards += self.illegal_move_penalty + 1
 
     def pick_up_passenger(self):
         """
@@ -164,7 +160,7 @@ class Cab:
         """
         self.speed = 0
         if self.passenger is None:
-            next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
+            next_passengers = self.map.get_n_passengers(self.pos, 3)
             for passenger in next_passengers:
                 if self.map.calc_distance(self.pos, passenger.pos) == 0:
                     self.passenger = passenger

@@ -44,6 +44,7 @@ class MultiAgentGame(Game):
         self.map = Map(os.path.join(self.img_path, img), screen_width, game_mode, data_path)
         self.grid_size = self.map.get_grid_size()
 
+        self.passenger_id = 0
         for _ in range(number_passengers):
             self.add_passenger()
 

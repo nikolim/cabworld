@@ -44,6 +44,7 @@ class Game:
         self.map = Map(os.path.join(self.img_path, img), screen_width, game_mode, data_path)
         self.grid_size = self.map.get_grid_size()
 
+        self.passenger_id = 0
         for _ in range(number_passengers):
             self.add_passenger()
         
@@ -54,6 +55,7 @@ class Game:
         self.mode = 0
         self.steps = 0
 
+        
     def add_passenger(self):
         """ "
         Add passenger with random position and destination on map
@@ -68,8 +70,10 @@ class Game:
             0,
             random_dest,
             self.grid_size,
+            self.passenger_id
         )
         self.map.add_passenger(passenger)
+        self.passenger_id += 1
 
     def action(self, action):
         """ "
@@ -121,13 +125,16 @@ class Game:
         @param state
         @return normalised state
         """
-        features = list(state)[:6]
-        for i in range(6, len(state)):
-            features.append(
-                abs(round((state[i] - (1.5 * self.grid_size)) / (screen_width - (3 * self.grid_size)), 3))
-            )
+        features = list(state)[:5]
+        for i in range(5, len(state)):
+            if (state[i] == -1):
+                features.append(-1)
+            else:
+                features.append(
+                    abs(round((state[i] - (1.5 * self.grid_size)) / (screen_width - (3 * self.grid_size)), 3))
+                )
         # fill up the state if not enough passengers
-        for _ in range(len(state), 14):
+        for _ in range(len(state), 13):
             features.append(-1)
         return tuple(features)
 
@@ -138,18 +145,18 @@ class Game:
         """
         # Possible actions
         r1, r2, r3, r4 = self.cab.radars
-
-        p1 = 1 if self.cab.passenger else -1 
-        p2 = 0
-        # p1 = self.cab.pick_up_possible
-        # p2 = self.cab.drop_off_possible
-        # own position
+        passng = 1 if self.cab.passenger else -1 
         pos_x, pos_y = self.cab.pos
-        state = [r1, r2, r3, r4, p1, p2, pos_x, pos_y]
+        state = [r1, r2, r3, r4, passng, pos_x, pos_y]
 
         if self.cab.passenger: 
-            # add destination of passenger
+            # add destination of passenger in the correct position
             dest_x, dest_y = self.cab.passenger.destination
+            passenger_arr_pos = self.cab.next_passengers.index(self.cab.passenger)
+            for _ in range(passenger_arr_pos): 
+                state.append(-1)
+                state.append(-1)
+
             state.append(dest_x)
             state.append(dest_y)
         else:
@@ -158,6 +165,7 @@ class Game:
                 pass_x, pass_y = passenger.pos
                 state.append(pass_x)
                 state.append(pass_y)
+
         return self.normalise(state)
 
     def view(self):
