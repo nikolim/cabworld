@@ -12,9 +12,9 @@ from gym_cabworld.envs.passenger_model import Passenger
 screen_width = 1000
 screen_height = 1000
 number_cabs = 2
-number_passengers = 3
-max_number_passengers = 4
-min_number_passengers = 2
+number_passengers = 1
+max_number_passengers = 1
+min_number_passengers = 1
 respawn_rate = 100
 
 

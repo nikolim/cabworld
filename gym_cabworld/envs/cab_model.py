@@ -41,14 +41,14 @@ class Cab:
         ]
 
         # rewards
-        self.pick_up_reward = 100
-        self.drop_off_reward = 100
+        self.pick_up_reward = 99
+        self.drop_off_reward = 99
 
         # motivate cab to drive the shortest path
         self.path_penalty = -1
-        self.step_penalty = -1
-        self.wrong_pick_up_penalty = -10
-        self.wrong_drop_off_penalty = -10
+        self.step_penalty = 0
+        self.wrong_pick_up_penalty = -11
+        self.wrong_drop_off_penalty = -11
         self.illegal_move_penalty = -5
         self.rewards = 0
         self.check_radar()
@@ -130,29 +130,33 @@ class Cab:
         if self.radars[0] == 1 and self.angle != -90:
             self.speed = self.grid_size
             self.angle = 90
+            self.rewards += -1
         else:
-            self.rewards += self.illegal_move_penalty + 1
+            self.rewards += self.illegal_move_penalty 
 
     def move_right(self):
         if self.radars[1] == 1 and self.angle != 180:
             self.speed = self.grid_size
             self.angle = 0
+            self.rewards += -1
         else:
-            self.rewards += self.illegal_move_penalty + 1
+            self.rewards += self.illegal_move_penalty 
 
     def move_down(self):
         if self.radars[2] == 1 and self.angle != 90:
             self.speed = self.grid_size
             self.angle = -90
+            self.rewards += -1
         else:
-            self.rewards += self.illegal_move_penalty + 1
+            self.rewards += self.illegal_move_penalty 
 
     def move_left(self):
         if self.radars[3] == 1 and self.angle != 0:
             self.speed = self.grid_size
             self.angle = 180
+            self.rewards += -1
         else:
-            self.rewards += self.illegal_move_penalty + 1
+            self.rewards += self.illegal_move_penalty 
 
     def pick_up_passenger(self):
         """

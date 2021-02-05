@@ -50,7 +50,7 @@ class Game:
         cab_pos = self.map.get_random_pos_on_map()
         self.cab = Cab(os.path.join(self.img_path, "cab.png"), self.map, cab_pos, self.grid_size)
 
-        self.game_speed = 60
+        self.game_speed = int(self.grid_size * 1.5)
         self.mode = 0
         self.steps = 0
 
@@ -128,7 +128,7 @@ class Game:
             )
         # fill up the state if not enough passengers
         for _ in range(len(state), 14):
-            features.append(0)
+            features.append(-1)
         return tuple(features)
 
     def observe(self):
@@ -138,10 +138,11 @@ class Game:
         """
         # Possible actions
         r1, r2, r3, r4 = self.cab.radars
-        # p1 = 1 if self.cab.passenger else 0
-        # p2 = 0
-        p1 = self.cab.pick_up_possible
-        p2 = self.cab.drop_off_possible
+
+        p1 = 1 if self.cab.passenger else -1 
+        p2 = 0
+        # p1 = self.cab.pick_up_possible
+        # p2 = self.cab.drop_off_possible
         # own position
         pos_x, pos_y = self.cab.pos
         state = [r1, r2, r3, r4, p1, p2, pos_x, pos_y]
