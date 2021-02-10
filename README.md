@@ -34,7 +34,6 @@ The environment has two different sizes (small and large) and respectively two m
 <br>
 
 
-
 ## Installation 
 
 ```bash
@@ -91,7 +90,7 @@ Note: the cab is currently not allowed to drive in the opposite direction as in 
 ### 2. Initial conditions
 
 Every environment starts with 3 initial passengers. Every 100 timesteps a new passenger is respawn up to a maximum of 4 passengers. 
-The minimum number of passsengers is 2.
+The minimum number of passsengers is 3.
 Note: with the help of jupyter notebooks a map of any size and with any street leading can be created.
 
 ### Cabworld-v0 (Single Agent, small map)
@@ -119,11 +118,12 @@ Note: with the help of jupyter notebooks a map of any size and with any street l
 
 The state of every environment consists of 14 values. 
 * 1-4: radar-up, radar-right, radar-down, radar-left &#8712; {-1,1}
+* 5: 1 if cab has passenger else 0
 * 5-6: x-position, y-position of cab &#8712; [0;1]
-* 7-8: x-destination, y-destination of passenger &#8712; [0;1] or -1 if no passenger
-* 9-10: x-position, y-position passenger 1 &#8712; [0;1]
-* 11-12: "" passenger 2
-* 13-14: "" passenger 3
+* 7-8: x-position, y-position passenger 1 &#8712; [0;1]
+* 9-10: "" passenger 2
+* 11-12: "" passenger 3
+* If cab picks up a passenger, its position is replaced with its destination
 
 Notes: 
 * Radar: 1 for street, -1 for terrain
@@ -137,6 +137,9 @@ pytest tests.py
 ```
 
 ## Changelog
+
+### [1.5.0] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.4.0) (07.02.2021)
+- New state, order passengers by spawn time
 
 ### [1.4.0] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.4.0) (11.01.2021)
 - New states, removed static environments

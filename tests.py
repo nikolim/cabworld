@@ -26,7 +26,7 @@ def check_states_multi(states):
             assert state[k] == 1 or state[k] == -1
         for i in range(5, len(state)):
             assert state[i] == -1 or 0 <= state[i] <= 1
-
+    
 
 def run_single_agent_env(version):
     assert version == 0 or version == 2

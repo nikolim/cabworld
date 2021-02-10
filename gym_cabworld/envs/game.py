@@ -14,7 +14,7 @@ number_cabs = 2
 
 number_passengers = 3  # initial
 max_number_passengers = 4
-min_number_passengers = 2
+min_number_passengers = 3
 respawn_rate = 100  # steps
 
 
@@ -103,6 +103,7 @@ class Game:
         if (len(self.map.passengers) < max_number_passengers
             and self.steps % respawn_rate == 0) or len(self.map.passengers) < min_number_passengers:
             self.add_passenger()
+            
         self.cab.update()
 
     def evaluate(self):
@@ -153,6 +154,7 @@ class Game:
             # add destination of passenger in the correct position
             dest_x, dest_y = self.cab.passenger.destination
             passenger_arr_pos = self.cab.next_passengers.index(self.cab.passenger)
+            # passenger_arr_pos = 0
             for _ in range(passenger_arr_pos): 
                 state.append(-1)
                 state.append(-1)

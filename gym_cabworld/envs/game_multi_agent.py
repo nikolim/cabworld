@@ -12,10 +12,11 @@ from gym_cabworld.envs.passenger_model import Passenger
 screen_width = 1000
 screen_height = 1000
 number_cabs = 2
-number_passengers = 1
-max_number_passengers = 1
-min_number_passengers = 1
-respawn_rate = 100
+
+number_passengers = 3  # initial
+max_number_passengers = 4
+min_number_passengers = 3
+respawn_rate = 100  # steps
 
 
 class MultiAgentGame(Game):
@@ -117,23 +118,26 @@ class MultiAgentGame(Game):
         for cab in self.cabs:
             # Possible actions
             r1, r2, r3, r4 = cab.radars
-            p1 = cab.pick_up_possible
-            p2 = cab.drop_off_possible
-            # own position
+            passng = 1 if cab.passenger else -1 
             pos_x, pos_y = cab.pos
-            state = [r1, r2, r3, r4, p1, p2, pos_x, pos_y]
+            state = [r1, r2, r3, r4, passng, pos_x, pos_y]
 
-            if cab.passenger: 
-                # add destination of passenger
+            if self.cab.passenger: 
+                # add destination of passenger in the correct position
                 dest_x, dest_y = cab.passenger.destination
+                passenger_arr_pos = self.cab.next_passengers.index(self.cab.passenger)
+                for _ in range(passenger_arr_pos): 
+                    state.append(-1)
+                    state.append(-1)
                 state.append(dest_x)
                 state.append(dest_y)
             else:
                 # add positions of passengers
-                for passenger in cab.next_passengers:
+                for passenger in self.cab.next_passengers:
                     pass_x, pass_y = passenger.pos
                     state.append(pass_x)
                     state.append(pass_y)
+
             observations.append(self.normalise(state))
         return observations
 
