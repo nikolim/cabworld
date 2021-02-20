@@ -138,7 +138,7 @@ pytest tests.py
 
 ## Changelog
 
-### [1.6.0] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.4.0) (20.02.2021)
+### [1.6.0] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.6.0) (20.02.2021)
 - Minimal state, single passenger
 
 ### [1.5.0] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.4.0) (07.02.2021)
