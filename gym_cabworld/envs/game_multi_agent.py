@@ -12,10 +12,11 @@ from gym_cabworld.envs.passenger_model import Passenger
 screen_width = 1000
 screen_height = 1000
 number_cabs = 2
-number_passengers = 3
-max_number_passengers = 4
-min_number_passengers = 2
-respawn_rate = 100
+
+number_passengers = 1  # initial
+max_number_passengers = 1
+min_number_passengers = 0
+respawn_rate = 50  # steps
 
 
 class MultiAgentGame(Game):
@@ -34,16 +35,19 @@ class MultiAgentGame(Game):
         self.img_path = os.path.join(dirname, "..", "images")
         data_path = os.path.join(dirname, "..", "data")
 
-        assert game_mode in [1,3]
+        assert game_mode in [1, 3]
 
         if game_mode == 1:
             img = "small_map_gen.png"
         elif game_mode == 3:
             img = "map_gen.png"
 
-        self.map = Map(os.path.join(self.img_path, img), screen_width, game_mode, data_path)
+        self.map = Map(
+            os.path.join(self.img_path, img), screen_width, game_mode, data_path
+        )
         self.grid_size = self.map.get_grid_size()
 
+        self.passenger_id = 0
         for _ in range(number_passengers):
             self.add_passenger()
 
@@ -68,6 +72,19 @@ class MultiAgentGame(Game):
         @param actions: action to perform
         """
         assert len(actions) == len(self.cabs)
+
+        # prevent deadlock if mult cabs want top pick-up same passenger
+        if actions.count(4) > 1:
+            pick_ups_possible = [cab.check_pick_up_possible() for cab in self.cabs]
+            idx = [
+                i
+                for i in range(len(actions))
+                if (actions[i] == 4 and pick_ups_possible[i])
+            ]
+            if len(idx) > 1:
+                rand_idx = random.sample(idx, 1)[0]
+                actions[rand_idx] = 6
+
         for cab, action in zip(self.cabs, actions):
             cab.rewards = 0
             if action == 0:
@@ -83,7 +100,8 @@ class MultiAgentGame(Game):
             elif action == 5:
                 cab.drop_off_passenger()
             elif action == 6:
-                pass
+                cab.do_nothing()
+
             cab.update()
             self.steps += 1
 
@@ -105,7 +123,8 @@ class MultiAgentGame(Game):
         Check if all passengers have reached their destination
         @return bool
         """
-        return self.map.all_passengers_reached_dest()
+        # return self.map.all_passengers_reached_dest()
+        return False
 
     def observe(self):
         """ "
@@ -116,19 +135,26 @@ class MultiAgentGame(Game):
         for cab in self.cabs:
             # Possible actions
             r1, r2, r3, r4 = cab.radars
-            # own position
+            passng = 1 if cab.passenger else -1
             pos_x, pos_y = cab.pos
-            # passenger destination 
-            if cab.passenger: 
+            state = [r1, r2, r3, r4, passng, pos_x, pos_y]
+
+            if cab.passenger:
+                # add destination of passenger in the correct position
                 dest_x, dest_y = cab.passenger.destination
-            else: 
-                dest_x, dest_y = -1, -1
-            state = [r1, r2, r3, r4, pos_x, pos_y, dest_x, dest_y]
-            # add positions of passengers
-            for passenger in cab.next_passengers:
-                pass_x, pass_y = passenger.pos
-                state.append(pass_x)
-                state.append(pass_y)
+                passenger_arr_pos = cab.next_passengers.index(cab.passenger)
+                for _ in range(passenger_arr_pos):
+                    state.append(-1)
+                    state.append(-1)
+                state.append(dest_x)
+                state.append(dest_y)
+            else:
+                # add positions of passengers
+                for passenger in cab.next_passengers:
+                    pass_x, pass_y = passenger.pos
+                    state.append(pass_x)
+                    state.append(pass_y)
+
             observations.append(self.normalise(state))
         return observations
 

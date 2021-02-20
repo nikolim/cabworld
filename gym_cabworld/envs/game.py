@@ -10,11 +10,10 @@ from gym_cabworld.envs.passenger_model import Passenger
 
 screen_width = 1000
 screen_height = 1000
-number_cabs = 2
 
-number_passengers = 3  # initial
-max_number_passengers = 4
-min_number_passengers = 2
+number_passengers = 1  # initial
+max_number_passengers = 1
+min_number_passengers = 0
 respawn_rate = 100  # steps
 
 
@@ -34,23 +33,28 @@ class Game:
         data_path = os.path.join(dirname, "..", "data")
         self.game_mode = game_mode
 
-        assert game_mode in [0,2]
+        assert game_mode in [0, 2]
 
         if game_mode == 0:
             img = "small_map_gen.png"
         else:
             img = "map_gen.png"
 
-        self.map = Map(os.path.join(self.img_path, img), screen_width, game_mode, data_path)
+        self.map = Map(
+            os.path.join(self.img_path, img), screen_width, game_mode, data_path
+        )
         self.grid_size = self.map.get_grid_size()
 
+        self.passenger_id = 0
         for _ in range(number_passengers):
             self.add_passenger()
-        
-        cab_pos = self.map.get_random_pos_on_map()
-        self.cab = Cab(os.path.join(self.img_path, "cab.png"), self.map, cab_pos, self.grid_size)
 
-        self.game_speed = 60
+        cab_pos = self.map.get_random_pos_on_map()
+        self.cab = Cab(
+            os.path.join(self.img_path, "cab.png"), self.map, cab_pos, self.grid_size
+        )
+
+        self.game_speed = int(self.grid_size * 1.5)
         self.mode = 0
         self.steps = 0
 
@@ -68,8 +72,10 @@ class Game:
             0,
             random_dest,
             self.grid_size,
+            self.passenger_id,
         )
         self.map.add_passenger(passenger)
+        self.passenger_id += 1
 
     def action(self, action):
         """ "
@@ -92,13 +98,16 @@ class Game:
         elif action == 5:
             self.cab.drop_off_passenger()
         elif action == 6:
-            pass
+            self.cab.do_nothing()
 
         self.steps += 1
         # repawn new passengers
-        if (len(self.map.passengers) < max_number_passengers
-            and self.steps % respawn_rate == 0) or len(self.map.passengers) < min_number_passengers:
+        if (
+            len(self.map.passengers) < max_number_passengers
+            and self.steps % respawn_rate == 0
+        ) or len(self.map.passengers) < min_number_passengers:
             self.add_passenger()
+
         self.cab.update()
 
     def evaluate(self):
@@ -113,7 +122,8 @@ class Game:
         Check if all passengers have reached their destination
         @return bool
         """
-        return self.map.all_passengers_reached_dest()
+        # return self.map.all_passengers_reached_dest()
+        return False
 
     def normalise(self, state):
         """ "
@@ -121,17 +131,23 @@ class Game:
         @param state
         @return normalised state
         """
-        features = list(state)[:4]
-        for i in range(4, len(state)):
-            if state[i] == -1: 
+        features = list(state)[:5]
+        for i in range(5, len(state)):
+            if state[i] == -1:
                 features.append(-1)
             else:
                 features.append(
-                    abs(round((state[i] - (1.5 * self.grid_size)) / (screen_width - (3 * self.grid_size)), 3))
+                    abs(
+                        round(
+                            (state[i] - (1.5 * self.grid_size))
+                            / (screen_width - (3 * self.grid_size)),
+                            3,
+                        )
+                    )
                 )
         # fill up the state if not enough passengers
-        for _ in range(len(state), 14):
-            features.append(0)
+        for _ in range(len(state), 9):
+            features.append(-1)
         return tuple(features)
 
     def observe(self):
@@ -141,19 +157,28 @@ class Game:
         """
         # Possible actions
         r1, r2, r3, r4 = self.cab.radars
-        # own position
+        passng = 1 if self.cab.passenger else -1
         pos_x, pos_y = self.cab.pos
-        # passenger destination 
-        if self.cab.passenger: 
+        state = [r1, r2, r3, r4, passng, pos_x, pos_y]
+
+        if self.cab.passenger:
+            # add destination of passenger in the correct position
             dest_x, dest_y = self.cab.passenger.destination
-        else: 
-            dest_x, dest_y = -1, -1
-        state = [r1, r2, r3, r4, pos_x, pos_y, dest_x, dest_y]
-        # add positions of passengers
-        for passenger in self.cab.next_passengers:
-            pass_x, pass_y = passenger.pos
-            state.append(pass_x)
-            state.append(pass_y)
+            passenger_arr_pos = self.cab.next_passengers.index(self.cab.passenger)
+            # passenger_arr_pos = 0
+            for _ in range(passenger_arr_pos):
+                state.append(-1)
+                state.append(-1)
+
+            state.append(dest_x)
+            state.append(dest_y)
+        else:
+            # add positions of passengers
+            for passenger in self.cab.next_passengers:
+                pass_x, pass_y = passenger.pos
+                state.append(pass_x)
+                state.append(pass_y)
+
         return self.normalise(state)
 
     def view(self):

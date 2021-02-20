@@ -18,17 +18,18 @@ class Cab:
         self.speed = 0
         self.radars = [0, 0, 0, 0]
 
-        self.pick_up_possible = 0
-        self.drop_off_possible = 0
+        self.pick_up_possible = -1
+        self.drop_off_possible = -1
+        self.pick_up_index = 0
 
         self.is_alive = True
         self.distance = 0
         self.time_spent = 0
         self.passenger = None
-        self.next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
+        self.next_passengers = self.map.get_n_passengers(self.pos, 1)
         self.debug = False
         self.grid_size = grid_size
-        
+
         self.cab_img = pygame.image.load(cab_file)
         self.cab_img = pygame.transform.scale(
             self.cab_img, (self.img_size, self.img_size)
@@ -49,6 +50,7 @@ class Cab:
         self.wrong_pick_up_penalty = -10
         self.wrong_drop_off_penalty = -10
         self.illegal_move_penalty = -5
+        self.do_nothing_penalty = -5
         self.rewards = 0
         self.check_radar()
 
@@ -61,31 +63,32 @@ class Cab:
         sensor_field = self.grid_size
 
         # up
-        if self.check_if_street(self.pos[0], self.pos[1] - sensor_field) and self.angle != -90:
+        if self.check_if_street(self.pos[0], self.pos[1] - sensor_field):
             self.radars[0] = 1
         # right
-        if self.check_if_street(self.pos[0] + sensor_field, self.pos[1]) and self.angle != 180:
+        if self.check_if_street(self.pos[0] + sensor_field, self.pos[1]):
             self.radars[1] = 1
         # down
-        if self.check_if_street(self.pos[0], self.pos[1] + sensor_field) and self.angle != 90:
+        if self.check_if_street(self.pos[0], self.pos[1] + sensor_field):
             self.radars[2] = 1
         # left
-        if self.check_if_street(self.pos[0] - sensor_field, self.pos[1]) and self.angle != 0:
+        if self.check_if_street(self.pos[0] - sensor_field, self.pos[1]):
             self.radars[3] = 1
-    
+
     def check_for_passengers(self):
         """
         Check if a passenger can be picked up or dropped off
         """
-        self.drop_off_possible = 0
-        self.pick_up_possible = 0
+        self.drop_off_possible = -1
+        self.pick_up_possible = -1
         if self.passenger is None:
             # Empty cab -> check if pick-up is possible
-            self.next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
-            for passenger in self.next_passengers:
+            self.next_passengers = self.map.get_n_passengers(self.pos, 1)
+            for i, passenger in enumerate(self.next_passengers):
                 distance = self.map.calc_distance(self.pos, passenger.pos)
                 if distance == 0:
                     self.pick_up_possible = 1
+                    self.pick_up_index = i
                     break
         if self.passenger:
             # Occupied cab -> check if drop-off possible
@@ -119,38 +122,45 @@ class Cab:
         self.speed = 0
         self.check_radar()
         if not self.passenger:
-            self.next_passengers = self.map.get_n_nearest_passengers(
-                self.pos, 3)
+            self.next_passengers = self.map.get_n_passengers(self.pos, 1)
+
         self.calc_rewards()
-        self.check_for_passengers()
+        # self.check_for_passengers()
 
     def move_up(self):
-        if self.radars[0] == 1 and self.angle != -90:
+        if self.radars[0] == 1:
             self.speed = self.grid_size
             self.angle = 90
         else:
             self.rewards += self.illegal_move_penalty + 1
 
     def move_right(self):
-        if self.radars[1] == 1 and self.angle != 180:
+        if self.radars[1] == 1:
             self.speed = self.grid_size
             self.angle = 0
         else:
             self.rewards += self.illegal_move_penalty + 1
 
     def move_down(self):
-        if self.radars[2] == 1 and self.angle != 90:
+        if self.radars[2] == 1:
             self.speed = self.grid_size
             self.angle = -90
         else:
             self.rewards += self.illegal_move_penalty + 1
 
     def move_left(self):
-        if self.radars[3] == 1 and self.angle != 0:
+        if self.radars[3] == 1:
             self.speed = self.grid_size
             self.angle = 180
         else:
             self.rewards += self.illegal_move_penalty + 1
+
+    def check_pick_up_possible(self):
+        if self.passenger is None:
+            for passenger in self.next_passengers:
+                if self.map.calc_distance(self.pos, passenger.pos) == 0:
+                    return True
+        return False
 
     def pick_up_passenger(self):
         """
@@ -158,12 +168,12 @@ class Cab:
         """
         self.speed = 0
         if self.passenger is None:
-            next_passengers = self.map.get_n_nearest_passengers(self.pos, 3)
-            for passenger in next_passengers:
+            for passenger in self.next_passengers:
                 if self.map.calc_distance(self.pos, passenger.pos) == 0:
                     self.passenger = passenger
                     self.passenger.get_in_cab()
                     self.rewards += self.pick_up_reward + 1
+                    next_passengers = self.map.get_n_passengers(self.pos, 1)
                     return
         self.rewards += self.wrong_pick_up_penalty + 1
 
@@ -183,8 +193,15 @@ class Cab:
                 self.map.remove_passenger(self.passenger)
                 self.passenger = None
                 self.rewards += self.drop_off_reward + 1
+                self.next_passengers = self.map.get_n_passengers(self.pos, 1)
                 return
         self.rewards += self.wrong_drop_off_penalty + 1
+
+    def do_nothing(self):
+        # Remove step penalty
+        if self.passenger:
+            self.rewards += self.do_nothing_penalty
+        self.rewards += 1
 
     def draw(self, screen):
         """
@@ -222,16 +239,13 @@ class Cab:
             color = self.map.map_img.get_at((int(x), int(y)))
             street_color = self.map.street_color
             red_similar = (
-                (street_color[0] -
-                 delta) < color[0] < (street_color[0] + delta)
+                (street_color[0] - delta) < color[0] < (street_color[0] + delta)
             )
             green_similar = (
-                (street_color[1] -
-                 delta) < color[1] < (street_color[1] + delta)
+                (street_color[1] - delta) < color[1] < (street_color[1] + delta)
             )
             blue_similar = (
-                (street_color[2] -
-                 delta) < color[2] < (street_color[2] + delta)
+                (street_color[2] - delta) < color[2] < (street_color[2] + delta)
             )
             return red_similar and green_similar and blue_similar
         except IndexError:

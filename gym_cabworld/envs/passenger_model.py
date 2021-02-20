@@ -5,7 +5,7 @@ import pygame
 
 
 class Passenger:
-    def __init__(self, passenger_file, map, pos, angle, destination, grid_size):
+    def __init__(self, passenger_file, map, pos, angle, destination, grid_size, id):
         """
         Passenger who is waiting to be picked up by a cab
         @param passenger_file: icon for passenger
@@ -14,6 +14,7 @@ class Passenger:
         @param angle: of the passenger
         @param destination: of the passenger
         """
+        self.id = id
         self.pos = pos
         self.angle = angle
         self.map = map
@@ -32,6 +33,9 @@ class Passenger:
             (self.pos[1] - (self.img_size / 2)),
         ]
         self.color = (randint(0, 255), randint(0, 255), randint(0, 255), 128)
+
+    def __lt__(self, other):
+        return self.id < other.id
 
     def draw(self, screen):
         """
