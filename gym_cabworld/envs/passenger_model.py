@@ -33,9 +33,9 @@ class Passenger:
             (self.pos[1] - (self.img_size / 2)),
         ]
         self.color = (randint(0, 255), randint(0, 255), randint(0, 255), 128)
-        
-    def __lt__(self, other): 
-        return  self.id < other.id
+
+    def __lt__(self, other):
+        return self.id < other.id
 
     def draw(self, screen):
         """

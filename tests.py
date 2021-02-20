@@ -8,11 +8,11 @@ import gym_cabworld
 from pyvirtualdisplay import Display
 
 disp = Display().start()
-possible_rewards = [-1, -5, -10, 100]
+possible_rewards = [0, -1, -5, -10, 100]
 
 
 def check_states(state):
-    assert len(state) == 13
+    assert len(state) == 9
     for k in range(0, 5):
         assert state[k] == 1 or state[k] == -1
     for i in range(5, len(state)):
@@ -21,12 +21,12 @@ def check_states(state):
 
 def check_states_multi(states):
     for state in states:
-        assert len(state) == 13
+        assert len(state) == 9
         for k in range(0, 5):
             assert state[k] == 1 or state[k] == -1
         for i in range(5, len(state)):
             assert state[i] == -1 or 0 <= state[i] <= 1
-    
+
 
 def run_single_agent_env(version):
     assert version == 0 or version == 2
@@ -62,14 +62,14 @@ def run_multi_agent_env(version):
         assert is_done
 
 
-def test_render_single(): 
+def test_render_single():
     env = gym.make("Cabworld-v0")
     env.reset()
     env.render()
     del env
 
 
-def test_render_multi(): 
+def test_render_multi():
     env = gym.make("Cabworld-v1")
     env.reset()
     env.render()

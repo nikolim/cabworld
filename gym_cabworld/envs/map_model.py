@@ -17,7 +17,7 @@ class Map:
         self.street_color = (175, 171, 171, 255)  # define color of street for radar
         self.passengers = []
 
-        if game_mode in [0,1]:
+        if game_mode in [0, 1]:
             map_file = "small_map.dat"
         else:
             map_file = "map.dat"
@@ -59,7 +59,7 @@ class Map:
         @param pos2: position of 2.object
         @return distance in pixels
         """
-        return round(math.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2))
+        return round(math.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2), 2)
 
     def get_n_passengers(self, pos, n):
         """
@@ -67,7 +67,7 @@ class Map:
         @param pos: position of cab
         @return nearest passengers
         """
-        tmp_passengers = [p for p in self.passengers if not p.in_cab]       
+        tmp_passengers = [p for p in self.passengers if not p.in_cab]
         tmp_passengers.sort()
         passengers = tmp_passengers[: (min(n, len(tmp_passengers)))]
         return passengers

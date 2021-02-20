@@ -65,7 +65,7 @@ env.render()
 
 ## Problem Statement
 
-The cab(s) should learn to chauffeur as many passengers as possible to their destination in a fixed number of time steps (10k).
+The cab(s) should learn to chauffeur as many passengers as possible to their destination in a fixed number of time steps (1000).
 
 ### 1. Environment description
 1. The Map has 8x8 grids for the small world (23x23 for the big world)
@@ -81,38 +81,39 @@ The cab(s) should learn to chauffeur as many passengers as possible to their des
 * Pick-up-reward: 100 
 * Drop-off-reward: 100
 * Step-penality: -1
-* Do-nothing-penalty: -1
+* Do-nothing-penalty (passenger in cab): -5
 * Wrong pick-up/drop-off penality: -10
 * Illegal move penalty: -5
 
-Note: the cab is currently not allowed to drive in the opposite direction as in the previous step.
 
 ### 2. Initial conditions
 
-Every environment starts with 3 initial passengers. Every 100 timesteps a new passenger is respawn up to a maximum of 4 passengers. 
-The minimum number of passsengers is 3.
+Every environment starts with an initial passengers. Every 100 timesteps (50 timesteps for Mulit-Agent) a new passenger is respawn.
+
 Note: with the help of jupyter notebooks a map of any size and with any street leading can be created.
 
 ### Cabworld-v0 (Single Agent, small map)
 1. Cab starting at random position
-2. Passengers with random start-position and random destination
+2. Passenger with random start-position and random destination (respawn every 100 steps)
 
 ### Cabworld-v1 (Multi-Agent, small map)
 1. 2 Cabs starting at the random position
-2. Passengers with random start-position and random destination
+2. Passenger with random start-position and random destination (respawn every 50 steps)
 
 ### Cabworld-v2 (Single Agent, big map)
 1. Cab starting at random position
-2. Passengers with random start-position and random destination
+2. Passenger with random start-position and random destination (respawn every 100 steps)
 
 ### Cabworld-v3 (Multi-Agent, big map)
 1. 2 Cabs starting at the random position
-2. Passengers with random start-position and random destination
+2. Passengers with random start-position and random destination (respawn 50 steps)
+
 
 ### 3. Expected behaviour
 1. Cab(s) pick(s) up passengers as fast as possible 
 2. Cab(s) bring(s) passengers to their destination as fast as possible
 3. Cab(s) drop(s) off passengers at their destination
+4. Cab(s) do nothing if no passenger on map
 
 ### 4. State 
 
@@ -120,15 +121,14 @@ The state of every environment consists of 14 values.
 * 1-4: radar-up, radar-right, radar-down, radar-left &#8712; {-1,1}
 * 5: 1 if cab has passenger else 0
 * 5-6: x-position, y-position of cab &#8712; [0;1]
-* 7-8: x-position, y-position passenger 1 &#8712; [0;1]
-* 9-10: "" passenger 2
-* 11-12: "" passenger 3
+* 7-8: x-position, y-position passenger &#8712; [0;1]
+
 * If cab picks up a passenger, its position is replaced with its destination
 
 Notes: 
 * Radar: 1 for street, -1 for terrain
 * Positions are normalized [0,1]
-* If not enough passengers on map, values are filled with -1
+* If currently there is no passengers on the map, values are filled with -1
 
 ## Test 
 Run 10 episodes of each version with random policy and check if states and rewards are valid.
@@ -137,6 +137,9 @@ pytest tests.py
 ```
 
 ## Changelog
+
+### [1.6.0] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.4.0) (20.02.2021)
+- Minimal state, single passenger
 
 ### [1.5.0] (https://gitlab.com/nlimbrun/cabworld/-/tags/release_1.4.0) (07.02.2021)
 - New state, order passengers by spawn time
