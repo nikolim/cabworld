@@ -90,6 +90,3 @@ def test_env_v2():
 
 def test_env_v3():
     run_multi_agent_env(3)
-
-
-test_env_v0()

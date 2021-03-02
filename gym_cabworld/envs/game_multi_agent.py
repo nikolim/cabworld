@@ -55,7 +55,7 @@ class MultiAgentGame(Game):
         for _ in range(number_cabs):
             random_pos = self.map.get_random_pos_on_map()
             cab = Cab(
-                os.path.join(self.img_path, "cab.png"),
+                os.path.join(self.img_path, "tractor.png"),
                 self.map,
                 random_pos,
                 self.grid_size,

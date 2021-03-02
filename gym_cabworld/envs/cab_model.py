@@ -4,7 +4,7 @@ import pygame
 
 
 class Cab:
-    def __init__(self, cab_file, map, pos, grid_size):
+    def __init__(self, cab_file, tractor_hay_file, map, pos, grid_size):
         """
         Cab moving on map trying to pickup passengers
         @param cab_file: icon for cab
@@ -26,7 +26,7 @@ class Cab:
         self.distance = 0
         self.time_spent = 0
         self.passenger = None
-        self.next_passengers = self.map.get_n_passengers(self.pos, 1)
+        self.next_passengers = self.map.get_n_passengers(self.pos, 10)
         self.debug = False
         self.grid_size = grid_size
 
@@ -34,6 +34,11 @@ class Cab:
         self.cab_img = pygame.transform.scale(
             self.cab_img, (self.img_size, self.img_size)
         )
+        self.tractor_with_hay = pygame.image.load(tractor_hay_file)
+        self.tractor_with_hay = pygame.transform.scale(
+            self.tractor_with_hay, (self.img_size, self.img_size)
+        )
+        
         self.rotate_cab_img = self.cab_img
         self.img_pos = [
             int(self.pos[0] - (self.img_size / 2)),
@@ -83,7 +88,7 @@ class Cab:
         self.pick_up_possible = -1
         if self.passenger is None:
             # Empty cab -> check if pick-up is possible
-            self.next_passengers = self.map.get_n_passengers(self.pos, 1)
+            self.next_passengers = self.map.get_n_passengers(self.pos, 10)
             for i, passenger in enumerate(self.next_passengers):
                 distance = self.map.calc_distance(self.pos, passenger.pos)
                 if distance == 0:
@@ -106,6 +111,10 @@ class Cab:
         """
         Update the values of the cab after movement
         """
+        # change img 
+        if self.passenger: 
+            self.cab_img = self.tractor_with_hay 
+
         # rotate image
         self.rotate_cab_img = self.rot_center(self.cab_img, self.angle)
         # move cab
@@ -122,7 +131,7 @@ class Cab:
         self.speed = 0
         self.check_radar()
         if not self.passenger:
-            self.next_passengers = self.map.get_n_passengers(self.pos, 1)
+            self.next_passengers = self.map.get_n_passengers(self.pos, 10)
 
         self.calc_rewards()
         # self.check_for_passengers()
@@ -209,11 +218,6 @@ class Cab:
         @param screen: to draw on
         """
         screen.blit(self.rotate_cab_img, self.img_pos)
-        if self.passenger:
-            light_size = int(self.grid_size / 10)
-            pygame.draw.circle(
-                screen, self.passenger.color, self.pos, light_size, light_size
-            )
 
     def rot_center(self, image, angle):
         """

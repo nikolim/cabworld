@@ -11,10 +11,10 @@ from gym_cabworld.envs.passenger_model import Passenger
 screen_width = 1000
 screen_height = 1000
 
-number_passengers = 1  # initial
-max_number_passengers = 1
+number_passengers = 10  # initial
+max_number_passengers = number_passengers
 min_number_passengers = 0
-respawn_rate = 100  # steps
+respawn_rate = 1000  # steps
 
 
 class Game:
@@ -51,7 +51,7 @@ class Game:
 
         cab_pos = self.map.get_random_pos_on_map()
         self.cab = Cab(
-            os.path.join(self.img_path, "cab.png"), self.map, cab_pos, self.grid_size
+            os.path.join(self.img_path, "tractor.png"), os.path.join(self.img_path, "tactor_with_hay.png"), self.map, cab_pos, self.grid_size
         )
 
         self.game_speed = int(self.grid_size * 1.5)
@@ -63,8 +63,9 @@ class Game:
         Add passenger with random position and destination on map
         """
         random_pos = self.map.get_random_pos_on_map()
-        random_dest = self.map.get_random_pos_on_map()
-        img = "person_" + str(randint(1, 3)) + ".png"
+        # random_dest = self.map.get_random_pos_on_map()
+        random_dest = 150,150
+        img = "hay.png"
         passenger = Passenger(
             os.path.join(self.img_path, img),
             self.map,

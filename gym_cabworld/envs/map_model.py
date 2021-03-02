@@ -14,7 +14,7 @@ class Map:
         @param map_file: map to create world
         """
         self.map_img = pygame.image.load(map_file)
-        self.street_color = (175, 171, 171, 255)  # define color of street for radar
+        self.street_color = (102, 51, 0, 255)  # define color of street for radar
         self.passengers = []
 
         if game_mode in [0, 1]:
@@ -95,7 +95,7 @@ class Map:
         @return pos  in pixels
         """
         x, y = 0, 0
-        while self.streets[y][x] != 1 or (x, y) in self.used_rand_pos:
+        while self.streets[y][x] != 1 or (x, y) in self.used_rand_pos or x<=2 or y<=2:
             x = random.randint(0, len(self.streets) - 1)
             y = random.randint(0, len(self.streets) - 1)
         self.used_rand_pos.append((x, y))
