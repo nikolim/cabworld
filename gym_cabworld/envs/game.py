@@ -12,10 +12,9 @@ screen_width = 1000
 screen_height = 1000
 
 number_passengers = 10  # initial
-max_number_passengers = number_passengers
+max_number_passengers = 10
 min_number_passengers = 0
-respawn_rate = 1000  # steps
-
+respawn_rate = 100  # steps
 
 class Game:
     def __init__(self, game_mode):
@@ -23,7 +22,7 @@ class Game:
         Create Pygame with map, cab, passenger
         """
         pygame.init()
-        pygame.display.set_caption("Cabworld-v" + str(game_mode))
+        pygame.display.set_caption("Farmworld-v" + str(game_mode))
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.clock = pygame.time.Clock()
         pygame.time.get_ticks()
@@ -132,8 +131,8 @@ class Game:
         @param state
         @return normalised state
         """
-        features = list(state)[:5]
-        for i in range(5, len(state)):
+        features = list(state)[:7]
+        for i in range(7, 9):
             if state[i] == -1:
                 features.append(-1)
             else:
@@ -146,10 +145,7 @@ class Game:
                         )
                     )
                 )
-        # fill up the state if not enough passengers
-        for _ in range(len(state), 9):
-            features.append(-1)
-        return tuple(features)
+        return features
 
     def observe(self):
         """ "
@@ -160,26 +156,11 @@ class Game:
         r1, r2, r3, r4 = self.cab.radars
         passng = 1 if self.cab.passenger else -1
         pos_x, pos_y = self.cab.pos
-        state = [r1, r2, r3, r4, passng, pos_x, pos_y]
 
-        if self.cab.passenger:
-            # add destination of passenger in the correct position
-            dest_x, dest_y = self.cab.passenger.destination
-            passenger_arr_pos = self.cab.next_passengers.index(self.cab.passenger)
-            # passenger_arr_pos = 0
-            for _ in range(passenger_arr_pos):
-                state.append(-1)
-                state.append(-1)
+        d = self.cab.drop_off_possible
+        p = self.cab.pick_up_possible
 
-            state.append(dest_x)
-            state.append(dest_y)
-        else:
-            # add positions of passengers
-            for passenger in self.cab.next_passengers:
-                pass_x, pass_y = passenger.pos
-                state.append(pass_x)
-                state.append(pass_y)
-
+        state = [r1, r2, r3, r4, p, d, passng, pos_x, pos_y]
         return self.normalise(state)
 
     def view(self):

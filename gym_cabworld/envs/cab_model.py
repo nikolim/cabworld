@@ -30,16 +30,16 @@ class Cab:
         self.debug = False
         self.grid_size = grid_size
 
-        self.cab_img = pygame.image.load(cab_file)
-        self.cab_img = pygame.transform.scale(
-            self.cab_img, (self.img_size, self.img_size)
+        self.tractor_img = pygame.image.load(cab_file)
+        self.tractor_img = pygame.transform.scale(
+            self.tractor_img, (self.img_size, self.img_size)
         )
         self.tractor_with_hay = pygame.image.load(tractor_hay_file)
         self.tractor_with_hay = pygame.transform.scale(
             self.tractor_with_hay, (self.img_size, self.img_size)
         )
-        
-        self.rotate_cab_img = self.cab_img
+
+        self.rotate_cab_img = self.tractor_img
         self.img_pos = [
             int(self.pos[0] - (self.img_size / 2)),
             int(self.pos[1] - (self.img_size / 2)),
@@ -114,6 +114,8 @@ class Cab:
         # change img 
         if self.passenger: 
             self.cab_img = self.tractor_with_hay 
+        else: 
+            self.cab_img = self.tractor_img
 
         # rotate image
         self.rotate_cab_img = self.rot_center(self.cab_img, self.angle)
@@ -132,9 +134,8 @@ class Cab:
         self.check_radar()
         if not self.passenger:
             self.next_passengers = self.map.get_n_passengers(self.pos, 10)
-
         self.calc_rewards()
-        # self.check_for_passengers()
+        self.check_for_passengers()
 
     def move_up(self):
         if self.radars[0] == 1:
@@ -164,13 +165,6 @@ class Cab:
         else:
             self.rewards += self.illegal_move_penalty + 1
 
-    def check_pick_up_possible(self):
-        if self.passenger is None:
-            for passenger in self.next_passengers:
-                if self.map.calc_distance(self.pos, passenger.pos) == 0:
-                    return True
-        return False
-
     def pick_up_passenger(self):
         """
         Picks up a the nearest passenger if available
@@ -182,7 +176,6 @@ class Cab:
                     self.passenger = passenger
                     self.passenger.get_in_cab()
                     self.rewards += self.pick_up_reward + 1
-                    next_passengers = self.map.get_n_passengers(self.pos, 1)
                     return
         self.rewards += self.wrong_pick_up_penalty + 1
 
@@ -192,11 +185,7 @@ class Cab:
         """
         self.speed = 0
         if self.passenger:
-            distance_pos_destination = self.map.calc_distance(
-                self.pos, self.passenger.destination
-            )
-            if distance_pos_destination == 0:
-                self.passenger.pos[0], self.passenger.pos[1] = self.pos[0], self.pos[1]
+            if int(self.pos[0]) == 150 and int(self.pos[1]) == 150:
                 self.passenger.reached_destination = True
                 self.passenger.get_out_of_cab()
                 self.map.remove_passenger(self.passenger)
@@ -217,7 +206,10 @@ class Cab:
         Draw to cab on the map
         @param screen: to draw on
         """
-        screen.blit(self.rotate_cab_img, self.img_pos)
+        if int(self.pos[0]) == 150 and int(self.pos[1]) == 150:
+            pass
+        else:
+            screen.blit(self.rotate_cab_img, self.img_pos)
 
     def rot_center(self, image, angle):
         """
@@ -238,10 +230,19 @@ class Cab:
         @param x: x-Postion to check
         @param y: y-Postion to check
         """
+
+        # allow driving in barn
+        if (round(x)==150) and (round(y)==150):  
+            return True
+
         delta = 10
         try:
             color = self.map.map_img.get_at((int(x), int(y)))
+            
             street_color = self.map.street_color
+
+            street_color2 = (198,140,83)
+
             red_similar = (
                 (street_color[0] - delta) < color[0] < (street_color[0] + delta)
             )
@@ -251,6 +252,17 @@ class Cab:
             blue_similar = (
                 (street_color[2] - delta) < color[2] < (street_color[2] + delta)
             )
-            return red_similar and green_similar and blue_similar
+
+            red_similar2 = (
+                (street_color2[0] - delta) < color[0] < (street_color2[0] + delta)
+            )
+            green_similar2 = (
+                (street_color2[1] - delta) < color[1] < (street_color2[1] + delta)
+            )
+            blue_similar2 = (
+                (street_color2[2] - delta) < color[2] < (street_color2[2] + delta)
+            )
+            return (red_similar and green_similar and blue_similar) or (red_similar2 and green_similar2 and blue_similar2)
+
         except IndexError:
             return False
