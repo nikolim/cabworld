@@ -3,7 +3,7 @@ import math
 import pygame
 
 
-class Cab:
+class Tractor:
     def __init__(self, cab_file, tractor_hay_file, map, pos, grid_size):
         """
         Cab moving on map trying to pickup passengers
@@ -25,8 +25,8 @@ class Cab:
         self.is_alive = True
         self.distance = 0
         self.time_spent = 0
-        self.passenger = None
-        self.next_passengers = self.map.get_n_passengers(self.pos, 10)
+        self.hay = None
+        self.next_hays = self.map.get_n_passengers(self.pos, 1)
         self.debug = False
         self.grid_size = grid_size
 
@@ -86,18 +86,18 @@ class Cab:
         """
         self.drop_off_possible = -1
         self.pick_up_possible = -1
-        if self.passenger is None:
+        if self.hay is None:
             # Empty cab -> check if pick-up is possible
-            self.next_passengers = self.map.get_n_passengers(self.pos, 10)
-            for i, passenger in enumerate(self.next_passengers):
+            self.next_hays = self.map.get_n_passengers(self.pos, 1)
+            for i, passenger in enumerate(self.next_hays):
                 distance = self.map.calc_distance(self.pos, passenger.pos)
                 if distance == 0:
                     self.pick_up_possible = 1
                     self.pick_up_index = i
                     break
-        if self.passenger:
+        if self.hay:
             # Occupied cab -> check if drop-off possible
-            distance = self.map.calc_distance(self.pos, self.passenger.destination)
+            distance = self.map.calc_distance(self.pos, self.hay.destination)
             if distance == 0:
                 self.drop_off_possible = 1
 
@@ -112,9 +112,9 @@ class Cab:
         Update the values of the cab after movement
         """
         # change img 
-        if self.passenger: 
-            self.cab_img = self.tractor_with_hay 
-        else: 
+        if self.hay:
+            self.cab_img = self.tractor_with_hay
+        else:
             self.cab_img = self.tractor_img
 
         # rotate image
@@ -132,8 +132,8 @@ class Cab:
         ]
         self.speed = 0
         self.check_radar()
-        if not self.passenger:
-            self.next_passengers = self.map.get_n_passengers(self.pos, 10)
+        if not self.hay:
+            self.next_hays = self.map.get_n_passengers(self.pos, 1)
         self.calc_rewards()
         self.check_for_passengers()
 
@@ -170,11 +170,11 @@ class Cab:
         Picks up a the nearest passenger if available
         """
         self.speed = 0
-        if self.passenger is None:
-            for passenger in self.next_passengers:
+        if self.hay is None:
+            for passenger in self.next_hays:
                 if self.map.calc_distance(self.pos, passenger.pos) == 0:
-                    self.passenger = passenger
-                    self.passenger.get_in_cab()
+                    self.hay = passenger
+                    self.hay.get_in_cab()
                     self.rewards += self.pick_up_reward + 1
                     return
         self.rewards += self.wrong_pick_up_penalty + 1
@@ -184,20 +184,20 @@ class Cab:
         Drops off a passenger
         """
         self.speed = 0
-        if self.passenger:
+        if self.hay:
             if int(self.pos[0]) == 150 and int(self.pos[1]) == 150:
-                self.passenger.reached_destination = True
-                self.passenger.get_out_of_cab()
-                self.map.remove_passenger(self.passenger)
-                self.passenger = None
+                self.hay.reached_destination = True
+                self.hay.get_out_of_cab()
+                self.map.remove_passenger(self.hay)
+                self.hay = None
                 self.rewards += self.drop_off_reward + 1
-                self.next_passengers = self.map.get_n_passengers(self.pos, 1)
+                self.next_hays = self.map.get_n_passengers(self.pos, 1)
                 return
         self.rewards += self.wrong_drop_off_penalty + 1
 
     def do_nothing(self):
         # Remove step penalty
-        if self.passenger:
+        if self.hay:
             self.rewards += self.do_nothing_penalty
         self.rewards += 1
 
@@ -232,13 +232,13 @@ class Cab:
         """
 
         # allow driving in barn
-        if (round(x)==150) and (round(y)==150):  
+        if (round(x)==150) and (round(y)==150):
             return True
 
         delta = 10
         try:
             color = self.map.map_img.get_at((int(x), int(y)))
-            
+
             street_color = self.map.street_color
 
             street_color2 = (198,140,83)

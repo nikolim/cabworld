@@ -10,7 +10,7 @@ import pygame
 class Map:
     def __init__(self, map_file, screen_size, game_mode, data_path):
         """
-        Map for the cabworld defined by image
+        Map for the farmworld defined by image
         @param map_file: map to create world
         """
         self.map_img = pygame.image.load(map_file)
@@ -67,7 +67,7 @@ class Map:
         @param pos: position of cab
         @return nearest passengers
         """
-        tmp_passengers = [p for p in self.passengers if not p.in_cab]
+        tmp_passengers = [p for p in self.passengers if not p.on_tractor]
         tmp_passengers.sort()
         if not n: 
             return tmp_passengers[: (min(n, len(tmp_passengers)))]
@@ -107,37 +107,3 @@ class Map:
             x * self.grid_size + int(self.grid_size / 2),
             y * self.grid_size + int(self.grid_size / 2),
         ]
-
-    def create_layer(self, pos):
-        """
-        Create layer for state deck
-        @param pos: one-hot
-        @return layer
-        """
-        layer = np.zeros((len(self.streets), len(self.streets)))
-        x, y = pos
-        x = int((x - (self.grid_size / 2)) / self.grid_size)
-        y = int((y - (self.grid_size / 2)) / self.grid_size)
-        layer[x][y] = 1
-        return layer
-
-    def create_state_deck(self, cab_pos):
-        """
-        Create state deck
-        @param cab_pos: position of cab
-        @return layer
-        """
-        # 1 layer -> map
-        street_layer = self.streets
-        # 2 layer -> cab
-        cab_layer = self.create_layer(cab_pos)
-        # 3 layer -> passenger pos
-        passenger = self.get_nearest_passenger(cab_pos)
-        pass_pos_layer = self.create_layer(passenger.pos)
-        # 4 layer -> passenger dest
-        pass_dest_layer = self.create_layer(passenger.destination)
-
-        state_deck = np.array(
-            [street_layer, cab_layer, pass_pos_layer, pass_dest_layer]
-        )
-        return state_deck

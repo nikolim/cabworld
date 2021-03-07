@@ -3,7 +3,7 @@ import pytest
 import time
 import gym
 
-import gym_cabworld
+import gym_farmworld
 
 from pyvirtualdisplay import Display
 
@@ -30,7 +30,7 @@ def check_states_multi(states):
 
 def run_single_agent_env(version):
     assert version == 0 or version == 2
-    env = gym.make("Cabworld-v" + str(version))
+    env = gym.make("Farmworld-v" + str(version))
     n_episodes = 10
     for episode in range(n_episodes):
         state = env.reset()
@@ -45,7 +45,7 @@ def run_single_agent_env(version):
 
 def run_multi_agent_env(version):
     assert version == 1 or version == 3
-    env = gym.make("Cabworld-v" + str(version))
+    env = gym.make("Farmworld-v" + str(version))
     n_episodes = 10
     for episode in range(n_episodes):
         states = env.reset()
@@ -63,30 +63,29 @@ def run_multi_agent_env(version):
 
 
 def test_render_single():
-    env = gym.make("Cabworld-v0")
+    env = gym.make("Farmworld-v0")
     env.reset()
     env.render()
     del env
 
 
-def test_render_multi():
-    env = gym.make("Cabworld-v1")
-    env.reset()
-    env.render()
-    del env
-
+# def test_render_multi():
+#     env = gym.make("Farmworld-v1")
+#     env.reset()
+#     env.render()
+#     del env
+# 
 
 def test_env_v0():
     run_single_agent_env(0)
 
 
-def test_env_v1():
-    run_multi_agent_env(1)
-
-
-def test_env_v2():
-    run_single_agent_env(2)
-
-
-def test_env_v3():
-    run_multi_agent_env(3)
+# def test_env_v1():
+#     run_multi_agent_env(1)
+# 
+# 
+# def test_env_v2():
+#     run_single_agent_env(2)
+# 
+# def test_env_v3():
+#     run_multi_agent_env(3)

@@ -4,17 +4,18 @@ import random
 
 import pygame
 
-from gym_cabworld.envs.cab_model import Cab
-from gym_cabworld.envs.map_model import Map
-from gym_cabworld.envs.passenger_model import Passenger
+from gym_farmworld.envs.tractor_model import Tractor
+from gym_farmworld.envs.map_model import Map
+from gym_farmworld.envs.hay_model import Hay
 
 screen_width = 1000
 screen_height = 1000
 
-number_passengers = 10  # initial
-max_number_passengers = 10
-min_number_passengers = 0
-respawn_rate = 100  # steps
+number_hay = 10  # initial
+max_number_hay = 10
+min_number_hay = 0
+respawn_rate = 10000  # steps
+
 
 class Game:
     def __init__(self, game_mode):
@@ -45,27 +46,28 @@ class Game:
         self.grid_size = self.map.get_grid_size()
 
         self.passenger_id = 0
-        for _ in range(number_passengers):
-            self.add_passenger()
+        for _ in range(number_hay):
+            self.add_hay()
 
-        cab_pos = self.map.get_random_pos_on_map()
-        self.cab = Cab(
-            os.path.join(self.img_path, "tractor.png"), os.path.join(self.img_path, "tactor_with_hay.png"), self.map, cab_pos, self.grid_size
+        tractor_pos = self.map.get_random_pos_on_map()
+        self.tractor = Tractor(
+            os.path.join(self.img_path, "tractor.png"), os.path.join(self.img_path, "tactor_with_hay.png"), self.map,
+            tractor_pos, self.grid_size
         )
 
         self.game_speed = int(self.grid_size * 1.5)
         self.mode = 0
         self.steps = 0
 
-    def add_passenger(self):
+    def add_hay(self):
         """ "
         Add passenger with random position and destination on map
         """
         random_pos = self.map.get_random_pos_on_map()
         # random_dest = self.map.get_random_pos_on_map()
-        random_dest = 150,150
+        random_dest = 150, 150
         img = "hay.png"
-        passenger = Passenger(
+        passenger = Hay(
             os.path.join(self.img_path, img),
             self.map,
             random_pos,
@@ -83,47 +85,47 @@ class Game:
         @param action: action to perform
         """
         # reset rewards
-        self.cab.rewards = 0
+        self.tractor.rewards = 0
 
         if action == 0:
-            self.cab.move_up()
+            self.tractor.move_up()
         elif action == 1:
-            self.cab.move_right()
+            self.tractor.move_right()
         elif action == 2:
-            self.cab.move_down()
+            self.tractor.move_down()
         elif action == 3:
-            self.cab.move_left()
+            self.tractor.move_left()
         elif action == 4:
-            self.cab.pick_up_passenger()
+            self.tractor.pick_up_passenger()
         elif action == 5:
-            self.cab.drop_off_passenger()
+            self.tractor.drop_off_passenger()
         elif action == 6:
-            self.cab.do_nothing()
+            self.tractor.do_nothing()
 
         self.steps += 1
-        # repawn new passengers
+        # repawn new hay
         if (
-            len(self.map.passengers) < max_number_passengers
-            and self.steps % respawn_rate == 0
-        ) or len(self.map.passengers) < min_number_passengers:
-            self.add_passenger()
+                len(self.map.passengers) < max_number_hay
+                and self.steps % respawn_rate == 0
+        ) or len(self.map.passengers) < min_number_hay:
+            self.add_hay()
 
-        self.cab.update()
+        self.tractor.update()
 
     def evaluate(self):
         """ "
         Evaluate rewards
         @return reward
         """
-        return self.cab.rewards
+        return self.tractor.rewards
 
     def is_done(self):
         """ "
         Check if all passengers have reached their destination
         @return bool
         """
-        # return self.map.all_passengers_reached_dest()
-        return False
+        return self.map.all_passengers_reached_dest()
+        # return False
 
     def normalise(self, state):
         """ "
@@ -131,8 +133,8 @@ class Game:
         @param state
         @return normalised state
         """
-        features = list(state)[:7]
-        for i in range(7, 9):
+        features = list(state)[:5]
+        for i in range(5, len(state)):
             if state[i] == -1:
                 features.append(-1)
             else:
@@ -153,14 +155,19 @@ class Game:
         @return state of environment
         """
         # Possible actions
-        r1, r2, r3, r4 = self.cab.radars
-        passng = 1 if self.cab.passenger else -1
-        pos_x, pos_y = self.cab.pos
+        r1, r2, r3, r4 = self.tractor.radars
+        hay = 1 if self.tractor.hay else -1
+        pos_x, pos_y = self.tractor.pos
 
-        d = self.cab.drop_off_possible
-        p = self.cab.pick_up_possible
+        state = [r1, r2, r3, r4, hay, pos_x, pos_y]
 
-        state = [r1, r2, r3, r4, p, d, passng, pos_x, pos_y]
+        if self.tractor.hay:
+            state.append(self.tractor.hay.destination[0])
+            state.append(self.tractor.hay.destination[1])
+        else:
+            state.append(self.tractor.next_hays[0].pos[0])
+            state.append(self.tractor.next_hays[0].pos[1])
+
         return self.normalise(state)
 
     def view(self):
@@ -175,8 +182,8 @@ class Game:
         if self.mode == 1:
             self.screen.fill((0, 0, 0))
 
-        self.cab.check_radar()
-        self.cab.draw(self.screen)
+        self.tractor.check_radar()
+        self.tractor.draw(self.screen)
         self.map.draw_passengers(self.screen)
 
         pygame.display.flip()

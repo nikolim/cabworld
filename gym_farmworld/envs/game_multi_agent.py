@@ -4,10 +4,10 @@ from random import randint
 
 import pygame
 
-from gym_cabworld.envs.cab_model import Cab
-from gym_cabworld.envs.game import Game
-from gym_cabworld.envs.map_model import Map
-from gym_cabworld.envs.passenger_model import Passenger
+from gym_farmworld.envs.tractor_model import Tractor
+from gym_farmworld.envs.game import Game
+from gym_farmworld.envs.map_model import Map
+from gym_farmworld.envs.hay_model import Hay
 
 screen_width = 1000
 screen_height = 1000
@@ -49,12 +49,12 @@ class MultiAgentGame(Game):
 
         self.passenger_id = 0
         for _ in range(number_passengers):
-            self.add_passenger()
+            self.add_hay()
 
         self.cabs = []
         for _ in range(number_cabs):
             random_pos = self.map.get_random_pos_on_map()
-            cab = Cab(
+            cab = Tractor(
                 os.path.join(self.img_path, "tractor.png"),
                 self.map,
                 random_pos,
@@ -109,7 +109,7 @@ class MultiAgentGame(Game):
             len(self.map.passengers) < max_number_passengers
             and self.steps % respawn_rate == 0
         ) or len(self.map.passengers) < min_number_passengers:
-            self.add_passenger()
+            self.add_hay()
 
     def evaluate(self):
         """ "
@@ -135,14 +135,14 @@ class MultiAgentGame(Game):
         for cab in self.cabs:
             # Possible actions
             r1, r2, r3, r4 = cab.radars
-            passng = 1 if cab.passenger else -1
+            passng = 1 if cab.hay else -1
             pos_x, pos_y = cab.pos
             state = [r1, r2, r3, r4, passng, pos_x, pos_y]
 
-            if cab.passenger:
+            if cab.hay:
                 # add destination of passenger in the correct position
-                dest_x, dest_y = cab.passenger.destination
-                passenger_arr_pos = cab.next_passengers.index(cab.passenger)
+                dest_x, dest_y = cab.hay.destination
+                passenger_arr_pos = cab.next_hays.index(cab.hay)
                 for _ in range(passenger_arr_pos):
                     state.append(-1)
                     state.append(-1)
@@ -150,7 +150,7 @@ class MultiAgentGame(Game):
                 state.append(dest_y)
             else:
                 # add positions of passengers
-                for passenger in cab.next_passengers:
+                for passenger in cab.next_hays:
                     pass_x, pass_y = passenger.pos
                     state.append(pass_x)
                     state.append(pass_y)

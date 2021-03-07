@@ -2,8 +2,8 @@ import gym
 import numpy as np
 from gym import spaces
 
-from gym_cabworld.envs.game import Game
-from gym_cabworld.envs.game_multi_agent import MultiAgentGame
+from gym_farmworld.envs.game import Game
+from gym_farmworld.envs.game_multi_agent import MultiAgentGame
 
 
 class CustomEnv(gym.Env):
