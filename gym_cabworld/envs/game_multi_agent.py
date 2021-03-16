@@ -151,9 +151,13 @@ class MultiAgentGame(Game):
             else:
                 # add positions of passengers
                 for passenger in cab.next_passengers:
-                    pass_x, pass_y = passenger.pos
-                    state.append(pass_x)
-                    state.append(pass_y)
+                    if passenger.in_cab:
+                        state.append(-1)
+                        state.append(-1)
+                    else:
+                        pass_x, pass_y = passenger.pos
+                        state.append(pass_x)
+                        state.append(pass_y)
 
             observations.append(self.normalise(state))
         return observations
