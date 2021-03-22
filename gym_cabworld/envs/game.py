@@ -11,9 +11,9 @@ from gym_cabworld.envs.passenger_model import Passenger
 screen_width = 1000
 screen_height = 1000
 
-number_passengers = 1  # initial
-max_number_passengers = 1
-min_number_passengers = 0
+number_passengers = 2  # initial
+max_number_passengers = 2
+min_number_passengers = 2
 respawn_rate = 100  # steps
 
 
@@ -146,7 +146,7 @@ class Game:
                     )
                 )
         # fill up the state if not enough passengers
-        for _ in range(len(state), 9):
+        for _ in range(len(state), 11):
             features.append(-1)
         return tuple(features)
 

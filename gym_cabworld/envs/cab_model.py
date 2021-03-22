@@ -26,7 +26,7 @@ class Cab:
         self.distance = 0
         self.time_spent = 0
         self.passenger = None
-        self.next_passengers = self.map.get_n_passengers(self.pos, 1)
+        self.next_passengers = self.map.get_n_passengers(self.pos, 2)
         self.debug = False
         self.grid_size = grid_size
 
@@ -83,7 +83,7 @@ class Cab:
         self.pick_up_possible = -1
         if self.passenger is None:
             # Empty cab -> check if pick-up is possible
-            self.next_passengers = self.map.get_n_passengers(self.pos, 1)
+            self.next_passengers = self.map.get_n_passengers(self.pos, 2)
             for i, passenger in enumerate(self.next_passengers):
                 distance = self.map.calc_distance(self.pos, passenger.pos)
                 if distance == 0:
@@ -122,7 +122,7 @@ class Cab:
         self.speed = 0
         self.check_radar()
         if not self.passenger:
-            self.next_passengers = self.map.get_n_passengers(self.pos, 1)
+            self.next_passengers = self.map.get_n_passengers(self.pos, 2)
 
         self.calc_rewards()
         # self.check_for_passengers()
@@ -173,7 +173,7 @@ class Cab:
                     self.passenger = passenger
                     self.passenger.get_in_cab()
                     self.rewards += self.pick_up_reward + 1
-                    next_passengers = self.map.get_n_passengers(self.pos, 1)
+                    next_passengers = self.map.get_n_passengers(self.pos, 2)
                     return
         self.rewards += self.wrong_pick_up_penalty + 1
 
@@ -193,7 +193,7 @@ class Cab:
                 self.map.remove_passenger(self.passenger)
                 self.passenger = None
                 self.rewards += self.drop_off_reward + 1
-                self.next_passengers = self.map.get_n_passengers(self.pos, 1)
+                self.next_passengers = self.map.get_n_passengers(self.pos, 2)
                 return
         self.rewards += self.wrong_drop_off_penalty + 1
 
