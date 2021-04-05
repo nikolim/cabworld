@@ -11,11 +11,6 @@ from gym_cabworld.envs.passenger_model import Passenger
 screen_width = 1000
 screen_height = 1000
 
-number_passengers = 2  # initial
-max_number_passengers = 2
-min_number_passengers = 2
-respawn_rate = 100  # steps
-
 
 class Game:
     def __init__(self, game_mode):
@@ -31,14 +26,23 @@ class Game:
         dirname = os.path.dirname(__file__)
         self.img_path = os.path.join(dirname, "..", "images")
         data_path = os.path.join(dirname, "..", "data")
+        img = "small_map_gen.png"
+
         self.game_mode = game_mode
-
-        assert game_mode in [0, 2]
-
-        if game_mode == 0:
-            img = "small_map_gen.png"
-        else:
-            img = "map_gen.png"
+        if game_mode == 0: 
+            number_passengers = 1  # initial
+            self.max_number_passengers = 1
+            self.min_number_passengers = 0
+            self.respawn_rate = 100  # steps
+            self.state_length = 9
+        elif game_mode == 1: 
+            number_passengers = 2  # initial
+            self.max_number_passengers = 2
+            self.min_number_passengers = 2
+            self.respawn_rate = 100  # steps
+            self.state_length = 11
+        else: 
+            raise Exception("No valid game mode")
 
         self.map = Map(
             os.path.join(self.img_path, img), screen_width, game_mode, data_path
@@ -53,9 +57,7 @@ class Game:
         self.cab = Cab(
             os.path.join(self.img_path, "cab.png"), self.map, cab_pos, self.grid_size
         )
-
         self.game_speed = int(self.grid_size * 1.5)
-        self.mode = 0
         self.steps = 0
 
     def add_passenger(self):
@@ -64,6 +66,9 @@ class Game:
         """
         random_pos = self.map.get_random_pos_on_map()
         random_dest = self.map.get_random_pos_on_map()
+        # ensure min distance between start and destination
+        while (self.map.calc_distance(random_pos, random_dest) <= self.map.get_grid_size() * 3): 
+            random_dest = self.map.get_random_pos_on_map()
         img = "person_" + str(randint(1, 3)) + ".png"
         passenger = Passenger(
             os.path.join(self.img_path, img),
@@ -103,9 +108,9 @@ class Game:
         self.steps += 1
         # repawn new passengers
         if (
-            len(self.map.passengers) < max_number_passengers
-            and self.steps % respawn_rate == 0
-        ) or len(self.map.passengers) < min_number_passengers:
+            len(self.map.passengers) < self.max_number_passengers
+            and self.steps % self.respawn_rate == 0
+        ) or len(self.map.passengers) < self.min_number_passengers:
             self.add_passenger()
 
         self.cab.update()
@@ -146,7 +151,7 @@ class Game:
                     )
                 )
         # fill up the state if not enough passengers
-        for _ in range(len(state), 11):
+        for _ in range(len(state), self.state_length):
             features.append(-1)
         return tuple(features)
 
@@ -190,9 +195,6 @@ class Game:
                 pygame.quit()
 
         self.screen.blit(self.map.map_img, (0, 0))
-        if self.mode == 1:
-            self.screen.fill((0, 0, 0))
-
         self.cab.check_radar()
         self.cab.draw(self.screen)
         self.map.draw_passengers(self.screen)

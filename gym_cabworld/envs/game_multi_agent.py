@@ -13,11 +13,6 @@ screen_width = 1000
 screen_height = 1000
 number_cabs = 2
 
-number_passengers = 1  # initial
-max_number_passengers = 1
-min_number_passengers = 0
-respawn_rate = 50  # steps
-
 
 class MultiAgentGame(Game):
     def __init__(self, game_mode):
@@ -34,13 +29,21 @@ class MultiAgentGame(Game):
         dirname = os.path.dirname(__file__)
         self.img_path = os.path.join(dirname, "..", "images")
         data_path = os.path.join(dirname, "..", "data")
-
-        assert game_mode in [1, 3]
-
-        if game_mode == 1:
-            img = "small_map_gen.png"
-        elif game_mode == 3:
-            img = "map_gen.png"
+        img = "small_map_gen.png"
+        
+        self.game_mode = game_mode
+        if game_mode == 2: 
+            number_passengers = 1  # initial
+            self.max_number_passengers = 1
+            self.min_number_passengers = 0
+            self.respawn_rate = 100  # steps
+            self.state_length = 9
+        elif game_mode == 3: 
+            number_passengers = 2  # initial
+            self.max_number_passengers = 2
+            self.min_number_passengers = 2
+            self.respawn_rate = 100  # steps
+            self.state_length = 11
 
         self.map = Map(
             os.path.join(self.img_path, img), screen_width, game_mode, data_path
@@ -106,9 +109,9 @@ class MultiAgentGame(Game):
             self.steps += 1
 
         if (
-            len(self.map.passengers) < max_number_passengers
-            and self.steps % respawn_rate == 0
-        ) or len(self.map.passengers) < min_number_passengers:
+            len(self.map.passengers) < self.max_number_passengers
+            and self.steps % self.respawn_rate == 0
+        ) or len(self.map.passengers) < self.min_number_passengers:
             self.add_passenger()
 
     def evaluate(self):
@@ -143,8 +146,7 @@ class MultiAgentGame(Game):
                 # add destination of passenger in the correct position
                 dest_x, dest_y = cab.passenger.destination
                 passenger_arr_pos = cab.next_passengers.index(cab.passenger)
-                for _ in range(passenger_arr_pos):
-                    state.append(-1)
+                for _ in range(passenger_arr_pos * 2):
                     state.append(-1)
                 state.append(dest_x)
                 state.append(dest_y)
@@ -168,16 +170,10 @@ class MultiAgentGame(Game):
         """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                done = True
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_m:
-                    self.mode += 1
-                    self.mode = self.mode % 3
+                pygame.quit()
 
         self.screen.blit(self.map.map_img, (0, 0))
-        if self.mode == 1:
-            self.screen.fill((0, 0, 0))
-
+       
         for cab in self.cabs:
             cab.check_radar()
             cab.draw(self.screen)

@@ -8,11 +8,11 @@ import gym_cabworld
 from pyvirtualdisplay import Display
 
 disp = Display().start()
-possible_rewards = [0, -1, -5, -10, 100]
+possible_rewards = [0, -1, -5, -10, 25]
 
 
 def check_states(state):
-    assert len(state) == 9
+    assert len(state) == 9 or len(state) == 11
     for k in range(0, 5):
         assert state[k] == 1 or state[k] == -1
     for i in range(5, len(state)):
@@ -21,7 +21,7 @@ def check_states(state):
 
 def check_states_multi(states):
     for state in states:
-        assert len(state) == 9
+        assert len(state) == 9 or len(state) == 11
         for k in range(0, 5):
             assert state[k] == 1 or state[k] == -1
         for i in range(5, len(state)):
@@ -29,7 +29,7 @@ def check_states_multi(states):
 
 
 def run_single_agent_env(version):
-    assert version == 0 or version == 2
+    assert version == 0 or version == 1
     env = gym.make("Cabworld-v" + str(version))
     n_episodes = 10
     for episode in range(n_episodes):
@@ -44,7 +44,7 @@ def run_single_agent_env(version):
 
 
 def run_multi_agent_env(version):
-    assert version == 1 or version == 3
+    assert version == 2 or version == 3
     env = gym.make("Cabworld-v" + str(version))
     n_episodes = 10
     for episode in range(n_episodes):
@@ -81,11 +81,11 @@ def test_env_v0():
 
 
 def test_env_v1():
-    run_multi_agent_env(1)
+    run_single_agent_env(1)
 
 
 def test_env_v2():
-    run_single_agent_env(2)
+    run_multi_agent_env(2)
 
 
 def test_env_v3():
