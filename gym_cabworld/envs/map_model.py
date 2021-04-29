@@ -49,6 +49,14 @@ class Map:
         if passenger in self.passengers:
             self.passengers.remove(passenger)
 
+    def increment_waiting_time(self): 
+        """
+        Increment the waiting time passenger while not picked up
+        """
+        for psng in self.passengers: 
+            if not psng.in_cab:
+                psng.waiting_time += 1
+
     def calc_distance(self, pos1, pos2):
         """
         Calculate distance between two objects

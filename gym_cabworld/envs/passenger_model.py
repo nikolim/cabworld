@@ -20,7 +20,7 @@ class Passenger:
         self.map = map
         self.destination = destination
         self.reached_destination = False
-        self.time_waiting = 0
+        self.waiting_time = 0
         self.in_cab = False
         self.img_size = int(grid_size / 2)
         self.passenger_img = pygame.image.load(passenger_file)

@@ -23,3 +23,9 @@ register(
     entry_point="gym_cabworld.envs:CustomEnv3",
     max_episode_steps=1000,
 )
+
+register(
+    id="Cabworld-v4",
+    entry_point="gym_cabworld.envs:CustomEnv4",
+    max_episode_steps=1000,
+)

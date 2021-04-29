@@ -1,6 +1,7 @@
 import os
 from random import randint
 import random
+import numpy as np
 
 import pygame
 
@@ -29,6 +30,7 @@ class Game:
         img = "small_map_gen.png"
 
         self.game_mode = game_mode
+
         if game_mode == 0: 
             number_passengers = 1  # initial
             self.max_number_passengers = 1
@@ -38,7 +40,7 @@ class Game:
         elif game_mode == 1: 
             number_passengers = 2  # initial
             self.max_number_passengers = 2
-            self.min_number_passengers = 2
+            self.min_number_passengers = 0
             self.respawn_rate = 100  # steps
             self.state_length = 11
         else: 
@@ -106,13 +108,21 @@ class Game:
             self.cab.do_nothing()
 
         self.steps += 1
+        
         # repawn new passengers
-        if (
-            len(self.map.passengers) < self.max_number_passengers
-            and self.steps % self.respawn_rate == 0
-        ) or len(self.map.passengers) < self.min_number_passengers:
-            self.add_passenger()
+        if self.game_mode == 0:
+            if (
+                len(self.map.passengers) < self.max_number_passengers
+                and self.steps % self.respawn_rate == 0
+            ) or len(self.map.passengers) < self.min_number_passengers:
+                self.add_passenger()
+        else: 
+             # add passengers periodic
+            if len(self.map.passengers) == 0: 
+                for _ in range(self.max_number_passengers):
+                    self.add_passenger()
 
+        self.map.increment_waiting_time()
         self.cab.update()
 
     def evaluate(self):
@@ -128,7 +138,8 @@ class Game:
         @return bool
         """
         # return self.map.all_passengers_reached_dest()
-        return False
+        return self.steps == 999
+        #return False
 
     def normalise(self, state):
         """ "
@@ -153,7 +164,7 @@ class Game:
         # fill up the state if not enough passengers
         for _ in range(len(state), self.state_length):
             features.append(-1)
-        return tuple(features)
+        return np.array(features)
 
     def observe(self):
         """ "
@@ -174,7 +185,6 @@ class Game:
             for _ in range(passenger_arr_pos):
                 state.append(-1)
                 state.append(-1)
-
             state.append(dest_x)
             state.append(dest_y)
         else:
@@ -183,7 +193,6 @@ class Game:
                 pass_x, pass_y = passenger.pos
                 state.append(pass_x)
                 state.append(pass_y)
-
         return self.normalise(state)
 
     def view(self):
