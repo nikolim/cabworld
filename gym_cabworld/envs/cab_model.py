@@ -41,16 +41,16 @@ class Cab:
         ]
 
         # rewards
-        self.pick_up_reward = 25
-        self.drop_off_reward = 25
+        self.pick_up_reward = 1
+        self.drop_off_reward = 1
 
         # motivate cab to drive the shortest path
-        self.path_penalty = -1
-        self.step_penalty = -1
-        self.wrong_pick_up_penalty = -10
-        self.wrong_drop_off_penalty = -10
-        self.illegal_move_penalty = -5
-        self.do_nothing_penalty = -5
+        self.path_penalty = -0.01
+        self.step_penalty = -0.01
+        self.wrong_pick_up_penalty = -0.02
+        self.wrong_drop_off_penalty = -0.02
+        self.illegal_move_penalty = -0.02
+        self.do_nothing_penalty = -0.01
         self.rewards = 0
         self.check_radar()
 
@@ -132,28 +132,27 @@ class Cab:
             self.speed = self.grid_size
             self.angle = 90
         else:
-            self.rewards += self.illegal_move_penalty + 1
+            self.rewards += self.illegal_move_penalty - self.step_penalty
 
     def move_right(self):
         if self.radars[1] == 1:
             self.speed = self.grid_size
             self.angle = 0
         else:
-            self.rewards += self.illegal_move_penalty + 1
+            self.rewards += self.illegal_move_penalty - self.step_penalty
 
     def move_down(self):
         if self.radars[2] == 1:
             self.speed = self.grid_size
             self.angle = -90
         else:
-            self.rewards += self.illegal_move_penalty + 1
-
+            self.rewards += self.illegal_move_penalty - self.step_penalty
     def move_left(self):
         if self.radars[3] == 1:
             self.speed = self.grid_size
             self.angle = 180
         else:
-            self.rewards += self.illegal_move_penalty + 1
+            self.rewards += self.illegal_move_penalty - self.step_penalty
 
     def check_pick_up_possible(self):
         if self.passenger is None:
@@ -172,10 +171,10 @@ class Cab:
                 if self.map.calc_distance(self.pos, passenger.pos) == 0:
                     self.passenger = passenger
                     self.passenger.get_in_cab()
-                    self.rewards += self.pick_up_reward + 1
+                    self.rewards += self.pick_up_reward - self.step_penalty
                     next_passengers = self.map.get_n_passengers(self.pos, 2)
                     return
-        self.rewards += self.wrong_pick_up_penalty + 1
+        self.rewards += self.wrong_pick_up_penalty - self.step_penalty
 
     def drop_off_passenger(self):
         """
@@ -192,17 +191,17 @@ class Cab:
                 self.passenger.get_out_of_cab()
                 self.map.remove_passenger(self.passenger)
                 self.passenger = None
-                self.rewards += self.drop_off_reward + 1
+                self.rewards += self.drop_off_reward - self.step_penalty
                 self.next_passengers = self.map.get_n_passengers(self.pos, 2)
                 return
-        self.rewards += self.wrong_drop_off_penalty + 1
+        self.rewards += self.wrong_drop_off_penalty - self.step_penalty
 
     def do_nothing(self):
         # Remove step penalty
         if self.passenger:
             self.rewards += self.do_nothing_penalty
-        self.rewards += 1
-
+        self.rewards -= self.step_penalty
+    
     def draw(self, screen):
         """
         Draw to cab on the map

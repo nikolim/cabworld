@@ -12,12 +12,11 @@ class CustomEnv(gym.Env):
         Create OpenAiGym with Pygame
         """
         self.mode = mode
-        self.pygame = Game(self.mode)
+        self.pygame = Game(mode)
         self.action_space = spaces.Discrete(7)
         n_states = 9 if mode == 0 else 11
         self.observation_space = spaces.Box(
-            np.array([[-1] * n_states]), np.array([[1] * n_states]), dtype=np.int
-        )
+            np.array([-1] * n_states), np.array([1] * n_states))
 
     def reset(self):
         """
@@ -53,11 +52,10 @@ class MarlEnv(CustomEnv):
         self.pygame = MultiAgentGame(mode)
         number_cabs = self.pygame.number_cabs
         self.action_space = spaces.Discrete(7)
-        n_states = 9 if mode == 0 else 11
+        n_states = 9 if mode == 2 else 11
         self.observation_space = spaces.Box(
             np.array([[-1] * n_states] * number_cabs),
             np.array([[1] * n_states] * number_cabs),
-            dtype=np.int,
         )
         self.game_mode = mode
 
@@ -72,14 +70,21 @@ class CustomEnv0(CustomEnv):
     def __init__(self):
         super().__init__(0)
 
+
 class CustomEnv1(CustomEnv):
     def __init__(self):
         super().__init__(1)
+
 
 class CustomEnv2(MarlEnv):
     def __init__(self):
         super().__init__(2)
 
+
 class CustomEnv3(MarlEnv):
     def __init__(self):
         super().__init__(3)
+
+class CustomEnv4(MarlEnv):
+    def __init__(self):
+        super().__init__(4)

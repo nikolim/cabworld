@@ -5,7 +5,7 @@ import pygame
 
 
 class Passenger:
-    def __init__(self, passenger_file, map, pos, angle, destination, grid_size, id):
+    def __init__(self, passenger_file, map, pos, angle, destination, grid_size, id, order=0):
         """
         Passenger who is waiting to be picked up by a cab
         @param passenger_file: icon for passenger
@@ -16,11 +16,12 @@ class Passenger:
         """
         self.id = id
         self.pos = pos
+        self.order = order
         self.angle = angle
         self.map = map
         self.destination = destination
         self.reached_destination = False
-        self.time_waiting = 0
+        self.waiting_time = 0
         self.in_cab = False
         self.img_size = int(grid_size / 2)
         self.passenger_img = pygame.image.load(passenger_file)

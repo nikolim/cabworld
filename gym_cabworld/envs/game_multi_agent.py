@@ -36,14 +36,23 @@ class MultiAgentGame(Game):
             number_passengers = 1  # initial
             self.max_number_passengers = 1
             self.min_number_passengers = 0
-            self.respawn_rate = 100  # steps
+            self.respawn_rate = 50  # steps
             self.state_length = 9
+
         elif game_mode == 3: 
             number_passengers = 2  # initial
             self.max_number_passengers = 2
-            self.min_number_passengers = 2
+            self.min_number_passengers = 0
             self.respawn_rate = 100  # steps
             self.state_length = 11
+        
+        elif game_mode == 4: 
+            number_passengers = 3  # initial
+            self.max_number_passengers = 3
+            self.min_number_passengers = 0
+            self.respawn_rate = 100  # steps
+            self.state_length = 11
+            self.number_cabs = 3
 
         self.map = Map(
             os.path.join(self.img_path, img), screen_width, game_mode, data_path
@@ -51,8 +60,8 @@ class MultiAgentGame(Game):
         self.grid_size = self.map.get_grid_size()
 
         self.passenger_id = 0
-        for _ in range(number_passengers):
-            self.add_passenger()
+        for i in range(number_passengers):
+            self.add_passenger(order=i)
 
         self.cabs = []
         for _ in range(number_cabs):
@@ -105,14 +114,24 @@ class MultiAgentGame(Game):
             elif action == 6:
                 cab.do_nothing()
 
+        self.map.increment_waiting_time()
+        self.steps += 1
+        
+        if self.game_mode == 2:
+            if (
+                len(self.map.passengers) < self.max_number_passengers
+                and self.steps % self.respawn_rate == 0
+            ) or len(self.map.passengers) < self.min_number_passengers:
+                self.add_passenger()
+        else: 
+            # add passengers periodic
+            if len(self.map.passengers) == 0: 
+                for i in range(self.max_number_passengers):
+                    self.add_passenger(order=i)
+        
+        # Update cabs after adding passengers
+        for cab in self.cabs: 
             cab.update()
-            self.steps += 1
-
-        if (
-            len(self.map.passengers) < self.max_number_passengers
-            and self.steps % self.respawn_rate == 0
-        ) or len(self.map.passengers) < self.min_number_passengers:
-            self.add_passenger()
 
     def evaluate(self):
         """ "
@@ -151,16 +170,16 @@ class MultiAgentGame(Game):
                 state.append(dest_x)
                 state.append(dest_y)
             else:
+                # keep passenger in same order
+                if len(cab.next_passengers) == 1: 
+                    if cab.next_passengers[0].order == 1: 
+                        state.append(-1)
+                        state.append(-1)
                 # add positions of passengers
                 for passenger in cab.next_passengers:
-                    if passenger.in_cab:
-                        state.append(-1)
-                        state.append(-1)
-                    else:
-                        pass_x, pass_y = passenger.pos
-                        state.append(pass_x)
-                        state.append(pass_y)
-
+                    pass_x, pass_y = passenger.pos
+                    state.append(pass_x)
+                    state.append(pass_y)
             observations.append(self.normalise(state))
         return observations
 

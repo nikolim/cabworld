@@ -8,7 +8,7 @@ import gym_cabworld
 from pyvirtualdisplay import Display
 
 disp = Display().start()
-possible_rewards = [0, -1, -5, -10, 25]
+possible_rewards = [0, -0.01, -0.02, 1]
 
 
 def check_states(state):
