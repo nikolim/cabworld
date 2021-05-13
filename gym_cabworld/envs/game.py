@@ -52,8 +52,8 @@ class Game:
         self.grid_size = self.map.get_grid_size()
 
         self.passenger_id = 0
-        for _ in range(number_passengers):
-            self.add_passenger()
+        for i in range(number_passengers):
+            self.add_passenger(order=i)
 
         cab_pos = self.map.get_random_pos_on_map()
         self.cab = Cab(
@@ -62,7 +62,7 @@ class Game:
         self.game_speed = int(self.grid_size * 1.5)
         self.steps = 0
 
-    def add_passenger(self):
+    def add_passenger(self, order=0):
         """ "
         Add passenger with random position and destination on map
         """
@@ -80,6 +80,7 @@ class Game:
             random_dest,
             self.grid_size,
             self.passenger_id,
+            order
         )
         self.map.add_passenger(passenger)
         self.passenger_id += 1
@@ -108,7 +109,6 @@ class Game:
             self.cab.do_nothing()
 
         self.steps += 1
-        
         # repawn new passengers
         if self.game_mode == 0:
             if (
@@ -119,8 +119,8 @@ class Game:
         else: 
              # add passengers periodic
             if len(self.map.passengers) == 0: 
-                for _ in range(self.max_number_passengers):
-                    self.add_passenger()
+                for i in range(self.max_number_passengers):
+                    self.add_passenger(order=i)
 
         self.map.increment_waiting_time()
         self.cab.update()
@@ -182,12 +182,16 @@ class Game:
             dest_x, dest_y = self.cab.passenger.destination
             passenger_arr_pos = self.cab.next_passengers.index(self.cab.passenger)
             # passenger_arr_pos = 0
-            for _ in range(passenger_arr_pos):
-                state.append(-1)
+            for _ in range(passenger_arr_pos * 2):
                 state.append(-1)
             state.append(dest_x)
             state.append(dest_y)
         else:
+             # keep passenger in same order
+            if len(self.cab.next_passengers) == 1: 
+                if self.cab.next_passengers[0].order == 1: 
+                    state.append(-1)
+                    state.append(-1)
             # add positions of passengers
             for passenger in self.cab.next_passengers:
                 pass_x, pass_y = passenger.pos
