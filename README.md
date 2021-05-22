@@ -8,9 +8,6 @@
 		<img alt="License MIT" src="https://img.shields.io/badge/build-passing-success">
 	</a>
 	<a href="https://opensource.org/licenses/MIT">
-		<img alt="coverage" src="https://img.shields.io/badge/coverage-95%25-green">
-	</a>
-	<a href="https://opensource.org/licenses/MIT">
 		<img alt="License MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg">
 	</a>
 </div>
@@ -77,13 +74,11 @@ The cab(s) should learn to chauffeur as many passengers as possible to their des
 * 5: drop-off passenger
 * 6: do nothing 
 3. Rewards / Penalties
-* Pick-up-reward: 25 
-* Drop-off-reward: 25
-* Step-penality: -1
-* Do-nothing-penalty (passenger in cab): -5
-* Wrong pick-up/drop-off penality: -10
-* Illegal move penalty: -5
-
+* Pick-up-reward: 1 
+* Drop-off-reward: 1
+* Step-penality: -0.01
+* Wrong pick-up/drop-off penality: -0.02
+* Illegal move penalty: -0.02
 
 ### 2. Initial conditions
 
