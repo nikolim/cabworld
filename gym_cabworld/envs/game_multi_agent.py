@@ -164,7 +164,7 @@ class MultiAgentGame(Game):
             if cab.passenger:
                 # add destination of passenger in the correct position
                 dest_x, dest_y = cab.passenger.destination
-                if self.cab.passenger.order == 1: 
+                if cab.passenger.order == 1: 
                     state.append(-1)
                     state.append(-1)
                 state.append(dest_x)
