@@ -180,9 +180,8 @@ class Game:
         if self.cab.passenger:
             # add destination of passenger in the correct position
             dest_x, dest_y = self.cab.passenger.destination
-            passenger_arr_pos = self.cab.next_passengers.index(self.cab.passenger)
-            # passenger_arr_pos = 0
-            for _ in range(passenger_arr_pos * 2):
+            if self.cab.passenger.order == 1: 
+                state.append(-1)
                 state.append(-1)
             state.append(dest_x)
             state.append(dest_y)
